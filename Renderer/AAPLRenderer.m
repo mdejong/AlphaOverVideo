@@ -29,6 +29,12 @@ Implementation of renderer class which performs Metal setup and per frame render
 
 @property (nonatomic, retain) MetalScaleRenderContext *metalScaleRenderContext;
 
+@property (nonatomic, copy) NSArray *frames;
+
+@property (nonatomic, assign) int frameNum;
+
+@property (nonatomic, assign) int skipCount;
+
 @end
 
 // Define this symbol to enable private texture mode on MacOSX.
@@ -227,7 +233,7 @@ void validate_storage_mode(id<MTLTexture> texture)
 
     // Process 32BPP input, a CoreVideo pixel buffer is modified so that
     // an additional channel for Y is retained.
-    self.metalBT709Decoder.hasAlphaChannel = TRUE;
+    self.metalBT709Decoder.hasAlphaChannel = FALSE;
     
     BOOL isOpaqueFlag;
 
@@ -252,7 +258,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     MetalBT709Gamma decodeGamma = MetalBT709GammaApple;
     
-    if ((1)) {
+    if ((0)) {
       // Explicitly set gamma to sRGB
       decodeGamma = MetalBT709GammaSRGB;
     } else if ((0)) {
@@ -302,9 +308,11 @@ void validate_storage_mode(id<MTLTexture> texture)
 
   // RGB + Alpha images
   //cvPixelBufer = [self decodeRedFadeAlpha];
-  cvPixelBufer = [self decodeRedCircleAlpha];
+  //cvPixelBufer = [self decodeRedCircleAlpha];
   //cvPixelBufer = [self decodeColorsAlpha4by4];
   //cvPixelBufer = [self decodeGlobeAlpha];
+  
+  cvPixelBufer = [self decodeBigBuckBunnyShort];
   
   if (debugDumpYCbCr) {
     [BGRAToBT709Converter dumpYCBCr:cvPixelBufer];
@@ -326,6 +334,10 @@ void validate_storage_mode(id<MTLTexture> texture)
                                                                        renderSize:CGSizeMake(1920, 1080)
                                                                        aveBitrate:0];
   NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
+  
+  self.frames = cvPixelBuffers;
+  self.frameNum = 0;
+  self.skipCount = 30;
   
   // Grab just the first texture, return retained ref
   
@@ -368,6 +380,9 @@ void validate_storage_mode(id<MTLTexture> texture)
                                                                        renderSize:CGSizeMake(1920, 1080)
                                                                        aveBitrate:0];
   NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
+  
+  self.frames = cvPixelBuffers;
+  self.frameNum = 0;
   
   // Grab just the first texture, return retained ref
   
@@ -739,6 +754,30 @@ void validate_storage_mode(id<MTLTexture> texture)
   return cvPixelBuffer;
 }
 
+- (CVPixelBufferRef) decodeBigBuckBunnyShort
+{
+  // Apple gamma
+  NSString *resFilename = @"BigBuckBunny640x360.m4v";
+  
+  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
+                                                                    frameDuration:1.0/30
+                                                                       renderSize:CGSizeMake(640, 360)
+                                                                       aveBitrate:0];
+  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
+  
+  self.frames = cvPixelBuffers;
+  self.frameNum = 0;
+  self.skipCount = 30;
+  
+  // Grab just the first texture, return retained ref
+  
+  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
+  
+  CVPixelBufferRetain(cvPixelBuffer);
+  
+  return cvPixelBuffer;
+}
+
 /// Called whenever view changes orientation or is resized
 - (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
 {
@@ -752,6 +791,28 @@ void validate_storage_mode(id<MTLTexture> texture)
 - (void)drawInMTKView:(nonnull MTKView *)view
 {
   BOOL worked;
+  
+  if (self.frameNum >= self.frames.count) {
+    self.frameNum = 0;
+  }
+  
+  // Input to sRGB texture render comes from H.264 source
+  CVPixelBufferRef rgbPixelBuffer = NULL;
+  CVPixelBufferRef alphaPixelBuffer = NULL;
+
+  //NSLog(@"display self.frames[%d]", (int)self.frameNum);
+  
+  rgbPixelBuffer = (__bridge CVPixelBufferRef) self.frames[self.frameNum];
+  
+  self.frameNum += 1;
+  
+//  if (self.skipCount == 0) {
+//    self.skipCount = 30;
+//    self.frameNum += 1;
+//  }
+//  self.skipCount -= 1;
+  
+  assert(rgbPixelBuffer != NULL);
 
   MetalBT709Decoder *metalBT709Decoder = self.metalBT709Decoder;
   MetalRenderContext *mrc = metalBT709Decoder.metalRenderContext;
@@ -767,8 +828,8 @@ void validate_storage_mode(id<MTLTexture> texture)
   int renderHeight = (int) _viewportSize.y;
   
   BOOL isExactlySameSize =
-  (renderWidth == ((int)CVPixelBufferGetWidth(_yCbCrPixelBuffer))) &&
-  (renderHeight == ((int)CVPixelBufferGetHeight(_yCbCrPixelBuffer))) &&
+  (renderWidth == ((int)CVPixelBufferGetWidth(rgbPixelBuffer))) &&
+  (renderHeight == ((int)CVPixelBufferGetHeight(rgbPixelBuffer))) &&
   (renderPassDescriptor != nil);
 
   if ((0)) {
@@ -776,8 +837,8 @@ void validate_storage_mode(id<MTLTexture> texture)
     // would generate slightly wrong non-linear resample results
     // if the dimensions do not exactly match.
     isExactlySameSize = 1;
-    renderWidth = (int)CVPixelBufferGetWidth(_yCbCrPixelBuffer);
-    renderHeight = (int)CVPixelBufferGetHeight(_yCbCrPixelBuffer);
+    renderWidth = (int)CVPixelBufferGetWidth(rgbPixelBuffer);
+    renderHeight = (int)CVPixelBufferGetHeight(rgbPixelBuffer);
   }
   
   if (isExactlySameSize) {
@@ -789,8 +850,8 @@ void validate_storage_mode(id<MTLTexture> texture)
       int renderWidth = (int) _resizeTexture.width;
       int renderHeight = (int) _resizeTexture.height;
       
-      [metalBT709Decoder decodeBT709:_yCbCrPixelBuffer
-                    alphaPixelBuffer:_alphaPixelBuffer
+      [metalBT709Decoder decodeBT709:rgbPixelBuffer
+                    alphaPixelBuffer:alphaPixelBuffer
                      bgraSRGBTexture:_resizeTexture
                        commandBuffer:commandBuffer
                 renderPassDescriptor:nil
@@ -802,8 +863,8 @@ void validate_storage_mode(id<MTLTexture> texture)
     // Render directly into the view, this optimization reduces IO
     // and results in a significant performance improvement.
 
-    worked = [metalBT709Decoder decodeBT709:_yCbCrPixelBuffer
-                           alphaPixelBuffer:_alphaPixelBuffer
+    worked = [metalBT709Decoder decodeBT709:rgbPixelBuffer
+                           alphaPixelBuffer:alphaPixelBuffer
                             bgraSRGBTexture:nil
                               commandBuffer:commandBuffer
                        renderPassDescriptor:renderPassDescriptor
@@ -825,8 +886,8 @@ void validate_storage_mode(id<MTLTexture> texture)
       int renderWidth = (int) _resizeTexture.width;
       int renderHeight = (int) _resizeTexture.height;
       
-      worked = [metalBT709Decoder decodeBT709:_yCbCrPixelBuffer
-                             alphaPixelBuffer:_alphaPixelBuffer
+      worked = [metalBT709Decoder decodeBT709:rgbPixelBuffer
+                             alphaPixelBuffer:alphaPixelBuffer
                               bgraSRGBTexture:_resizeTexture
                                 commandBuffer:commandBuffer
                          renderPassDescriptor:nil
