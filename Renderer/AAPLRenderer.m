@@ -30,6 +30,7 @@ Implementation of renderer class which performs Metal setup and per frame render
 @property (nonatomic, retain) MetalScaleRenderContext *metalScaleRenderContext;
 
 @property (nonatomic, copy) NSArray *frames;
+@property (nonatomic, copy) NSArray *alphaFrames;
 
 @property (nonatomic, assign) int frameNum;
 
@@ -233,7 +234,7 @@ void validate_storage_mode(id<MTLTexture> texture)
 
     // Process 32BPP input, a CoreVideo pixel buffer is modified so that
     // an additional channel for Y is retained.
-    self.metalBT709Decoder.hasAlphaChannel = FALSE;
+    self.metalBT709Decoder.hasAlphaChannel = TRUE;
     
     BOOL isOpaqueFlag;
 
@@ -258,7 +259,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     MetalBT709Gamma decodeGamma = MetalBT709GammaApple;
     
-    if ((0)) {
+    if ((1)) {
       // Explicitly set gamma to sRGB
       decodeGamma = MetalBT709GammaSRGB;
     } else if ((0)) {
@@ -312,7 +313,8 @@ void validate_storage_mode(id<MTLTexture> texture)
   //cvPixelBufer = [self decodeColorsAlpha4by4];
   //cvPixelBufer = [self decodeGlobeAlpha];
   
-  cvPixelBufer = [self decodeBigBuckBunnyShort];
+  //cvPixelBufer = [self decodeBigBuckBunnyShort];
+  cvPixelBufer = [self decodeCarSpinAlphaLoop];
   
   if (debugDumpYCbCr) {
     [BGRAToBT709Converter dumpYCBCr:cvPixelBufer];
@@ -778,6 +780,44 @@ void validate_storage_mode(id<MTLTexture> texture)
   return cvPixelBuffer;
 }
 
+- (CVPixelBufferRef) decodeCarSpinAlphaLoop
+{
+  NSString *resFilename = @"CarSpin.m4v";
+  
+  int width = 960;
+  int height = 720;
+  
+  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
+                                                                    frameDuration:1.0/30
+                                                                       renderSize:CGSizeMake(width, height)
+                                                                       aveBitrate:0];
+  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
+  
+  self.frames = cvPixelBuffers;
+  self.frameNum = 0;
+  self.skipCount = 30;
+  
+  if ((1)) {
+    NSString *resFilename = @"CarSpin_alpha.m4v";
+    
+    NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
+                                                                      frameDuration:1.0/30
+                                                                         renderSize:CGSizeMake(width, height)
+                                                                         aveBitrate:0];
+    NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
+    
+    self.alphaFrames = cvPixelBuffers;
+  }
+  
+  // Grab just the first texture, return retained ref
+  
+  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
+  
+  CVPixelBufferRetain(cvPixelBuffer);
+  
+  return cvPixelBuffer;
+}
+
 /// Called whenever view changes orientation or is resized
 - (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
 {
@@ -802,8 +842,14 @@ void validate_storage_mode(id<MTLTexture> texture)
 
   //NSLog(@"display self.frames[%d]", (int)self.frameNum);
   
-  rgbPixelBuffer = (__bridge CVPixelBufferRef) self.frames[self.frameNum];
+  int currentFrameNum = self.frameNum;
   
+  rgbPixelBuffer = (__bridge CVPixelBufferRef) self.frames[currentFrameNum];
+  
+  if (self.alphaFrames != nil) {
+    alphaPixelBuffer = (__bridge CVPixelBufferRef) self.alphaFrames[currentFrameNum];
+  }
+
   self.frameNum += 1;
   
 //  if (self.skipCount == 0) {
@@ -813,6 +859,9 @@ void validate_storage_mode(id<MTLTexture> texture)
 //  self.skipCount -= 1;
   
   assert(rgbPixelBuffer != NULL);
+  if (self.alphaFrames != nil) {
+    assert(alphaPixelBuffer != NULL);
+  }
 
   MetalBT709Decoder *metalBT709Decoder = self.metalBT709Decoder;
   MetalRenderContext *mrc = metalBT709Decoder.metalRenderContext;
