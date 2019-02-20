@@ -107,7 +107,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   self = [super init];
   if(self)
   {
-    isCaptureRenderedTextureEnabled = 1;
+    isCaptureRenderedTextureEnabled = 0;
     
     id<MTLDevice> device = mtkView.device;
     
@@ -116,7 +116,8 @@ void validate_storage_mode(id<MTLTexture> texture)
     }
 
     //mtkView.preferredFramesPerSecond = 60;
-    mtkView.preferredFramesPerSecond = 30;
+    //mtkView.preferredFramesPerSecond = 30;
+    mtkView.preferredFramesPerSecond = 10;
     
     // Init Metal context, this object contains refs to metal objects
     // and util functions.
@@ -311,10 +312,10 @@ void validate_storage_mode(id<MTLTexture> texture)
   //cvPixelBufer = [self decodeGlobeAlpha];
   
   //cvPixelBufer = [self decodeBigBuckBunnyShort];
-  //cvPixelBufer = [self decodeCarSpinAlphaLoop];
+  cvPixelBufer = [self decodeCarSpinAlphaLoop];
   
   // Single frame
-  cvPixelBufer = [self decodeCarSpinAlphaLoopSingleFrame];
+  //cvPixelBufer = [self decodeCarSpinAlphaLoopSingleFrame];
   
   if (debugDumpYCbCr) {
     [BGRAToBT709Converter dumpYCBCr:cvPixelBufer];
