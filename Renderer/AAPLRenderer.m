@@ -114,6 +114,9 @@ void validate_storage_mode(id<MTLTexture> texture)
     if (isCaptureRenderedTextureEnabled) {
       mtkView.framebufferOnly = false;
     }
+
+    //mtkView.preferredFramesPerSecond = 60;
+    mtkView.preferredFramesPerSecond = 30;
     
     // Init Metal context, this object contains refs to metal objects
     // and util functions.
@@ -237,12 +240,6 @@ void validate_storage_mode(id<MTLTexture> texture)
     self.metalBT709Decoder.hasAlphaChannel = TRUE;
     
     BOOL isOpaqueFlag;
-
-//    if (self.metalBT709Decoder.hasAlphaChannel) {
-//      mtkView.opaque = FALSE;
-//    } else {
-//      mtkView.opaque = TRUE;
-//    }
 
     if (self.metalBT709Decoder.hasAlphaChannel) {
       isOpaqueFlag = FALSE;
