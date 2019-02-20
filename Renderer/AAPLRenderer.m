@@ -107,7 +107,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   self = [super init];
   if(self)
   {
-    isCaptureRenderedTextureEnabled = 0;
+    isCaptureRenderedTextureEnabled = 1;
     
     id<MTLDevice> device = mtkView.device;
     
@@ -311,7 +311,10 @@ void validate_storage_mode(id<MTLTexture> texture)
   //cvPixelBufer = [self decodeGlobeAlpha];
   
   //cvPixelBufer = [self decodeBigBuckBunnyShort];
-  cvPixelBufer = [self decodeCarSpinAlphaLoop];
+  //cvPixelBufer = [self decodeCarSpinAlphaLoop];
+  
+  // Single frame
+  cvPixelBufer = [self decodeCarSpinAlphaLoopSingleFrame];
   
   if (debugDumpYCbCr) {
     [BGRAToBT709Converter dumpYCBCr:cvPixelBufer];
@@ -796,6 +799,44 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   if ((1)) {
     NSString *resFilename = @"CarSpin_alpha.m4v";
+    
+    NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
+                                                                      frameDuration:1.0/30
+                                                                         renderSize:CGSizeMake(width, height)
+                                                                         aveBitrate:0];
+    NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
+    
+    self.alphaFrames = cvPixelBuffers;
+  }
+  
+  // Grab just the first texture, return retained ref
+  
+  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
+  
+  CVPixelBufferRetain(cvPixelBuffer);
+  
+  return cvPixelBuffer;
+}
+
+- (CVPixelBufferRef) decodeCarSpinAlphaLoopSingleFrame
+{
+  NSString *resFilename = @"CarSpinAF10.m4v";
+  
+  int width = 960;
+  int height = 720;
+  
+  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
+                                                                    frameDuration:1.0/30
+                                                                       renderSize:CGSizeMake(width, height)
+                                                                       aveBitrate:0];
+  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
+  
+  self.frames = cvPixelBuffers;
+  self.frameNum = 0;
+  self.skipCount = 30;
+  
+  if ((1)) {
+    NSString *resFilename = @"CarSpinAF10_alpha.m4v";
     
     NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
                                                                       frameDuration:1.0/30
