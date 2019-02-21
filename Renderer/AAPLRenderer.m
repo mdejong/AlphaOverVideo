@@ -331,7 +331,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   // FIXME: does this help ?
   self.playerItemVideoOutput.suppressesPlayerRendering = TRUE;
   
-  self.playerQueue = dispatch_queue_create("com.decode.carspin_rgb", DISPATCH_QUEUE_SERIAL);
+  self.playerQueue = dispatch_queue_create("com.decodem4v.carspin_rgb", DISPATCH_QUEUE_SERIAL);
   
   __weak AAPLRenderer* weakSelf = self;
   
@@ -456,22 +456,31 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   CFTimeInterval outputItemTime;
   outputItemTime = currentFrameNum * (1.0f / 10); // 10 FPS
+  //outputItemTime = currentFrameNum * 1.0f; // 1 FPS
   
   CMTime syncTime = CMTimeMake(round(outputItemTime * 1000.0f), 1000);
 
-  NSLog(@"display frame %d : at vsync time %0.2f : %d / %d", (int)self.frameNum + 1, outputItemTime, (int)syncTime.value, (int)syncTime.timescale);
+  //NSLog(@"display frame %d : at vsync time %0.2f : %d / %d", (int)self.frameNum + 1, outputItemTime, (int)syncTime.value, (int)syncTime.timescale);
   
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
   
   if ([playerItemVideoOutput hasNewPixelBufferForItemTime:syncTime]) {
     rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:syncTime itemTimeForDisplay:NULL];
+    
+    if (rgbPixelBuffer != NULL) {
+      NSLog(@"loaded RGB frame for sync time %0.2f", outputItemTime);
+    } else {
+      NSLog(@"did not load RGB frame for sync time %0.2f", outputItemTime);
+    }
+  } else {
+    NSLog(@"hasNewPixelBufferForItemTime is FALSE at vsync time %0.2f", outputItemTime);
   }
   
   self.frameNum += 1;
   
   if (rgbPixelBuffer == NULL) {
     // FIXME: When no frame to display, what the do then?
-    NSLog(@"hasNewPixelBufferForItemTime is false at vsync time %0.2f", outputItemTime);
+    //NSLog(@"hasNewPixelBufferForItemTime is false at vsync time %0.2f", outputItemTime);
     return;
   }
   
