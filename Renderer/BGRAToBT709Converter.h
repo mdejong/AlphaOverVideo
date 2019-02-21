@@ -56,6 +56,10 @@ typedef enum {
 
 + (BOOL) setBT709Colorspace:(CVPixelBufferRef)cvPixelBuffer;
 
+// Return pixel buffer attributes
+
++ (NSDictionary*) getPixelBufferAttributes;
+
 // Allocate a CoreVideo buffer for use with BT.709 format YCBCr 2 plane data
 
 + (CVPixelBufferRef) createCoreVideoYCbCrBuffer:(CGSize)size;

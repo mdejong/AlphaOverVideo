@@ -23,11 +23,20 @@ Implementation of renderer class which performs Metal setup and per frame render
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
 
+static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
+
 @interface AAPLRenderer ()
 
 @property (nonatomic, retain) MetalBT709Decoder *metalBT709Decoder;
 
 @property (nonatomic, retain) MetalScaleRenderContext *metalScaleRenderContext;
+
+// Player instance objects to decode CoreVideo buffers from an asset item
+
+@property (nonatomic, retain) AVPlayer *player;
+@property (nonatomic, retain) AVPlayerItem *playerItem;
+@property (nonatomic, retain) AVPlayerItemVideoOutput *playerItemVideoOutput;
+@property (nonatomic, retain) dispatch_queue_t playerQueue;
 
 @property (nonatomic, copy) NSArray *frames;
 @property (nonatomic, copy) NSArray *alphaFrames;
@@ -117,6 +126,7 @@ void validate_storage_mode(id<MTLTexture> texture)
 
     //mtkView.preferredFramesPerSecond = 60;
     //mtkView.preferredFramesPerSecond = 30;
+    //mtkView.preferredFramesPerSecond = 20;
     mtkView.preferredFramesPerSecond = 10;
     
     // Init Metal context, this object contains refs to metal objects
@@ -130,11 +140,14 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     // Decode H.264 to CoreVideo pixel buffer
     
-    _yCbCrPixelBuffer = [self decodeH264YCbCr];
+    [self decodeCarSpinAlphaLoop];
     //CVPixelBufferRetain(_yCbCrPixelBuffer);
     
-    int width = (int) CVPixelBufferGetWidth(_yCbCrPixelBuffer);
-    int height = (int) CVPixelBufferGetHeight(_yCbCrPixelBuffer);
+    //int width = (int) CVPixelBufferGetWidth(_yCbCrPixelBuffer);
+    //int height = (int) CVPixelBufferGetHeight(_yCbCrPixelBuffer);
+    
+    int width = 960;
+    int height = 720;
     
     // Configure Metal view so that it treats pixels as sRGB values.
     
@@ -238,7 +251,7 @@ void validate_storage_mode(id<MTLTexture> texture)
 
     // Process 32BPP input, a CoreVideo pixel buffer is modified so that
     // an additional channel for Y is retained.
-    self.metalBT709Decoder.hasAlphaChannel = TRUE;
+    self.metalBT709Decoder.hasAlphaChannel = FALSE;
     
     BOOL isOpaqueFlag;
 
@@ -285,543 +298,92 @@ void validate_storage_mode(id<MTLTexture> texture)
   return self;
 }
 
-// Decode a single frame of H.264 video as BT.709 formatted CoreVideo frame.
-// Note that the ref count of the returned pixel buffer is 1.
-
-- (CVPixelBufferRef) decodeH264YCbCr
-{
-  const BOOL debugDumpYCbCr = TRUE;
-  
-  CVPixelBufferRef cvPixelBufer;
-  
-  //cvPixelBufer = [self decodeQuicktimeTestPattern];
-  //cvPixelBufer = [self decodeSMPTEGray75Perent];
-  //cvPixelBufer = [self decodeH264YCbCr_bars256];
-  //cvPixelBufer = [self decodeH264YCbCr_bars_iPadFullScreen];
-  //cvPixelBufer = [self decodeH264YCbCr_barsFullscreen];
-  //cvPixelBufer = [self decodeCloudsiPadImage];
-  //cvPixelBufer = [self decodeTest709Frame];
-  //cvPixelBufer = [self decodeDropOfWater];
-  //cvPixelBufer = [self decodeBigBuckBunny];
-  //cvPixelBufer = [self decodeQuicktimeTestPatternLinearGrayscale];
-
-  // RGB + Alpha images
-  //cvPixelBufer = [self decodeRedFadeAlpha];
-  //cvPixelBufer = [self decodeRedCircleAlpha];
-  //cvPixelBufer = [self decodeColorsAlpha4by4];
-  //cvPixelBufer = [self decodeGlobeAlpha];
-  
-  //cvPixelBufer = [self decodeBigBuckBunnyShort];
-  cvPixelBufer = [self decodeCarSpinAlphaLoop];
-  
-  // Single frame
-  //cvPixelBufer = [self decodeCarSpinAlphaLoopSingleFrame];
-  
-  if (debugDumpYCbCr) {
-    [BGRAToBT709Converter dumpYCBCr:cvPixelBufer];
-  }
-  
-  return cvPixelBufer;
-}
-
-// Rec 709 encoded frame that shows skin tones
-
-- (CVPixelBufferRef) decodeTest709Frame
-{
-  NSString *resFilename = @"Rec709Sample.mp4";
-  
-  // (1920, 1080)
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(1920, 1080)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  self.frames = cvPixelBuffers;
-  self.frameNum = 0;
-  self.skipCount = 30;
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  return cvPixelBuffer;
-}
-
-// iPad full screen size high def image
-
-- (CVPixelBufferRef) decodeCloudsiPadImage
-{
-  NSString *resFilename = @"clouds_reflecting_off_the_beach-wallpaper-2048x1536.m4v";
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(2048, 1536)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  return cvPixelBuffer;
-}
-
-// Quicktime test pattern
-
-- (CVPixelBufferRef) decodeQuicktimeTestPattern
-{
-  NSString *resFilename = @"QuickTime_Test_Pattern_HD.mov";
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(1920, 1080)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  self.frames = cvPixelBuffers;
-  self.frameNum = 0;
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  return cvPixelBuffer;
-}
-
-// Grayscale linear gamma version of Quicktime test pattern
-
-- (CVPixelBufferRef) decodeQuicktimeTestPatternLinearGrayscale
-{
-  NSString *resFilename = @"QuickTime_Test_Pattern_HD_grayscale.m4v";
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(1920, 1080)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  return cvPixelBuffer;
-}
-
-// Most simple input, 0.75 SMPTE colorbars, input is linear RGB value (192 192 192)
-// which gets decoded to sRGB (225 225 255) from the BT.709 YCbCr (206 128 128)
-
-- (CVPixelBufferRef) decodeSMPTEGray75Perent
-{
-  NSString *resFilename = @"Gamma_test_HD_75Per_24BPP_sRGB_HD.m4v";
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(1920, 1080)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  return cvPixelBuffer;
-}
-
-- (CVPixelBufferRef) decodeH264YCbCr_bars256
-{
-  NSString *resFilename = @"osxcolor_test_image_24bit_BT709.m4v";
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(256, 256)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  return cvPixelBuffer;
-}
-
-- (CVPixelBufferRef) decodeH264YCbCr_bars_iPadFullScreen
-{
-  NSString *resFilename = @"osxcolor_test_image_iPad_2048_1536.m4v";
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(2048, 1536)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  return cvPixelBuffer;
-}
-
-- (CVPixelBufferRef) decodeDropOfWater
-{
-  //NSString *resFilename = @"drop-of-water-iPad-2048-1536-apple-crf20.m4v";
-  NSString *resFilename = @"drop-of-water-iPad-2048-1536-sRGB-crf20.m4v";
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(2048, 1536)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  return cvPixelBuffer;
-}
-
-- (CVPixelBufferRef) decodeBigBuckBunny
-{
-  //NSString *resFilename = @"big_buck_bunny_HD_apple.m4v";
-  NSString *resFilename = @"big_buck_bunny_HD_srgb.m4v";
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(1920, 1080)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  return cvPixelBuffer;
-}
-
-- (CVPixelBufferRef) decodeRedFadeAlpha
-{
-  NSString *resFilename = @"RedFadeAlpha256.m4v";
-  
-  int width = 256;
-  int height = 256;
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(width, height)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  // FIXME: Read CoreVideo pixel bufer from _alpha input source and then create a single
-  // CoreVideo container that is able to represent all 4 channels of input data in
-  // a single ref. Another option would be to use 2 CoreVideo buffers but mark
-  // the second texture and a single 8 bit input, this would require a copy operation
-  // for the Alpha channel but it would mean the extra memory for the CbCr in the
-  // second video would not need to be retained.
-  
-  if ((1)) {
-    NSString *resFilename = @"RedFadeAlpha256_alpha.m4v";
-    
-    NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                      frameDuration:1.0/30
-                                                                         renderSize:CGSizeMake(width, height)
-                                                                         aveBitrate:0];
-    NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-    
-    CVPixelBufferRef cvPixelBufferAlphaIn = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-    
-    const int makeCopyToReduceMemoryUsage = 0;
-    
-    if (makeCopyToReduceMemoryUsage) {
-      // Create a CoreVideo pixel buffer that features a Y channel but no UV
-      // channel. This reduces runtime memory usage at the cost of a copy.
-      
-      CVPixelBufferRef cvPixelBufferAlphaOut = [BGRAToBT709Converter createCoreVideoYBuffer:CGSizeMake(width, height)];
-      
-      cvpbu_copy_plane(cvPixelBufferAlphaIn, cvPixelBufferAlphaOut, 0);
-      
-      // Note that only the kCVImageBufferTransferFunctionKey property is set here, this
-      // special purpose Alpha channel buffer cannot be converted from YCbCr to RGB.
-      // This linear check is here so that the reduced memory use pixel buffer will
-      // pass the same validation as the original encoded with ffmpeg.
-      
-      NSDictionary *pbAttachments = @{
-                                      //(__bridge NSString*)kCVImageBufferYCbCrMatrixKey: (__bridge NSString*)kCVImageBufferYCbCrMatrix_ITU_R_709_2,
-                                      //(__bridge NSString*)kCVImageBufferColorPrimariesKey: (__bridge NSString*)kCVImageBufferColorPrimaries_ITU_R_709_2,
-                                      (__bridge NSString*)kCVImageBufferTransferFunctionKey: (__bridge NSString*)kCVImageBufferTransferFunction_Linear,
-                                      };
-      
-      CVBufferSetAttachments(cvPixelBufferAlphaOut, (__bridge CFDictionaryRef)pbAttachments, kCVAttachmentMode_ShouldPropagate);
-      
-      self->_alphaPixelBuffer = cvPixelBufferAlphaOut;
-    } else {
-      CVPixelBufferRetain(cvPixelBufferAlphaIn);
-      self->_alphaPixelBuffer = cvPixelBufferAlphaIn;
-    }
-  }
-  
-  // FIXME: Need a way to hold on to these 2 CoreVideo pixel buffers, if the
-  // buffers will be used and released right away then no need to copy.
-  
-  return cvPixelBuffer;
-}
-
-- (CVPixelBufferRef) decodeRedCircleAlpha
-{
-  NSString *resFilename = @"RedCircleOverWhiteA.m4v";
-  
-  int width = 200;
-  int height = 200;
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(width, height)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  // FIXME: Read CoreVideo pixel bufer from _alpha input source and then create a single
-  // CoreVideo container that is able to represent all 4 channels of input data in
-  // a single ref. Another option would be to use 2 CoreVideo buffers but mark
-  // the second texture and a single 8 bit input, this would require a copy operation
-  // for the Alpha channel but it would mean the extra memory for the CbCr in the
-  // second video would not need to be retained.
-  
-  if ((1)) {
-    NSString *resFilename = @"RedCircleOverWhiteA_alpha.m4v";
-    
-    NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                      frameDuration:1.0/30
-                                                                         renderSize:CGSizeMake(width, height)
-                                                                         aveBitrate:0];
-    NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-    
-    CVPixelBufferRef cvPixelBufferAlphaIn = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-    
-    CVPixelBufferRetain(cvPixelBufferAlphaIn);
-    self->_alphaPixelBuffer = cvPixelBufferAlphaIn;
-  }
-  
-  // FIXME: Need a way to hold on to these 2 CoreVideo pixel buffers, if the
-  // buffers will be used and released right away then no need to copy.
-  
-  return cvPixelBuffer;
-}
-
-- (CVPixelBufferRef) decodeColorsAlpha4by4
-{
-  NSString *resFilename = @"ColorsAlpha4by4.m4v";
-  
-  int width = 512;
-  int height = 512;
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(width, height)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  // FIXME: Read CoreVideo pixel bufer from _alpha input source and then create a single
-  // CoreVideo container that is able to represent all 4 channels of input data in
-  // a single ref. Another option would be to use 2 CoreVideo buffers but mark
-  // the second texture and a single 8 bit input, this would require a copy operation
-  // for the Alpha channel but it would mean the extra memory for the CbCr in the
-  // second video would not need to be retained.
-  
-  if ((1)) {
-    NSString *resFilename = @"ColorsAlpha4by4_alpha.m4v";
-    
-    NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                      frameDuration:1.0/30
-                                                                         renderSize:CGSizeMake(width, height)
-                                                                         aveBitrate:0];
-    NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-    
-    CVPixelBufferRef cvPixelBufferAlphaIn = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-    
-    CVPixelBufferRetain(cvPixelBufferAlphaIn);
-    self->_alphaPixelBuffer = cvPixelBufferAlphaIn;
-  }
-  
-  // FIXME: Need a way to hold on to these 2 CoreVideo pixel buffers, if the
-  // buffers will be used and released right away then no need to copy.
-  
-  return cvPixelBuffer;
-}
-
-- (CVPixelBufferRef) decodeGlobeAlpha
-{
-  NSString *resFilename = @"GlobeLEDAlpha.m4v";
-  
-  int width = 1920;
-  int height = 1080;
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(width, height)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  // FIXME: Read CoreVideo pixel bufer from _alpha input source and then create a single
-  // CoreVideo container that is able to represent all 4 channels of input data in
-  // a single ref. Another option would be to use 2 CoreVideo buffers but mark
-  // the second texture and a single 8 bit input, this would require a copy operation
-  // for the Alpha channel but it would mean the extra memory for the CbCr in the
-  // second video would not need to be retained.
-  
-  if ((1)) {
-    NSString *resFilename = @"GlobeLEDAlpha_alpha.m4v";
-    
-    NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                      frameDuration:1.0/30
-                                                                         renderSize:CGSizeMake(width, height)
-                                                                         aveBitrate:0];
-    NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-    
-    CVPixelBufferRef cvPixelBufferAlphaIn = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-    
-    const int makeCopyToReduceMemoryUsage = 0;
-    
-    if (makeCopyToReduceMemoryUsage) {
-      // Create a CoreVideo pixel buffer that features a Y channel but no UV
-      // channel. This reduces runtime memory usage at the cost of a copy.
-      
-      CVPixelBufferRef cvPixelBufferAlphaOut = [BGRAToBT709Converter createCoreVideoYBuffer:CGSizeMake(width, height)];
-      
-      cvpbu_copy_plane(cvPixelBufferAlphaIn, cvPixelBufferAlphaOut, 0);
-      
-      // Note that only the kCVImageBufferTransferFunctionKey property is set here, this
-      // special purpose Alpha channel buffer cannot be converted from YCbCr to RGB.
-      // This linear check is here so that the reduced memory use pixel buffer will
-      // pass the same validation as the original encoded with ffmpeg.
-      
-      NSDictionary *pbAttachments = @{
-                                      //(__bridge NSString*)kCVImageBufferYCbCrMatrixKey: (__bridge NSString*)kCVImageBufferYCbCrMatrix_ITU_R_709_2,
-                                      //(__bridge NSString*)kCVImageBufferColorPrimariesKey: (__bridge NSString*)kCVImageBufferColorPrimaries_ITU_R_709_2,
-                                      (__bridge NSString*)kCVImageBufferTransferFunctionKey: (__bridge NSString*)kCVImageBufferTransferFunction_Linear,
-                                      };
-      
-      CVBufferSetAttachments(cvPixelBufferAlphaOut, (__bridge CFDictionaryRef)pbAttachments, kCVAttachmentMode_ShouldPropagate);
-      
-      self->_alphaPixelBuffer = cvPixelBufferAlphaOut;
-    } else {
-      CVPixelBufferRetain(cvPixelBufferAlphaIn);
-      self->_alphaPixelBuffer = cvPixelBufferAlphaIn;
-    }
-  }
-  
-  // FIXME: Need a way to hold on to these 2 CoreVideo pixel buffers, if the
-  // buffers will be used and released right away then no need to copy.
-  
-  return cvPixelBuffer;
-}
-
-- (CVPixelBufferRef) decodeBigBuckBunnyShort
-{
-  // Apple gamma
-  NSString *resFilename = @"BigBuckBunny640x360.m4v";
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(640, 360)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  self.frames = cvPixelBuffers;
-  self.frameNum = 0;
-  self.skipCount = 30;
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  return cvPixelBuffer;
-}
-
-- (CVPixelBufferRef) decodeCarSpinAlphaLoop
+- (void) decodeCarSpinAlphaLoop
 {
   NSString *resFilename = @"CarSpin.m4v";
   
   int width = 960;
   int height = 720;
   
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(width, height)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
+  self.player = [[AVPlayer alloc] init];
   
-  self.frames = cvPixelBuffers;
+  NSString *path = [[NSBundle mainBundle] pathForResource:resFilename ofType:nil];
+  NSAssert(path, @"path is nil");
+  
+  NSURL *assetURL = [NSURL fileURLWithPath:path];
+
+  self.playerItem = [AVPlayerItem playerItemWithURL:assetURL];
+  
+  NSLog(@"PlayerItem URL %@", assetURL);
+  
+  NSDictionary *pixelBufferAttributes = [BGRAToBT709Converter getPixelBufferAttributes];
+  
+  NSMutableDictionary *mDict = [NSMutableDictionary dictionaryWithDictionary:pixelBufferAttributes];
+  
+  // Add kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+  
+  mDict[(id)kCVPixelBufferPixelFormatTypeKey] = @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
+  
+  pixelBufferAttributes = [NSDictionary dictionaryWithDictionary:mDict];
+  
+  self.playerItemVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixelBufferAttributes];;
+  
+  // FIXME: does this help ?
+  self.playerItemVideoOutput.suppressesPlayerRendering = TRUE;
+  
+  self.playerQueue = dispatch_queue_create("com.decode.carspin_rgb", DISPATCH_QUEUE_SERIAL);
+  
+  __weak AAPLRenderer* weakSelf = self;
+  
+  [self.playerItemVideoOutput setDelegate:weakSelf queue:self.playerQueue];
+  
+  //self.frames = cvPixelBuffers;
   self.frameNum = 0;
-  self.skipCount = 30;
+  //self.skipCount = 30;
   
-  if ((1)) {
-    NSString *resFilename = @"CarSpin_alpha.m4v";
-    
-    NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                      frameDuration:1.0/30
-                                                                         renderSize:CGSizeMake(width, height)
-                                                                         aveBitrate:0];
-    NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-    
-    self.alphaFrames = cvPixelBuffers;
-  }
+  // @"CarSpin_alpha.m4v"
   
   // Grab just the first texture, return retained ref
   
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
+  //CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
+  //CVPixelBufferRetain(cvPixelBuffer);
   
-  CVPixelBufferRetain(cvPixelBuffer);
+  float ONE_FRAME_DURATION = 1.0f / 10.0f;
   
-  return cvPixelBuffer;
+  // Async logic to parse M4V headers to get tracks and other metadata
+  
+  AVAsset *asset = [self.playerItem asset];
+  
+  NSArray *assetKeys = @[@"duration", @"playable", @"tracks"];
+  
+  [asset loadValuesAsynchronouslyForKeys:assetKeys completionHandler:^{
+    
+    if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
+      NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+      if ([tracks count] > 0) {
+        // Choose the first video track. Ignore other tracks if found
+        AVAssetTrack *videoTrack = [tracks objectAtIndex:0];
+        
+//        [weakSelf.playerItem addOutput:weakSelf.playerItemVideoOutput];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+                      [weakSelf.playerItem addOutput:weakSelf.playerItemVideoOutput];
+                      [weakSelf.player replaceCurrentItemWithPlayerItem:weakSelf.playerItem];
+                      [weakSelf.playerItem seekToTime:kCMTimeZero completionHandler:nil];
+                      [weakSelf.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
+                      [weakSelf.player play];
+                    });
+      }
+    }
+    
+  }];
+  
+  return;
 }
 
 - (CVPixelBufferRef) decodeCarSpinAlphaLoopSingleFrame
 {
-  NSString *resFilename = @"CarSpinAF10.m4v";
+  NSString *resFilename = @"CarSpin.m4v";
   
   int width = 960;
   int height = 720;
@@ -871,25 +433,51 @@ void validate_storage_mode(id<MTLTexture> texture)
 {
   BOOL worked;
   
-  if (self.frameNum >= self.frames.count) {
-    self.frameNum = 0;
+//  if (self.frameNum >= self.frames.count) {
+//    self.frameNum = 0;
+//  }
+  
+  // If player is not actually playing yet then nothing is ready
+  
+  if (self.player.currentItem == nil) {
+    NSLog(@"player not playing yet on display frame %d", (int)self.frameNum + 1);
+    return;
   }
   
   // Input to sRGB texture render comes from H.264 source
   CVPixelBufferRef rgbPixelBuffer = NULL;
   CVPixelBufferRef alphaPixelBuffer = NULL;
-
-  //NSLog(@"display self.frames[%d]", (int)self.frameNum);
   
   int currentFrameNum = self.frameNum;
   
-  rgbPixelBuffer = (__bridge CVPixelBufferRef) self.frames[currentFrameNum];
+  //NSLog(@"display frame %d", (int)self.frameNum + 1);
   
-  if (self.alphaFrames != nil) {
-    alphaPixelBuffer = (__bridge CVPixelBufferRef) self.alphaFrames[currentFrameNum];
-  }
+  // Check for next frame at time t = (frameNum * duration)
+  
+  CFTimeInterval outputItemTime;
+  outputItemTime = currentFrameNum * (1.0f / 10); // 10 FPS
+  
+  CMTime syncTime = CMTimeMake(round(outputItemTime * 1000.0f), 1000);
 
+  NSLog(@"display frame %d : at vsync time %0.2f : %d / %d", (int)self.frameNum + 1, outputItemTime, (int)syncTime.value, (int)syncTime.timescale);
+  
+  AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
+  
+  if ([playerItemVideoOutput hasNewPixelBufferForItemTime:syncTime]) {
+    rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:syncTime itemTimeForDisplay:NULL];
+  }
+  
   self.frameNum += 1;
+  
+  if (rgbPixelBuffer == NULL) {
+    // FIXME: When no frame to display, what the do then?
+    NSLog(@"hasNewPixelBufferForItemTime is false at vsync time %0.2f", outputItemTime);
+    return;
+  }
+  
+//  if (self.alphaFrames != nil) {
+//    alphaPixelBuffer = (__bridge CVPixelBufferRef) self.alphaFrames[currentFrameNum];
+//  }
   
 //  if (self.skipCount == 0) {
 //    self.skipCount = 30;
@@ -1011,6 +599,15 @@ void validate_storage_mode(id<MTLTexture> texture)
   } else {
     [commandBuffer commit];
   }
+  
+  // FIXME: frame of RGB + Alpha should be retained until next frame is ready
+  
+  _yCbCrPixelBuffer = rgbPixelBuffer;
+  
+  CVPixelBufferRelease(rgbPixelBuffer);
+  if (alphaPixelBuffer) {
+    CVPixelBufferRelease(alphaPixelBuffer);
+  }
 
   // Internal resize texture can only be captured when it is sRGB texture. In the case
   // of MacOSX that makes use a linear 16 bit intermeiate texture, no means to
@@ -1095,5 +692,52 @@ void validate_storage_mode(id<MTLTexture> texture)
     NSLog(@"wrote %@ as %d bytes", path, (int)pngData.length);
   }
 }
+
+#pragma mark - AVPlayerItemOutputPullDelegate
+
+- (void)outputMediaDataWillChange:(AVPlayerItemOutput*)sender
+{
+  // Restart display link.
+  //[[self displayLink] setPaused:NO];
+  
+  NSLog(@"outputMediaDataWillChange");
+  
+  return;
+}
+
+- (void)outputSequenceWasFlushed:(AVPlayerItemOutput*)output
+{
+  NSLog(@"outputSequenceWasFlushed");
+  
+  return;
+}
+
+// Wait for video dimensions to be come available
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+  if (context == AVPlayerItemStatusContext) {
+    AVPlayerStatus status = [change[NSKeyValueChangeNewKey] integerValue];
+    switch (status) {
+      case AVPlayerItemStatusUnknown:
+        break;
+      case AVPlayerItemStatusReadyToPlay: {
+        //self.playerView.presentationRect = [[_player currentItem] presentationSize];
+        CGSize playSize = [[self.player currentItem] presentationSize];
+        NSLog(@"AVPlayer viewport dimensions : %d x %d", (int)playSize.width, (int)playSize.height);
+        break;
+      }
+      case AVPlayerItemStatusFailed: {
+        //[self stopLoadingAnimationAndHandleError:[[_player currentItem] error]];
+        NSLog(@"AVPlayerItemStatusFailed : %@", [[self.player currentItem] error]);
+        break;
+      }
+    }
+  }
+  else {
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+  }
+}
+
 
 @end
