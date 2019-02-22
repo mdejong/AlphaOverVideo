@@ -401,7 +401,9 @@ void validate_storage_mode(id<MTLTexture> texture)
   self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback:)];
   self.displayLink.paused = TRUE;
   self.displayLink.preferredFramesPerSecond = 10;
-  [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+  // FIXME: what to pass as forMode? Should this be
+  // NSRunLoopCommonModes cs NSDefaultRunLoopMode
+  [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
   
   //self.frames = cvPixelBuffers;
   self.frameNum = 0;
@@ -425,12 +427,33 @@ void validate_storage_mode(id<MTLTexture> texture)
   [asset loadValuesAsynchronouslyForKeys:assetKeys completionHandler:^{
     
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-      NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-      if ([tracks count] > 0) {
+      NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+      if ([videoTracks count] > 0) {
         // Choose the first video track. Ignore other tracks if found
-        AVAssetTrack *videoTrack = [tracks objectAtIndex:0];
+        const int videoTrackOffset = 0;
+        AVAssetTrack *videoTrack = [videoTracks objectAtIndex:videoTrackOffset];
         
-//        [weakSelf.playerItem addOutput:weakSelf.playerItemVideoOutput];
+        // Must be self contained
+        
+        if (videoTrack.isSelfContained != TRUE) {
+          //NSLog(@"videoTrack.isSelfContained must be TRUE for \"%@\"", movPath);
+          //return FALSE;
+          assert(0);
+        }
+        
+        CGSize uncroppedSize = videoTrack.naturalSize;
+        NSLog(@"video track naturalSize w x h : %d x %d", (int)uncroppedSize.width, (int)uncroppedSize.height);
+        
+        CMTimeRange timeRange = videoTrack.timeRange;
+        float trackDuration = (float)CMTimeGetSeconds(timeRange.duration);
+        NSLog(@"video track time duration %0.3f", trackDuration);
+        
+        CMTime frameDurationTime = videoTrack.minFrameDuration;
+        float frameDuration = (float)CMTimeGetSeconds(frameDurationTime);
+        NSLog(@"video track frame duration %0.3f", frameDuration);
+
+        float nominalFrameRate = videoTrack.nominalFrameRate;
+        NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
         
         dispatch_async(dispatch_get_main_queue(), ^{
                       [weakSelf.playerItem addOutput:weakSelf.playerItemVideoOutput];
@@ -838,11 +861,20 @@ void validate_storage_mode(id<MTLTexture> texture)
 {
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
   
+  // hostTime is the previous vsync time plus the amount of time
+  // between the vsync and the invocation of this callback
   CFTimeInterval hostTime = sender.timestamp + sender.duration;
   
+  if ((1)) {
+    CFTimeInterval prevFrameTime = sender.timestamp;
+    CFTimeInterval nextFrameTime = sender.targetTimestamp;
+    CFTimeInterval duration = nextFrameTime - prevFrameTime;
+    
+    NSLog(@"prev %.2f -> next %.2f : duration %.2f : sender.duration %.2f", prevFrameTime, nextFrameTime, duration, sender.duration);
+    NSLog(@"");
+  }
+  
   // Map time offset to item time
-
-  //CMTime vSyncTime = CMTimeMake(round(currentTime * 1000.0f), 1000);
   
   CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
   
@@ -882,7 +914,14 @@ void validate_storage_mode(id<MTLTexture> texture)
   // Need to move code into a generate purpose view layer so that a ref
   // to the view can be used to invoke setNeedsDisplay ?
   
-  //[self setNeedsDisplay];  
+  //[self setNeedsDisplay];
+}
+
+- (void) cancelDisplayLink
+{
+  self.displayLink.paused = TRUE;
+  [self.displayLink invalidate];
+  self.displayLink = nil;
 }
 
 @end
