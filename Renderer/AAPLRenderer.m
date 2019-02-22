@@ -37,6 +37,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 @property (nonatomic, retain) AVPlayerItem *playerItem;
 @property (nonatomic, retain) AVPlayerItemVideoOutput *playerItemVideoOutput;
 @property (nonatomic, retain) dispatch_queue_t playerQueue;
+@property (nonatomic, retain) CADisplayLink *displayLink;
 
 @property (nonatomic, copy) NSArray *frames;
 @property (nonatomic, copy) NSArray *alphaFrames;
@@ -101,6 +102,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   // (because mixing non-linear BT.709 input is not legit)
   // that can then be sampled to resize render into the view.
   id<MTLTexture> _resizeTexture;
+  CGSize _resizeTextureSize;
   
   // The current size of our view so we can use this in our render pipeline
   vector_uint2 _viewportSize;
@@ -108,6 +110,8 @@ void validate_storage_mode(id<MTLTexture> texture)
   // non-zero when writing to a sRGB texture is possible, certain versions
   // of MacOSX do not support sRGB texture write operations.
   int hasWriteSRGBTextureSupport;
+  
+  id _notificationToken;
 }
 
 /// Initialize with the MetalKit view from which we'll obtain our Metal device
@@ -141,94 +145,10 @@ void validate_storage_mode(id<MTLTexture> texture)
     // Decode H.264 to CoreVideo pixel buffer
     
     [self decodeCarSpinAlphaLoop];
-    //CVPixelBufferRetain(_yCbCrPixelBuffer);
-    
-    //int width = (int) CVPixelBufferGetWidth(_yCbCrPixelBuffer);
-    //int height = (int) CVPixelBufferGetHeight(_yCbCrPixelBuffer);
-    
-    int width = 960;
-    int height = 720;
     
     // Configure Metal view so that it treats pixels as sRGB values.
     
     mtkView.colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
-    
-    {
-      // Init render texture that will hold resize render intermediate
-      // results. This is typically sRGB, but Mac OSX may not support it.
-      
-      MTLTextureDescriptor *textureDescriptor = [[MTLTextureDescriptor alloc] init];
-      
-      textureDescriptor.textureType = MTLTextureType2D;
-      
-      // Indicate that each pixel has a blue, green, red, and alpha channel, where each channel is
-      // an 8-bit unsigned normalized value (i.e. 0 maps to 0.0 and 255 maps to 1.0) as sRGB
-
-#if TARGET_OS_IOS
-      hasWriteSRGBTextureSupport = 1;
-#else
-      // MacOSX 10.14 or newer needed to support sRGB texture writes
-      
-      NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
-      
-      if (version.majorVersion >= 10 && version.minorVersion >= 14) {
-        // Supports sRGB texture write feature.
-        hasWriteSRGBTextureSupport = 1;
-      } else {
-        hasWriteSRGBTextureSupport = 0;
-      }
-      
-      // Force 16 bit float texture to be used (about 2x slower for IO bound shader)
-      //hasWriteSRGBTextureSupport = 0;
-#endif // TARGET_OS_IOS
-      
-#if TARGET_OS_IOS
-      textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
-#else
-      // MacOSX
-      if (hasWriteSRGBTextureSupport) {
-        textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
-      } else {
-        textureDescriptor.pixelFormat = MTLPixelFormatRGBA16Float;
-      }
-#endif // TARGET_OS_IOS
-      
-      // Set the pixel dimensions of the texture
-      textureDescriptor.width = width;
-      textureDescriptor.height = height;
-      
-      textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
-      
-      // Create the texture from the device by using the descriptor,
-      // note that GPU private storage mode is the default for
-      // newTextureWithDescriptor, this is just here to make that clear.
-      
-      set_storage_mode(textureDescriptor);
-      
-      _resizeTexture = [device newTextureWithDescriptor:textureDescriptor];
-      
-      NSAssert(_resizeTexture, @"_resizeTexture");
-      
-      validate_storage_mode(_resizeTexture);
-      
-      // Debug print size of intermediate render texture
-      
-# if defined(DEBUG)
-      {
-        int numBytesPerPixel;
-        
-        if (hasWriteSRGBTextureSupport) {
-          numBytesPerPixel = 4;
-        } else {
-          numBytesPerPixel = 8;
-        }
-        
-        int numBytes = (int) (width * height * numBytesPerPixel);
-        
-        printf("intermediate render texture num bytes %d kB : %.2f mB\n", (int)(numBytes / 1000), numBytes / 1000000.0f);
-      }
-# endif // DEBUG
-    }
     
     // Init metalBT709Decoder with MetalRenderContext set as a property
     
@@ -293,17 +213,156 @@ void validate_storage_mode(id<MTLTexture> texture)
     [metalScaleRenderContext setupRenderPipelines:mrc mtkView:mtkView];
     
     self.metalScaleRenderContext = metalScaleRenderContext;
+    
+    // FIXME: what should observable be attahed to, the view, the media?
+    
+    [self regiserForItemNotificaitons];
+    
+    _viewportSize.x = 0;
+    _viewportSize.y = 0;
   }
   
   return self;
 }
 
+- (BOOL) makeInternalMetalTexture
+{
+  // FIXME: this method is invoked after the video dimensions have
+  // been loaded and the size of the internal texture is known.
+  // In the case that the view dimensions are exactly the same
+  // as the movie dimensions the internal texture is not allocated
+  // in order to keep memory down for very large textures.
+  
+  // FIXME: do not allocate if the render size exactly matches
+  // the movie size. Allocate if these do not match.
+  
+  assert(_resizeTextureSize.width != 0);
+  assert(_resizeTextureSize.height != 0);
+  assert(_resizeTexture == nil);
+  
+  int width = _resizeTextureSize.width;
+  int height = _resizeTextureSize.height;
+  
+  // FIXME: pull videoSize
+  
+  id<MTLDevice> device = self.metalBT709Decoder.metalRenderContext.device;
+  assert(device);
+  
+  // Init render texture that will hold resize render intermediate
+  // results. This is typically sRGB, but Mac OSX may not support it.
+  
+  MTLTextureDescriptor *textureDescriptor = [[MTLTextureDescriptor alloc] init];
+  
+  textureDescriptor.textureType = MTLTextureType2D;
+  
+  // Indicate that each pixel has a blue, green, red, and alpha channel, where each channel is
+  // an 8-bit unsigned normalized value (i.e. 0 maps to 0.0 and 255 maps to 1.0) as sRGB
+  
+#if TARGET_OS_IOS
+  hasWriteSRGBTextureSupport = 1;
+#else
+  // MacOSX 10.14 or newer needed to support sRGB texture writes
+  
+  NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
+  
+  if (version.majorVersion >= 10 && version.minorVersion >= 14) {
+    // Supports sRGB texture write feature.
+    hasWriteSRGBTextureSupport = 1;
+  } else {
+    hasWriteSRGBTextureSupport = 0;
+  }
+  
+  // Force 16 bit float texture to be used (about 2x slower for IO bound shader)
+  //hasWriteSRGBTextureSupport = 0;
+#endif // TARGET_OS_IOS
+  
+#if TARGET_OS_IOS
+  textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+#else
+  // MacOSX
+  if (hasWriteSRGBTextureSupport) {
+    textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+  } else {
+    textureDescriptor.pixelFormat = MTLPixelFormatRGBA16Float;
+  }
+#endif // TARGET_OS_IOS
+  
+  // Set the pixel dimensions of the texture
+  textureDescriptor.width = width;
+  textureDescriptor.height = height;
+  
+  textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
+  
+  // Create the texture from the device by using the descriptor,
+  // note that GPU private storage mode is the default for
+  // newTextureWithDescriptor, this is just here to make that clear.
+  
+  set_storage_mode(textureDescriptor);
+  
+  _resizeTexture = [device newTextureWithDescriptor:textureDescriptor];
+  
+  NSAssert(_resizeTexture, @"_resizeTexture");
+  
+  validate_storage_mode(_resizeTexture);
+  
+  // Debug print size of intermediate render texture
+  
+# if defined(DEBUG)
+  {
+    int numBytesPerPixel;
+    
+    if (hasWriteSRGBTextureSupport) {
+      numBytesPerPixel = 4;
+    } else {
+      numBytesPerPixel = 8;
+    }
+    
+    int numBytes = (int) (width * height * numBytesPerPixel);
+    
+    printf("intermediate render texture num bytes %d kB : %.2f mB\n", (int)(numBytes / 1000), numBytes / 1000000.0f);
+  }
+# endif // DEBUG
+  
+  return TRUE;
+}
+
+
+- (void) regiserForItemNotificaitons
+{
+    [self addObserver:self forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:AVPlayerItemStatusContext];
+}
+
+- (void) unregiserForItemNotificaitons
+{
+  [self removeObserver:self forKeyPath:@"player.currentItem.status" context:AVPlayerItemStatusContext];
+}
+
+- (void) addDidPlayToEndTimeNotificationForPlayerItem:(AVPlayerItem *)item
+{
+  if (_notificationToken) {
+    _notificationToken = nil;
+  }
+  
+  // Setting actionAtItemEnd to None prevents the movie from getting paused at item end. A very simplistic, and not gapless, looped playback.
+
+  _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+  _notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:AVPlayerItemDidPlayToEndTimeNotification object:item queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
+    // Simple item playback rewind.
+    [self.playerItem seekToTime:kCMTimeZero completionHandler:nil];
+  }];
+}
+
+- (void) unregisterForItemEndNotification
+{
+  if (_notificationToken) {
+    [[NSNotificationCenter defaultCenter] removeObserver:_notificationToken name:AVPlayerItemDidPlayToEndTimeNotification object:_player.currentItem];
+    _notificationToken = nil;
+  }
+}
+
 - (void) decodeCarSpinAlphaLoop
 {
   NSString *resFilename = @"CarSpin.m4v";
-  
-  int width = 960;
-  int height = 720;
   
   self.player = [[AVPlayer alloc] init];
   
@@ -337,6 +396,13 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   [self.playerItemVideoOutput setDelegate:weakSelf queue:self.playerQueue];
   
+  // CADisplayLink
+  
+  self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback:)];
+  self.displayLink.paused = TRUE;
+  self.displayLink.preferredFramesPerSecond = 10;
+  [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+  
   //self.frames = cvPixelBuffers;
   self.frameNum = 0;
   //self.skipCount = 30;
@@ -369,6 +435,7 @@ void validate_storage_mode(id<MTLTexture> texture)
         dispatch_async(dispatch_get_main_queue(), ^{
                       [weakSelf.playerItem addOutput:weakSelf.playerItemVideoOutput];
                       [weakSelf.player replaceCurrentItemWithPlayerItem:weakSelf.playerItem];
+                      [weakSelf addDidPlayToEndTimeNotificationForPlayerItem:weakSelf.playerItem];
                       [weakSelf.playerItem seekToTime:kCMTimeZero completionHandler:nil];
                       [weakSelf.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
                       [weakSelf.player play];
@@ -433,9 +500,18 @@ void validate_storage_mode(id<MTLTexture> texture)
 {
   BOOL worked;
   
-//  if (self.frameNum >= self.frames.count) {
-//    self.frameNum = 0;
-//  }
+  int renderWidth = (int) _viewportSize.x;
+  int renderHeight = (int) _viewportSize.y;
+  
+  if (renderWidth == 0) {
+    NSLog(@"view dimensions not configured during drawInMTKView");
+    return;
+  }
+
+  if (_resizeTexture == nil) {
+    NSLog(@"_resizeTexture not allocated in drawInMTKView");
+    return;
+  }
   
   // If player is not actually playing yet then nothing is ready
   
@@ -445,10 +521,15 @@ void validate_storage_mode(id<MTLTexture> texture)
   }
   
   // Input to sRGB texture render comes from H.264 source
+  
   CVPixelBufferRef rgbPixelBuffer = NULL;
   CVPixelBufferRef alphaPixelBuffer = NULL;
   
-  int currentFrameNum = self.frameNum;
+  // Get most recently extracted frame from the video output source
+  
+  rgbPixelBuffer = _yCbCrPixelBuffer;
+  
+  /*
   
   //NSLog(@"display frame %d", (int)self.frameNum + 1);
   
@@ -478,9 +559,10 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   self.frameNum += 1;
   
+  */
+   
   if (rgbPixelBuffer == NULL) {
-    // FIXME: When no frame to display, what the do then?
-    //NSLog(@"hasNewPixelBufferForItemTime is false at vsync time %0.2f", outputItemTime);
+    NSLog(@"_yCbCrPixelBuffer is NULL in drawInMTKView");
     return;
   }
   
@@ -508,9 +590,6 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   // Obtain a renderPassDescriptor generated from the view's drawable textures
   MTLRenderPassDescriptor *renderPassDescriptor = view.currentRenderPassDescriptor;
-  
-  int renderWidth = (int) _viewportSize.x;
-  int renderHeight = (int) _viewportSize.y;
   
   BOOL isExactlySameSize =
   (renderWidth == ((int)CVPixelBufferGetWidth(rgbPixelBuffer))) &&
@@ -611,12 +690,12 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   // FIXME: frame of RGB + Alpha should be retained until next frame is ready
   
-  _yCbCrPixelBuffer = rgbPixelBuffer;
+  //_yCbCrPixelBuffer = rgbPixelBuffer;
+  //CVPixelBufferRelease(rgbPixelBuffer);
   
-  CVPixelBufferRelease(rgbPixelBuffer);
-  if (alphaPixelBuffer) {
-    CVPixelBufferRelease(alphaPixelBuffer);
-  }
+  //if (alphaPixelBuffer) {
+  //  CVPixelBufferRelease(alphaPixelBuffer);
+  //}
 
   // Internal resize texture can only be captured when it is sRGB texture. In the case
   // of MacOSX that makes use a linear 16 bit intermeiate texture, no means to
@@ -707,8 +786,11 @@ void validate_storage_mode(id<MTLTexture> texture)
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput*)sender
 {
   // Restart display link.
-  //[[self displayLink] setPaused:NO];
   
+  if (self.displayLink.paused == TRUE) {
+    self.displayLink.paused = FALSE;
+  }
+
   NSLog(@"outputMediaDataWillChange");
   
   return;
@@ -732,8 +814,10 @@ void validate_storage_mode(id<MTLTexture> texture)
         break;
       case AVPlayerItemStatusReadyToPlay: {
         //self.playerView.presentationRect = [[_player currentItem] presentationSize];
-        CGSize playSize = [[self.player currentItem] presentationSize];
-        NSLog(@"AVPlayer viewport dimensions : %d x %d", (int)playSize.width, (int)playSize.height);
+        CGSize itemSize = [[self.player currentItem] presentationSize];
+        NSLog(@"video itemSize dimensions : %d x %d", (int)itemSize.width, (int)itemSize.height);
+        _resizeTextureSize = itemSize;
+        [self makeInternalMetalTexture];
         break;
       }
       case AVPlayerItemStatusFailed: {
@@ -748,5 +832,57 @@ void validate_storage_mode(id<MTLTexture> texture)
   }
 }
 
+#pragma mark - DisplayLink
+
+- (void)displayLinkCallback:(CADisplayLink*)sender
+{
+  AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
+  
+  CFTimeInterval hostTime = sender.timestamp + sender.duration;
+  
+  // Map time offset to item time
+
+  //CMTime vSyncTime = CMTimeMake(round(currentTime * 1000.0f), 1000);
+  
+  CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
+  
+  NSLog(@"host time %0.2f -> item time %0.2f", hostTime, CMTimeGetSeconds(currentItemTime));
+  
+  //CFTimeInterval outputItemTime;
+  //outputItemTime = currentFrameNum * (1.0f / 10); // 10 FPS
+  
+  //outputItemTime = currentFrameNum * 1.0f; // 1 FPS
+  
+  //CMTime syncTime = CMTimeMake(round(outputItemTime * 1000.0f), 1000);
+  
+  //NSLog(@"display frame %d : at vsync time %0.2f : %d / %d", (int)self.frameNum + 1, outputItemTime, (int)syncTime.value, (int)syncTime.timescale);
+  
+  CVPixelBufferRef rgbPixelBuffer = NULL;
+  
+  if ([playerItemVideoOutput hasNewPixelBufferForItemTime:currentItemTime]) {
+    // Grab the pixel bufer for the current time
+    
+    rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:currentItemTime itemTimeForDisplay:NULL];
+    
+    if (rgbPixelBuffer != NULL) {
+      NSLog(@"loaded RGB frame for item time %0.2f", CMTimeGetSeconds(currentItemTime));
+      
+      if (self->_yCbCrPixelBuffer) {
+        CVPixelBufferRelease(self->_yCbCrPixelBuffer);
+      }
+      CVPixelBufferRetain(rgbPixelBuffer);
+      self->_yCbCrPixelBuffer = rgbPixelBuffer;
+    } else {
+      NSLog(@"did not load RGB frame for item time %0.2f", CMTimeGetSeconds(currentItemTime));
+    }
+  } else {
+    NSLog(@"hasNewPixelBufferForItemTime is FALSE at vsync time %0.2f", CMTimeGetSeconds(currentItemTime));
+  }
+  
+  // Need to move code into a generate purpose view layer so that a ref
+  // to the view can be used to invoke setNeedsDisplay ?
+  
+  //[self setNeedsDisplay];  
+}
 
 @end
