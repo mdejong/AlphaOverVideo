@@ -790,6 +790,10 @@ void validate_storage_mode(id<MTLTexture> texture)
 // This method is invoked when a new frame of video data is ready to be displayed.
 
 - (void) nextFrameReady:(GPUVFrame*)nextFrame {
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+  
   //@synchronized (self)
   {
 #if defined(DEBUG)
