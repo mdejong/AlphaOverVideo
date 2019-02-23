@@ -394,16 +394,20 @@ void validate_storage_mode(id<MTLTexture> texture)
   __weak AAPLRenderer* weakSelf = self;
   
   [self.playerItemVideoOutput setDelegate:weakSelf queue:self.playerQueue];
+
+#if defined(DEBUG)
+  assert(self.playerItemVideoOutput.delegateQueue == self.playerQueue);
+#endif // DEBUG
   
-  // CADisplayLink
-  
-  self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback:)];
-  self.displayLink.paused = TRUE;
-  // FIXME: configure preferredFramesPerSecond based on parsed FPS from video file
-  self.displayLink.preferredFramesPerSecond = 10;
-  // FIXME: what to pass as forMode? Should this be
-  // NSRunLoopCommonModes cs NSDefaultRunLoopMode
-  [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+//  // CADisplayLink
+//
+//  self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback:)];
+//  self.displayLink.paused = TRUE;
+//  // FIXME: configure preferredFramesPerSecond based on parsed FPS from video file
+//  self.displayLink.preferredFramesPerSecond = 10;
+//  // FIXME: what to pass as forMode? Should this be
+//  // NSRunLoopCommonModes cs NSDefaultRunLoopMode
+//  [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
   
   //self.frames = cvPixelBuffers;
   self.frameNum = 0;
@@ -446,15 +450,15 @@ void validate_storage_mode(id<MTLTexture> texture)
         // Allocate render buffer once asset dimensions are known
         
         {
-            AAPLRenderer *strongSelf = weakSelf;
-            if (strongSelf) {
-              strongSelf->_resizeTextureSize = itemSize;
-            }
+          AAPLRenderer *strongSelf = weakSelf;
+          if (strongSelf) {
+            strongSelf->_resizeTextureSize = itemSize;
+          }
           
           // FIXME: how would a queue player that has multiple outputs with different asset sizes be handled
           // here? Would intermediate render buffers be different sizes?
           
-          [weakSelf makeInternalMetalTexture];
+          [strongSelf makeInternalMetalTexture];
         }
 
         CMTimeRange timeRange = videoTrack.timeRange;
@@ -470,6 +474,15 @@ void validate_storage_mode(id<MTLTexture> texture)
           if (strongSelf) {
             // FIXME: get closest known FPS time ??
             strongSelf->fps = CMTimeGetSeconds(frameDurationTime);
+            
+            // Once display frame interval has been parsed, create display
+            // frame timer but be sure it is created on the main thread
+            // and that this method invocation completes before the
+            // next call to dispatch_async() to start playback.
+            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+              [weakSelf makeDisplayLink];
+            });
           }
         }
 
@@ -811,6 +824,10 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput*)sender
 {
+#if defined(DEBUG)
+  assert(self.displayLink != nil);
+#endif // DEBUG
+  
   // Restart display link.
   
   if (self.displayLink.paused == TRUE) {
@@ -860,6 +877,45 @@ void validate_storage_mode(id<MTLTexture> texture)
 }
 
 #pragma mark - DisplayLink
+
+- (void) makeDisplayLink
+{
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+  
+  // Calculate approximate FPS
+  //float FPS = 1.0f / timeInterval;
+  float FPS = self->fps;
+  
+#if defined(DEBUG)
+  NSAssert(FPS != 0.0f, @"fps not set when creating display link");
+#endif // DEBUG
+  
+  // CADisplayLink
+  
+  assert(self.displayLink == nil);
+  
+  self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback:)];
+  self.displayLink.paused = TRUE;
+  
+  // FIXME: configure preferredFramesPerSecond based on parsed FPS from video file
+  
+  //self.displayLink.preferredFramesPerSecond = FPS;
+  
+  //self.displayLink.preferredFramesPerSecond = 10;
+  
+  FPS = (FPS * 10); // Force 10 FPS sampling rate when 1 FPS is detected
+  
+  NSInteger intFPS = (NSInteger) round(FPS);
+  
+  self.displayLink.preferredFramesPerSecond = intFPS;
+  
+  // FIXME: what to pass as forMode? Should this be
+  // NSRunLoopCommonModes cs NSDefaultRunLoopMode
+  
+  [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+}
 
 - (void)displayLinkCallback:(CADisplayLink*)sender
 {
