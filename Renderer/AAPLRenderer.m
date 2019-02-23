@@ -111,6 +111,9 @@ void validate_storage_mode(id<MTLTexture> texture)
   // of MacOSX do not support sRGB texture write operations.
   int hasWriteSRGBTextureSupport;
   
+  // Exact frame duration grabbed out of the video metdata
+  float fps;
+  
   id _notificationToken;
 }
 
@@ -400,6 +403,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback:)];
   self.displayLink.paused = TRUE;
+  // FIXME: configure preferredFramesPerSecond based on parsed FPS from video file
   self.displayLink.preferredFramesPerSecond = 10;
   // FIXME: what to pass as forMode? Should this be
   // NSRunLoopCommonModes cs NSDefaultRunLoopMode
@@ -441,9 +445,23 @@ void validate_storage_mode(id<MTLTexture> texture)
           assert(0);
         }
         
-        CGSize uncroppedSize = videoTrack.naturalSize;
-        NSLog(@"video track naturalSize w x h : %d x %d", (int)uncroppedSize.width, (int)uncroppedSize.height);
+        CGSize itemSize = videoTrack.naturalSize;
+        NSLog(@"video track naturalSize w x h : %d x %d", (int)itemSize.width, (int)itemSize.height);
         
+        // Allocate render buffer once asset dimensions are known
+        
+        {
+            AAPLRenderer *strongSelf = weakSelf;
+            if (strongSelf) {
+              strongSelf->_resizeTextureSize = itemSize;
+            }
+          
+          // FIXME: how would a queue player that has multiple outputs with different asset sizes be handled
+          // here? Would intermediate render buffers be different sizes?
+          
+          [weakSelf makeInternalMetalTexture];
+        }
+
         CMTimeRange timeRange = videoTrack.timeRange;
         float trackDuration = (float)CMTimeGetSeconds(timeRange.duration);
         NSLog(@"video track time duration %0.3f", trackDuration);
@@ -451,6 +469,14 @@ void validate_storage_mode(id<MTLTexture> texture)
         CMTime frameDurationTime = videoTrack.minFrameDuration;
         float frameDuration = (float)CMTimeGetSeconds(frameDurationTime);
         NSLog(@"video track frame duration %0.3f", frameDuration);
+        
+        {
+          AAPLRenderer *strongSelf = weakSelf;
+          if (strongSelf) {
+            // FIXME: get closest known FPS time ??
+            strongSelf->fps = CMTimeGetSeconds(frameDurationTime);
+          }
+        }
 
         float nominalFrameRate = videoTrack.nominalFrameRate;
         NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
@@ -812,9 +838,11 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   if (self.displayLink.paused == TRUE) {
     self.displayLink.paused = FALSE;
+    
+    NSLog(@"outputMediaDataWillChange : paused = FALSE : start display link at host time %.3f", CACurrentMediaTime());
   }
 
-  NSLog(@"outputMediaDataWillChange");
+  //NSLog(@"outputMediaDataWillChange");
   
   return;
 }
@@ -836,11 +864,10 @@ void validate_storage_mode(id<MTLTexture> texture)
       case AVPlayerItemStatusUnknown:
         break;
       case AVPlayerItemStatusReadyToPlay: {
-        //self.playerView.presentationRect = [[_player currentItem] presentationSize];
-        CGSize itemSize = [[self.player currentItem] presentationSize];
-        NSLog(@"video itemSize dimensions : %d x %d", (int)itemSize.width, (int)itemSize.height);
-        _resizeTextureSize = itemSize;
-        [self makeInternalMetalTexture];
+//        CGSize itemSize = [[self.player currentItem] presentationSize];
+//        NSLog(@"AVPlayerItemStatusReadyToPlay: video itemSize dimensions : %d x %d", (int)itemSize.width, (int)itemSize.height);
+//        _resizeTextureSize = itemSize;
+//        [self makeInternalMetalTexture];
         break;
       }
       case AVPlayerItemStatusFailed: {
@@ -860,9 +887,20 @@ void validate_storage_mode(id<MTLTexture> texture)
 - (void)displayLinkCallback:(CADisplayLink*)sender
 {
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
+
+  if ((1)) {
+    NSLog(@"displayLinkCallback at host time %.3f", CACurrentMediaTime());
+  }
   
   // hostTime is the previous vsync time plus the amount of time
-  // between the vsync and the invocation of this callback
+  // between the vsync and the invocation of this callback. It is
+  // tempting to use targetTimestamp as the time for the next
+  // vsync except there is no way to "force" frame zero at
+  // the start of the decoding process so then frame zero
+  // will always be displayed at the time actually indicated
+  // by targetTimestamp (assuming a frame is decoded there).
+  // This will sync as long as all video data is 1 frame behind.
+  
   CFTimeInterval hostTime = sender.timestamp + sender.duration;
   
   if ((1)) {
@@ -897,7 +935,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:currentItemTime itemTimeForDisplay:NULL];
     
     if (rgbPixelBuffer != NULL) {
-      NSLog(@"loaded RGB frame for item time %0.2f", CMTimeGetSeconds(currentItemTime));
+      NSLog(@"loaded RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
       
       if (self->_yCbCrPixelBuffer) {
         CVPixelBufferRelease(self->_yCbCrPixelBuffer);
@@ -905,10 +943,10 @@ void validate_storage_mode(id<MTLTexture> texture)
       CVPixelBufferRetain(rgbPixelBuffer);
       self->_yCbCrPixelBuffer = rgbPixelBuffer;
     } else {
-      NSLog(@"did not load RGB frame for item time %0.2f", CMTimeGetSeconds(currentItemTime));
+      NSLog(@"did not load RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
     }
   } else {
-    NSLog(@"hasNewPixelBufferForItemTime is FALSE at vsync time %0.2f", CMTimeGetSeconds(currentItemTime));
+    NSLog(@"hasNewPixelBufferForItemTime is FALSE at vsync time %0.3f", CMTimeGetSeconds(currentItemTime));
   }
   
   // Need to move code into a generate purpose view layer so that a ref
