@@ -55,6 +55,11 @@ typedef enum {
 
 - (BOOL) setupMetal;
 
+// Flushing the texture cache is required to return CoreVideo
+// pixel buffers to the reuse pool.
+
+- (void) flushTextureCache;
+
 // BT709 -> BGRA conversion that writes directly into a Metal texture.
 // This logic assumes that the Metal texture was already allocated at
 // exactly the same dimensions as the input YCbCr encoded data.

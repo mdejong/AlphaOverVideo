@@ -612,6 +612,8 @@ void validate_storage_mode(id<MTLTexture> texture)
   MetalBT709Decoder *metalBT709Decoder = self.metalBT709Decoder;
   MetalRenderContext *mrc = metalBT709Decoder.metalRenderContext;
   
+  [metalBT709Decoder flushTextureCache];
+  
   // Create a new command buffer for each render pass to the current drawable
   id<MTLCommandBuffer> commandBuffer = [mrc.commandQueue commandBuffer];
   commandBuffer.label = @"BT709 Render";

@@ -36,11 +36,18 @@
   self.inputCbCrTexture = nil;
   
   if (_textureCache != NULL) {
-    CVMetalTextureCacheFlush(_textureCache, 0);
+    [self flushTextureCache];
     CFRelease(_textureCache);
   }
   
   return;
+}
+
+- (void) flushTextureCache
+{
+  if (_textureCache != NULL) {
+    CVMetalTextureCacheFlush(_textureCache, 0);
+  }
 }
 
 - (BOOL) setupMetal
@@ -86,7 +93,10 @@
     return FALSE;
   }
   
-  // Setup texture cache so that pixel buffers can be represented by a Metal texture
+  // Setup texture cache so that pixel buffers can be represented by a Metal texture.
+  // Note the kCVMetalTextureCacheMaximumTextureAgeKey here which disables time based
+  // flushing of textures, an explicit call to flush the texture cache is needed to
+  // ensure that CoreVideo buffers represented by Metal textures are reused.
   
   NSDictionary *cacheAttributes = @{
                                     (NSString*)kCVMetalTextureCacheMaximumTextureAgeKey: @(0),
