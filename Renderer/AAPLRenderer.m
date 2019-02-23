@@ -532,6 +532,15 @@ void validate_storage_mode(id<MTLTexture> texture)
     return;
   }
   
+  // Flush texture to release Metal/CoreVideo textures and pixel buffers.
+  // Note that this is executed before checking nil conditions so that
+  // a flush will still be done even if playback is stopping.
+  
+  MetalBT709Decoder *metalBT709Decoder = self.metalBT709Decoder;
+  MetalRenderContext *mrc = metalBT709Decoder.metalRenderContext;
+  
+  [metalBT709Decoder flushTextureCache];
+  
   // If player is not actually playing yet then nothing is ready
   
   if (self.player.currentItem == nil) {
@@ -608,11 +617,6 @@ void validate_storage_mode(id<MTLTexture> texture)
   if (rgbPixelBuffer == NULL) {
     return;
   }
-
-  MetalBT709Decoder *metalBT709Decoder = self.metalBT709Decoder;
-  MetalRenderContext *mrc = metalBT709Decoder.metalRenderContext;
-  
-  [metalBT709Decoder flushTextureCache];
   
   // Create a new command buffer for each render pass to the current drawable
   id<MTLCommandBuffer> commandBuffer = [mrc.commandQueue commandBuffer];
@@ -948,7 +952,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     CFTimeInterval nextFrameTime = sender.targetTimestamp;
     CFTimeInterval duration = nextFrameTime - prevFrameTime;
     
-    NSLog(@"prev %.2f -> next %.2f : duration %.2f : sender.duration %.2f", prevFrameTime, nextFrameTime, duration, sender.duration);
+    NSLog(@"prev %0.3f -> next %0.3f : duration %0.2f : sender.duration %0.2f", prevFrameTime, nextFrameTime, duration, sender.duration);
     NSLog(@"");
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
@@ -958,7 +962,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-  NSLog(@"host time %0.2f -> item time %0.2f", hostTime, CMTimeGetSeconds(currentItemTime));
+  NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
   //CFTimeInterval outputItemTime;
