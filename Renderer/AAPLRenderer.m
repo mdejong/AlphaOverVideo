@@ -23,6 +23,8 @@ Implementation of renderer class which performs Metal setup and per frame render
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
 
+#import "GPUVFrame.h"
+
 static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 @interface AAPLRenderer ()
@@ -39,12 +41,12 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 @property (nonatomic, retain) dispatch_queue_t playerQueue;
 @property (nonatomic, retain) CADisplayLink *displayLink;
 
-@property (nonatomic, copy) NSArray *frames;
-@property (nonatomic, copy) NSArray *alphaFrames;
-
 @property (nonatomic, assign) int frameNum;
 
-@property (nonatomic, assign) int skipCount;
+// Frame object currently being displayed
+
+@property (nonatomic, retain) GPUVFrame *currentFrame;
+@property (nonatomic, retain) GPUVFrame *prevFrame;
 
 @end
 
@@ -91,12 +93,6 @@ void validate_storage_mode(id<MTLTexture> texture)
   // so that results of the render can be captured. This has performance
   // implications so it should only be enabled when debuging.
   int isCaptureRenderedTextureEnabled;
-  
-  // Input to sRGB texture render comes from H.264 source
-  CVPixelBufferRef _yCbCrPixelBuffer;
-  
-  // Secondary Alpha channel texture input
-  CVPixelBufferRef _alphaPixelBuffer;
   
   // BT.709 render operation must write to an intermediate texture
   // (because mixing non-linear BT.709 input is not legit)
@@ -411,7 +407,6 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   //self.frames = cvPixelBuffers;
   self.frameNum = 0;
-  //self.skipCount = 30;
   
   // @"CarSpin_alpha.m4v"
   
@@ -497,44 +492,6 @@ void validate_storage_mode(id<MTLTexture> texture)
   return;
 }
 
-- (CVPixelBufferRef) decodeCarSpinAlphaLoopSingleFrame
-{
-  NSString *resFilename = @"CarSpin.m4v";
-  
-  int width = 960;
-  int height = 720;
-  
-  NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                    frameDuration:1.0/30
-                                                                       renderSize:CGSizeMake(width, height)
-                                                                       aveBitrate:0];
-  NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-  
-  self.frames = cvPixelBuffers;
-  self.frameNum = 0;
-  self.skipCount = 30;
-  
-  if ((1)) {
-    NSString *resFilename = @"CarSpinAF10_alpha.m4v";
-    
-    NSArray *cvPixelBuffers = [BGDecodeEncode recompressKeyframesOnBackgroundThread:resFilename
-                                                                      frameDuration:1.0/30
-                                                                         renderSize:CGSizeMake(width, height)
-                                                                         aveBitrate:0];
-    NSLog(@"returned %d YCbCr textures", (int)cvPixelBuffers.count);
-    
-    self.alphaFrames = cvPixelBuffers;
-  }
-  
-  // Grab just the first texture, return retained ref
-  
-  CVPixelBufferRef cvPixelBuffer = (__bridge CVPixelBufferRef) cvPixelBuffers[0];
-  
-  CVPixelBufferRetain(cvPixelBuffer);
-  
-  return cvPixelBuffer;
-}
-
 /// Called whenever view changes orientation or is resized
 - (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
 {
@@ -569,6 +526,11 @@ void validate_storage_mode(id<MTLTexture> texture)
     return;
   }
   
+  if (self.currentFrame == nil) {
+    NSLog(@"currentFrame is nil in drawInMTKView");
+    return;
+  }
+  
   // Input to sRGB texture render comes from H.264 source
   
   CVPixelBufferRef rgbPixelBuffer = NULL;
@@ -576,7 +538,21 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   // Get most recently extracted frame from the video output source
   
-  rgbPixelBuffer = _yCbCrPixelBuffer;
+  // FIXME: add "ready" flag to determine if pixel buffer data is valid?
+
+#if defined(DEBUG)
+  assert(self.currentFrame != nil);
+#endif // DEBUG
+  
+  rgbPixelBuffer = self.currentFrame.yCbCrPixelBuffer;
+  
+#if defined(DEBUG)
+  assert(rgbPixelBuffer != NULL);
+#endif // DEBUG
+  
+  if (self.currentFrame.alphaPixelBuffer != nil) {
+    alphaPixelBuffer = self.currentFrame.alphaPixelBuffer;
+  }
   
   /*
   
@@ -609,25 +585,15 @@ void validate_storage_mode(id<MTLTexture> texture)
   self.frameNum += 1;
   
   */
-   
-  if (rgbPixelBuffer == NULL) {
-    NSLog(@"_yCbCrPixelBuffer is NULL in drawInMTKView");
-    return;
-  }
+
+  // This should never happen
   
-//  if (self.alphaFrames != nil) {
-//    alphaPixelBuffer = (__bridge CVPixelBufferRef) self.alphaFrames[currentFrameNum];
-//  }
-  
-//  if (self.skipCount == 0) {
-//    self.skipCount = 30;
-//    self.frameNum += 1;
-//  }
-//  self.skipCount -= 1;
-  
+#if defined(DEBUG)
   assert(rgbPixelBuffer != NULL);
-  if (self.alphaFrames != nil) {
-    assert(alphaPixelBuffer != NULL);
+#endif // DEBUG
+  
+  if (rgbPixelBuffer == NULL) {
+    return;
   }
 
   MetalBT709Decoder *metalBT709Decoder = self.metalBT709Decoder;
@@ -736,15 +702,6 @@ void validate_storage_mode(id<MTLTexture> texture)
   } else {
     [commandBuffer commit];
   }
-  
-  // FIXME: frame of RGB + Alpha should be retained until next frame is ready
-  
-  //_yCbCrPixelBuffer = rgbPixelBuffer;
-  //CVPixelBufferRelease(rgbPixelBuffer);
-  
-  //if (alphaPixelBuffer) {
-  //  CVPixelBufferRelease(alphaPixelBuffer);
-  //}
 
   // Internal resize texture can only be captured when it is sRGB texture. In the case
   // of MacOSX that makes use a linear 16 bit intermeiate texture, no means to
@@ -830,6 +787,22 @@ void validate_storage_mode(id<MTLTexture> texture)
   }
 }
 
+// This method is invoked when a new frame of video data is ready to be displayed.
+
+- (void) nextFrameReady:(GPUVFrame*)nextFrame {
+  //@synchronized (self)
+  {
+#if defined(DEBUG)
+    // Should drop last ref to previous GPUVFrame here
+    if (self.prevFrame != nil) {
+      self.prevFrame = nil;
+    }
+#endif // DEBUG
+    self.prevFrame = self.currentFrame;
+    self.currentFrame = nextFrame;
+  }
+}
+
 #pragma mark - AVPlayerItemOutputPullDelegate
 
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput*)sender
@@ -887,10 +860,14 @@ void validate_storage_mode(id<MTLTexture> texture)
 - (void)displayLinkCallback:(CADisplayLink*)sender
 {
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
+  
+#define LOG_DISPLAY_LINK_TIMINGS
 
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1)) {
     NSLog(@"displayLinkCallback at host time %.3f", CACurrentMediaTime());
   }
+#endif // LOG_DISPLAY_LINK_TIMINGS
   
   // hostTime is the previous vsync time plus the amount of time
   // between the vsync and the invocation of this callback. It is
@@ -903,6 +880,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   CFTimeInterval hostTime = sender.timestamp + sender.duration;
   
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1)) {
     CFTimeInterval prevFrameTime = sender.timestamp;
     CFTimeInterval nextFrameTime = sender.targetTimestamp;
@@ -911,42 +889,47 @@ void validate_storage_mode(id<MTLTexture> texture)
     NSLog(@"prev %.2f -> next %.2f : duration %.2f : sender.duration %.2f", prevFrameTime, nextFrameTime, duration, sender.duration);
     NSLog(@"");
   }
+#endif // LOG_DISPLAY_LINK_TIMINGS
   
   // Map time offset to item time
   
   CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
   
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
   NSLog(@"host time %0.2f -> item time %0.2f", hostTime, CMTimeGetSeconds(currentItemTime));
+#endif // LOG_DISPLAY_LINK_TIMINGS
   
   //CFTimeInterval outputItemTime;
   //outputItemTime = currentFrameNum * (1.0f / 10); // 10 FPS
-  
   //outputItemTime = currentFrameNum * 1.0f; // 1 FPS
-  
   //CMTime syncTime = CMTimeMake(round(outputItemTime * 1000.0f), 1000);
   
   //NSLog(@"display frame %d : at vsync time %0.2f : %d / %d", (int)self.frameNum + 1, outputItemTime, (int)syncTime.value, (int)syncTime.timescale);
   
-  CVPixelBufferRef rgbPixelBuffer = NULL;
-  
   if ([playerItemVideoOutput hasNewPixelBufferForItemTime:currentItemTime]) {
     // Grab the pixel bufer for the current time
     
-    rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:currentItemTime itemTimeForDisplay:NULL];
+    CVPixelBufferRef rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:currentItemTime itemTimeForDisplay:NULL];
     
     if (rgbPixelBuffer != NULL) {
-      NSLog(@"loaded RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
+      NSLog(@"LOADED RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
+#endif // LOG_DISPLAY_LINK_TIMINGS
       
-      if (self->_yCbCrPixelBuffer) {
-        CVPixelBufferRelease(self->_yCbCrPixelBuffer);
-      }
-      CVPixelBufferRetain(rgbPixelBuffer);
-      self->_yCbCrPixelBuffer = rgbPixelBuffer;
+      GPUVFrame *nextFrame = [[GPUVFrame alloc] init];
+      nextFrame.yCbCrPixelBuffer = rgbPixelBuffer;
+      CVPixelBufferRelease(rgbPixelBuffer);
+      [self nextFrameReady:nextFrame];
+      nextFrame = nil;
     } else {
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
       NSLog(@"did not load RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
+#endif // LOG_DISPLAY_LINK_TIMINGS
     }
   } else {
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
     NSLog(@"hasNewPixelBufferForItemTime is FALSE at vsync time %0.3f", CMTimeGetSeconds(currentItemTime));
+#endif // LOG_DISPLAY_LINK_TIMINGS
   }
   
   // Need to move code into a generate purpose view layer so that a ref
