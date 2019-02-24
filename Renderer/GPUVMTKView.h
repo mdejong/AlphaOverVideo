@@ -41,6 +41,8 @@
 
 - (BOOL) configure;
 
+// This method is invoked when the next frame of video is available.
+
 - (void) nextFrameReady:(GPUVFrame*)nextFrame;
 
 @end

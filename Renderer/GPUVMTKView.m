@@ -824,6 +824,13 @@ void validate_storage_mode(id<MTLTexture> texture)
   [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 }
 
+- (void) cancelDisplayLink
+{
+  self.displayLink.paused = TRUE;
+  [self.displayLink invalidate];
+  self.displayLink = nil;
+}
+
 - (void)displayLinkCallback:(CADisplayLink*)sender
 {
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
@@ -902,18 +909,15 @@ void validate_storage_mode(id<MTLTexture> texture)
   }
 }
 
-- (void) cancelDisplayLink
-{
-  self.displayLink.paused = TRUE;
-  [self.displayLink invalidate];
-  self.displayLink = nil;
-}
-
-
 - (void) decodeCarSpinAlphaLoop
 {
+  //NSString *resFilename = @"QuickTime_Test_Pattern_HD.mov";
   NSString *resFilename = @"CarSpin.m4v";
-  
+  [self decodeRGBResourceMovie:resFilename];
+}
+
+- (void) decodeRGBResourceMovie:(NSString*)resFilename
+{
   self.player = [[AVPlayer alloc] init];
   
   NSString *path = [[NSBundle mainBundle] pathForResource:resFilename ofType:nil];
@@ -963,6 +967,10 @@ void validate_storage_mode(id<MTLTexture> texture)
   NSArray *assetKeys = @[@"duration", @"playable", @"tracks"];
   
   [asset loadValuesAsynchronouslyForKeys:assetKeys completionHandler:^{
+    
+    // FIXME: Save @"duration" when available here
+    
+    // FIXME: if @"playable" is FALSE then need to return error and not attempt to play
     
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
       NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
