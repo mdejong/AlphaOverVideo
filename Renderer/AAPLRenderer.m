@@ -117,6 +117,62 @@ void validate_storage_mode(id<MTLTexture> texture)
   id _notificationToken;
 }
 
++ (void) setupViewPixelFormat:(nonnull MTKView *)mtkView
+{
+  // Pixels written into view are BGRA with sRGB encoding and 8 bits
+  
+  mtkView.colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+}
+
+- (void) setupViewOpaqueProperty:(nonnull MTKView *)mtkView
+{
+  BOOL isOpaqueFlag;
+  
+  if (self.metalBT709Decoder.hasAlphaChannel) {
+    isOpaqueFlag = FALSE;
+  } else {
+    isOpaqueFlag = TRUE;
+  }
+  
+#if TARGET_OS_IOS
+  mtkView.opaque = isOpaqueFlag;
+#else
+  // MacOSX
+  mtkView.layer.opaque = isOpaqueFlag;
+#endif // TARGET_OS_IOS
+}
+
+- (void) setupBT709Decoder:(nonnull MTKView *)mtkView
+{
+  // Init Metal context, this object contains refs to metal objects
+  // and util functions.
+  
+  id<MTLDevice> device = mtkView.device;
+  
+  MetalRenderContext *mrc = [[MetalRenderContext alloc] init];
+  
+  mrc.device = device;
+  mrc.defaultLibrary = [device newDefaultLibrary];
+  mrc.commandQueue = [device newCommandQueue];
+  
+  // Init metalBT709Decoder with MetalRenderContext set as a property
+  
+  self.metalBT709Decoder = [[MetalBT709Decoder alloc] init];
+  
+  self.metalBT709Decoder.metalRenderContext = mrc;
+  
+#if TARGET_OS_IOS
+  // sRGB texture
+  self.metalBT709Decoder.colorPixelFormat = mtkView.colorPixelFormat;
+#else
+  if (hasWriteSRGBTextureSupport) {
+    self.metalBT709Decoder.colorPixelFormat = mtkView.colorPixelFormat;
+  } else {
+    self.metalBT709Decoder.colorPixelFormat = MTLPixelFormatRGBA16Float;
+  }
+#endif // TARGET_OS_IOS
+}
+
 /// Initialize with the MetalKit view from which we'll obtain our Metal device
 - (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView
 {
@@ -127,54 +183,19 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     isCaptureRenderedTextureEnabled = 0;
     
-    id<MTLDevice> device = mtkView.device;
+    //id<MTLDevice> device = mtkView.device;
     
     if (isCaptureRenderedTextureEnabled) {
       mtkView.framebufferOnly = false;
     }
-
-    // View redraw cycle no longer used directly, a display link
-    // callback will now explicitly invoke draw when a new frame
-    // is available.
     
-    //mtkView.preferredFramesPerSecond = 60;
-    //mtkView.preferredFramesPerSecond = 30;
-    //mtkView.preferredFramesPerSecond = 20;
-    //mtkView.preferredFramesPerSecond = 10;
+    [self.class setupViewPixelFormat:mtkView];
     
-    // Init Metal context, this object contains refs to metal objects
-    // and util functions.
-    
-    MetalRenderContext *mrc = [[MetalRenderContext alloc] init];
-    
-    mrc.device = device;
-    mrc.defaultLibrary = [device newDefaultLibrary];
-    mrc.commandQueue = [device newCommandQueue];
+    [self setupBT709Decoder:mtkView];
     
     // Decode H.264 to CoreVideo pixel buffer
     
     [self decodeCarSpinAlphaLoop];
-    
-    // Configure Metal view so that it treats pixels as sRGB values.
-    
-    mtkView.colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
-    
-    // Init metalBT709Decoder with MetalRenderContext set as a property
-    
-    self.metalBT709Decoder = [[MetalBT709Decoder alloc] init];
-    
-    self.metalBT709Decoder.metalRenderContext = mrc;
-
-#if TARGET_OS_IOS
-    // sRGB texture
-    self.metalBT709Decoder.colorPixelFormat = mtkView.colorPixelFormat;
-#else
-    if (hasWriteSRGBTextureSupport) {
-      self.metalBT709Decoder.colorPixelFormat = mtkView.colorPixelFormat;
-    } else {
-      self.metalBT709Decoder.colorPixelFormat = MTLPixelFormatRGBA16Float;
-    }
-#endif // TARGET_OS_IOS
     
     //self.metalBT709Decoder.useComputeRenderer = TRUE;
 
@@ -182,21 +203,8 @@ void validate_storage_mode(id<MTLTexture> texture)
     // an additional channel for Y is retained.
     self.metalBT709Decoder.hasAlphaChannel = FALSE;
     
-    BOOL isOpaqueFlag;
-
-    if (self.metalBT709Decoder.hasAlphaChannel) {
-      isOpaqueFlag = FALSE;
-    } else {
-      isOpaqueFlag = TRUE;
-    }
-
-#if TARGET_OS_IOS
-    mtkView.opaque = isOpaqueFlag;
-#else
-    // MacOSX
-    mtkView.layer.opaque = isOpaqueFlag;
-#endif // TARGET_OS_IOS
-    
+    [self setupViewOpaqueProperty:mtkView];
+        
     MetalBT709Gamma decodeGamma = MetalBT709GammaApple;
     
     if ((1)) {
@@ -207,6 +215,9 @@ void validate_storage_mode(id<MTLTexture> texture)
     }
 
     self.metalBT709Decoder.gamma = decodeGamma;
+    
+    // Based on BPP and gamma config, choose Metal shader and
+    // configure pipelines.
     
     BOOL worked = [self.metalBT709Decoder setupMetal];
     worked = worked;
@@ -219,7 +230,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     MetalScaleRenderContext *metalScaleRenderContext = [[MetalScaleRenderContext alloc] init];
     
-    [metalScaleRenderContext setupRenderPipelines:mrc mtkView:mtkView];
+    [metalScaleRenderContext setupRenderPipelines:self.metalBT709Decoder.metalRenderContext mtkView:mtkView];
     
     self.metalScaleRenderContext = metalScaleRenderContext;
     
