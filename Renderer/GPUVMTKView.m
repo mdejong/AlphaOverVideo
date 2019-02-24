@@ -151,7 +151,9 @@ void validate_storage_mode(id<MTLTexture> texture)
   // If media is attached and the size changes from an exact match to a different size
   // that would require a scale operation then be sure that an intermediate buffer is
   // allocated. This would make it possible to not allocate an intermediate buffer
-  // unless it was actually needed to implement scaling.
+  // unless it was actually needed to implement scaling. Note that since layoutSubviews
+  // can be invoked multiple times on startup, this logic might be better served in
+  // a pre-play set of checks when the video is starting up but before the timer in running.
   
   return;
 }
@@ -302,8 +304,6 @@ void validate_storage_mode(id<MTLTexture> texture)
 {
   BOOL worked;
   
-  GPUVMTKView *view = (GPUVMTKView *) self;
-  
   int renderWidth = viewportWidth;
   int renderHeight = viewportHeight;
   
@@ -333,7 +333,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     return;
   }
   
-  if (view.currentFrame == nil) {
+  if (self.currentFrame == nil) {
     NSLog(@"currentFrame is nil in drawInMTKView");
     return;
   }
@@ -348,7 +348,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   // FIXME: add "ready" flag to determine if pixel buffer data is valid?
   
 #if defined(DEBUG)
-  assert(view.currentFrame != nil);
+  assert(self.currentFrame != nil);
 #endif // DEBUG
   
   rgbPixelBuffer = self.currentFrame.yCbCrPixelBuffer;
@@ -376,7 +376,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   commandBuffer.label = @"BT709 Render";
   
   // Obtain a renderPassDescriptor generated from the view's drawable textures
-  MTLRenderPassDescriptor *renderPassDescriptor = view.currentRenderPassDescriptor;
+  MTLRenderPassDescriptor *renderPassDescriptor = self.currentRenderPassDescriptor;
   
   BOOL isExactlySameSize =
   (renderWidth == ((int)CVPixelBufferGetWidth(rgbPixelBuffer))) &&
@@ -425,7 +425,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     if (worked) {
       // Schedule a present once the framebuffer is complete using the current drawable
-      [commandBuffer presentDrawable:view.currentDrawable];
+      [commandBuffer presentDrawable:self.currentDrawable];
     }
   } else {
     // Viewport dimensions do not exactly match the input texture
@@ -458,7 +458,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     // into the current width and height of the viewport.
     
     [self.metalScaleRenderContext renderScaled:mrc
-                                       mtkView:view
+                                       mtkView:self
                                    renderWidth:renderWidth
                                   renderHeight:renderHeight
                                  commandBuffer:commandBuffer

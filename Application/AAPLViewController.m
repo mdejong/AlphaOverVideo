@@ -103,7 +103,13 @@ Implementation of our cross-platform view controller
     // Initialize our renderer with the view size
     [_renderer mtkView:mtkView drawableSizeWillChange:mtkView.drawableSize];
 
-    [mtkView configure];
+    // Setup Metal and playback logic
+    BOOL worked = [mtkView configure];
+    if(!worked)
+    {
+      NSLog(@"configure failed for GPUVMTKView");
+      return;
+    }
   
     mtkView.delegate = _renderer;
 }

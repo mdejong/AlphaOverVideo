@@ -36,9 +36,10 @@
 
 @property (nonatomic, retain) GPUVFrame *currentFrame;
 
-// Configure view properties after view has been loaded from the NIB
+// Configure view properties after view has been loaded from the NIB.
+// Returns TRUE on success, otherwise FALSE is something went wrong.
 
-- (void) configure;
+- (BOOL) configure;
 
 - (void) nextFrameReady:(GPUVFrame*)nextFrame;
 
