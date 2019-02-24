@@ -21,12 +21,25 @@
 
 #import <MetalKit/MTKView.h>
 
+#include "GPUVFrame.h"
+
 // GPUVMTKView extends MTKView
 
 @interface GPUVMTKView : MTKView
 
+// Previous frame, ref to the previous frame is dropped as
+// soon as the next frame is delivered.
+
+@property (nonatomic, retain) GPUVFrame *prevFrame;
+
+// Frame currently being displayed
+
+@property (nonatomic, retain) GPUVFrame *currentFrame;
+
 // Configure view properties after view has been loaded from the NIB
 
 - (void) configure;
+
+- (void) nextFrameReady:(GPUVFrame*)nextFrame;
 
 @end
