@@ -10,6 +10,8 @@ Implementation of our cross-platform view controller
 
 #import <QuartzCore/QuartzCore.h>
 
+#import "GPUVMTKView.h"
+
 @implementation AAPLViewController
 {
 #if TARGET_OS_IOS
@@ -18,7 +20,7 @@ Implementation of our cross-platform view controller
     IBOutlet NSImageView *imageView;
 #endif // TARGET_OS_IOS
   
-    IBOutlet MTKView *mtkView;
+    IBOutlet GPUVMTKView *mtkView;
 
     AAPLRenderer *_renderer;
 }
@@ -26,6 +28,23 @@ Implementation of our cross-platform view controller
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+  
+    // Verify that this MTKView is a GPUVMTKView instance
+
+    {
+      MTKView *loadedMtkView = mtkView;
+      
+      if (loadedMtkView == nil)
+      {
+        NSLog(@"MTKView loaded from NIB is nil");
+        return;
+      }
+      
+      if ([loadedMtkView isKindOfClass:GPUVMTKView.class] == FALSE) {
+        NSLog(@"MTKView loaded from NIB does not extend GPUVMTKView base class");
+        return;
+      }
+    }
 
     BOOL alphaImageBackground = FALSE;
     // If alphaImageBackground is FALSE, background can be black or white
@@ -84,6 +103,8 @@ Implementation of our cross-platform view controller
     // Initialize our renderer with the view size
     [_renderer mtkView:mtkView drawableSizeWillChange:mtkView.drawableSize];
 
+    [mtkView configure];
+  
     mtkView.delegate = _renderer;
 }
 

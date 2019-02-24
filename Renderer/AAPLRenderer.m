@@ -48,6 +48,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 @property (nonatomic, retain) GPUVFrame *currentFrame;
 @property (nonatomic, retain) GPUVFrame *prevFrame;
 
+// Hack to hold ref to GPUVMTKView instance
+
+@property (nonatomic, assign) MTKView *unretainedSelfView;
+
 @end
 
 // Define this symbol to enable private texture mode on MacOSX.
@@ -119,6 +123,8 @@ void validate_storage_mode(id<MTLTexture> texture)
   self = [super init];
   if(self)
   {
+    self.unretainedSelfView = mtkView;
+    
     isCaptureRenderedTextureEnabled = 0;
     
     id<MTLDevice> device = mtkView.device;
@@ -127,10 +133,14 @@ void validate_storage_mode(id<MTLTexture> texture)
       mtkView.framebufferOnly = false;
     }
 
+    // View redraw cycle no longer used directly, a display link
+    // callback will now explicitly invoke draw when a new frame
+    // is available.
+    
     //mtkView.preferredFramesPerSecond = 60;
     //mtkView.preferredFramesPerSecond = 30;
     //mtkView.preferredFramesPerSecond = 20;
-    mtkView.preferredFramesPerSecond = 10;
+    //mtkView.preferredFramesPerSecond = 10;
     
     // Init Metal context, this object contains refs to metal objects
     // and util functions.
@@ -514,7 +524,10 @@ void validate_storage_mode(id<MTLTexture> texture)
     _viewportSize.y = size.height;
 }
 
-/// Called whenever the view needs to render a frame
+// Called when a video frame becomes available, while the video framerate may
+// change the video frame on each step of frame duration length, it is also
+// possible that one given frame could continue to display for multiple frames.
+
 - (void)drawInMTKView:(nonnull MTKView *)view
 {
   BOOL worked;
@@ -987,6 +1000,12 @@ void validate_storage_mode(id<MTLTexture> texture)
       CVPixelBufferRelease(rgbPixelBuffer);
       [self nextFrameReady:nextFrame];
       nextFrame = nil;
+      
+      //[self setNeedsDisplay];
+      
+      // Hack to draw GPUVMTKView directly from the current timer
+      
+      [self.unretainedSelfView draw];
     } else {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
       NSLog(@"did not load RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
@@ -997,11 +1016,6 @@ void validate_storage_mode(id<MTLTexture> texture)
     NSLog(@"hasNewPixelBufferForItemTime is FALSE at vsync time %0.3f", CMTimeGetSeconds(currentItemTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
   }
-  
-  // Need to move code into a generate purpose view layer so that a ref
-  // to the view can be used to invoke setNeedsDisplay ?
-  
-  //[self setNeedsDisplay];
 }
 
 - (void) cancelDisplayLink
