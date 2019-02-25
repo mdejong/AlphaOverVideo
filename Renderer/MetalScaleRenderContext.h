@@ -10,7 +10,7 @@
 //  to fit the contents of a Metal texture into a view.
 
 //@import MetalKit;
-#include <MetalKit/MetalKit.h>
+#import <MetalKit/MetalKit.h>
 
 @class MetalRenderContext;
 

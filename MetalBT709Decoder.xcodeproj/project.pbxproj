@@ -189,6 +189,9 @@
 		3CBDDE1421FAF9C6008E1E66 /* QuickTime_Test_Pattern_HD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */; };
 		3CBDDE1521FAF9C6008E1E66 /* QuickTime_Test_Pattern_SD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B221DD87D50041ACE3 /* QuickTime_Test_Pattern_SD.mov */; };
 		3CBDDE1621FAF9C6008E1E66 /* Rec709Sample.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3C821A3C21ED84DD006D516F /* Rec709Sample.mp4 */; };
+		3CE62FD022233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
+		3CE62FD122233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
+		3CE62FD222233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
 		3CF086C0221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
 		3CF086C1221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
 		3CF086C2221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
@@ -374,6 +377,9 @@
 		3CBDDDFF21FAF8FD008E1E66 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3CBDDE0121FAF8FD008E1E66 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CBDDE0221FAF8FD008E1E66 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		3CE62FC922233B850003EA70 /* GPUVFrameSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSource.h; sourceTree = "<group>"; };
+		3CE62FCE22233DBA0003EA70 /* GPUVFrameSourceVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSourceVideo.h; sourceTree = "<group>"; };
+		3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVFrameSourceVideo.m; sourceTree = "<group>"; };
 		3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = GlobeLEDAlpha.m4v; sourceTree = "<group>"; };
 		3CF086BF221773C000FD7802 /* GlobeLEDAlpha_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = GlobeLEDAlpha_alpha.m4v; sourceTree = "<group>"; };
 		3CF086C622178F0500FD7802 /* RedCircleOverWhiteA.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = RedCircleOverWhiteA.m4v; sourceTree = "<group>"; };
@@ -544,6 +550,9 @@
 				3C18D3CF221D432E005DAF85 /* CarSpinAF10_alpha.m4v */,
 				3C1310CA2220D492000C4972 /* GPUVFrame.h */,
 				3C1310CB2220D493000C4972 /* GPUVFrame.m */,
+				3CE62FC922233B850003EA70 /* GPUVFrameSource.h */,
+				3CE62FCE22233DBA0003EA70 /* GPUVFrameSourceVideo.h */,
+				3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */,
 				3C1310CF222214FE000C4972 /* GPUVMTKView.h */,
 				3C1310D0222214FE000C4972 /* GPUVMTKView.m */,
 				3AF7E9BE1EB64A46003BB06D /* AAPLRenderer.h */,
@@ -1186,6 +1195,7 @@
 				63B42F161ED2063300859D09 /* AAPLShaders.metal in Sources */,
 				3CB6E80321D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
 				3AF7EA0A1EB64A46003BB06D /* AAPLRenderer.m in Sources */,
+				3CE62FD122233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */,
 				3A30EDF91EB67EA800B4FC0B /* AAPLImage.m in Sources */,
 				3CB6E81521D73BB5005424E6 /* CGFrameBuffer.m in Sources */,
 				3AFD65721F71A8A10008A125 /* main.m in Sources */,
@@ -1216,6 +1226,7 @@
 				3AFD65731F71A8A10008A125 /* main.m in Sources */,
 				3A30EDFF1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
 				3CB6E80C21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
+				3CE62FD222233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1237,6 +1248,7 @@
 				3A30EDFE1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
 				3AF7EA0C1EB64A46003BB06D /* AAPLRenderer.m in Sources */,
 				3CB6E80A21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
+				3CE62FD022233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

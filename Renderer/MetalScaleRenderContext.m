@@ -9,7 +9,7 @@
 //  in the case where a 2D rescale operation is needed
 //  to fit the contents of a Metal texture into a view.
 
-#include "MetalScaleRenderContext.h"
+#import "MetalScaleRenderContext.h"
 
 // Header shared between C code here, which executes Metal API commands, and .metal files, which
 //   uses these types as inpute to the shaders

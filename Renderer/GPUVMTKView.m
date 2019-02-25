@@ -20,7 +20,7 @@
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
 
-static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
+#import "GPUVFrameSourceVideo.h"
 
 // Define this symbol to enable private texture mode on MacOSX.
 
@@ -64,15 +64,9 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 @property (nonatomic, retain) MetalScaleRenderContext *metalScaleRenderContext;
 
-// Player instance objects to decode CoreVideo buffers from an asset item
-
-@property (nonatomic, retain) AVPlayer *player;
-@property (nonatomic, retain) AVPlayerItem *playerItem;
-@property (nonatomic, retain) AVPlayerItemVideoOutput *playerItemVideoOutput;
-@property (nonatomic, retain) dispatch_queue_t playerQueue;
 @property (nonatomic, retain) CADisplayLink *displayLink;
 
-@property (nonatomic, assign) int frameNum;
+@property (nonatomic, assign) float FPS;
 
 @end
 
@@ -91,19 +85,10 @@ void validate_storage_mode(id<MTLTexture> texture)
   // (because mixing non-linear BT.709 input is not legit)
   // that can then be sampled to resize render into the view.
   id<MTLTexture> _resizeTexture;
-  CGSize _resizeTextureSize;
-  
-  // The current size of our view so we can use this in our render pipeline
-  //vector_uint2 _viewportSize;
   
   // non-zero when writing to a sRGB texture is possible, certain versions
   // of MacOSX do not support sRGB texture write operations.
   int hasWriteSRGBTextureSupport;
-  
-  // Exact frame duration grabbed out of the video metdata
-  float FPS;
-  
-  id _notificationToken;
 }
 
 - (void) dealloc
@@ -112,11 +97,15 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   self.prevFrame = nil;
   self.currentFrame = nil;
+  _resizeTexture = nil;
 
   if (metalBT709Decoder) {
     [metalBT709Decoder flushTextureCache];
   }
 
+  self.metalBT709Decoder = nil;
+  self.metalScaleRenderContext = nil;
+  
   return;
 }
 
@@ -241,7 +230,42 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     // Decode H.264 to CoreVideo pixel buffer
     
-    [self decodeCarSpinAlphaLoop];
+    if (self.frameSource == nil) {
+      self.frameSource = [[GPUVFrameSourceVideo alloc] init];
+    }
+
+    GPUVFrameSourceVideo *frameSourceVideo = (GPUVFrameSourceVideo *) self.frameSource;
+
+    __weak GPUVMTKView *weakSelf = self;
+    __weak GPUVFrameSourceVideo *weakFrameSourceVideo = frameSourceVideo;
+    
+    frameSourceVideo.loadedBlock = ^(BOOL success){
+      // Allocate scaling texture
+      
+      int width = weakFrameSourceVideo.width;
+      int height = weakFrameSourceVideo.height;
+      
+      [weakSelf makeInternalMetalTexture:CGSizeMake(width, height)];
+      
+      float FPS = weakFrameSourceVideo.FPS;
+      weakSelf.FPS = FPS;
+      
+      // Create display link once framerate is known
+      
+      [weakSelf makeDisplayLink];
+      
+      if (weakSelf.displayLink.paused == TRUE) {
+        weakSelf.displayLink.paused = FALSE;
+        
+        NSLog(@"loadedBlock : paused = FALSE : start display link at host time %.3f", CACurrentMediaTime());
+      }
+      
+      [weakFrameSourceVideo play];
+    };
+    
+    [frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
+    
+    //[self decodeCarSpinAlphaLoop];
     
     //self.metalBT709Decoder.useComputeRenderer = TRUE;
     
@@ -279,11 +303,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     [metalScaleRenderContext setupRenderPipelines:self.metalBT709Decoder.metalRenderContext mtkView:mtkView];
     
     self.metalScaleRenderContext = metalScaleRenderContext;
-    
-    // FIXME: what should observable be attahed to, the view, the media?
-    
-    [self regiserForItemNotificaitons];
-    
+        
     viewportWidth = 0;
     viewportHeight = 0;
   }
@@ -337,10 +357,10 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   // If player is not actually playing yet then nothing is ready
   
-  if (self.player.currentItem == nil) {
-    NSLog(@"player not playing yet on display frame %d", (int)self.frameNum + 1);
-    return;
-  }
+//  if (self.player.currentItem == nil) {
+//    NSLog(@"player not playing yet in drawInMTKView");
+//    return;
+//  }
   
   if (self.currentFrame == nil) {
     NSLog(@"currentFrame is nil in drawInMTKView");
@@ -568,27 +588,6 @@ void validate_storage_mode(id<MTLTexture> texture)
   }
 }
 
-#pragma mark - AVPlayerItemOutputPullDelegate
-
-- (void)outputMediaDataWillChange:(AVPlayerItemOutput*)sender
-{
-#if defined(DEBUG)
-  assert(self.displayLink != nil);
-#endif // DEBUG
-  
-  // Restart display link.
-  
-  if (self.displayLink.paused == TRUE) {
-    self.displayLink.paused = FALSE;
-    
-    NSLog(@"outputMediaDataWillChange : paused = FALSE : start display link at host time %.3f", CACurrentMediaTime());
-  }
-  
-  //NSLog(@"outputMediaDataWillChange");
-  
-  return;
-}
-
 // This method is invoked when a new frame of video data is ready to be displayed.
 
 - (void) nextFrameReady:(GPUVFrame*)nextFrame {
@@ -609,7 +608,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   }
 }
 
-- (BOOL) makeInternalMetalTexture
+- (BOOL) makeInternalMetalTexture:(CGSize)_resizeTextureSize
 {
 #if defined(DEBUG)
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
@@ -714,74 +713,11 @@ void validate_storage_mode(id<MTLTexture> texture)
   return TRUE;
 }
 
-
-- (void) regiserForItemNotificaitons
-{
-  [self addObserver:self forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:AVPlayerItemStatusContext];
-}
-
-- (void) unregiserForItemNotificaitons
-{
-  [self removeObserver:self forKeyPath:@"player.currentItem.status" context:AVPlayerItemStatusContext];
-}
-
-- (void) addDidPlayToEndTimeNotificationForPlayerItem:(AVPlayerItem *)item
-{
-  if (_notificationToken) {
-    _notificationToken = nil;
-  }
-  
-  // Setting actionAtItemEnd to None prevents the movie from getting paused at item end. A very simplistic, and not gapless, looped playback.
-  
-  _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
-  _notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:AVPlayerItemDidPlayToEndTimeNotification object:item queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
-    // Simple item playback rewind.
-    [self.playerItem seekToTime:kCMTimeZero completionHandler:nil];
-  }];
-}
-
-- (void) unregisterForItemEndNotification
-{
-  if (_notificationToken) {
-    [[NSNotificationCenter defaultCenter] removeObserver:_notificationToken name:AVPlayerItemDidPlayToEndTimeNotification object:_player.currentItem];
-    _notificationToken = nil;
-  }
-}
-
-- (void)outputSequenceWasFlushed:(AVPlayerItemOutput*)output
-{
-  NSLog(@"outputSequenceWasFlushed");
-  
-  return;
-}
-
-// Wait for video dimensions to be come available
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-  if (context == AVPlayerItemStatusContext) {
-    AVPlayerStatus status = [change[NSKeyValueChangeNewKey] integerValue];
-    switch (status) {
-      case AVPlayerItemStatusUnknown:
-        break;
-      case AVPlayerItemStatusReadyToPlay: {
-        //        CGSize itemSize = [[self.player currentItem] presentationSize];
-        //        NSLog(@"AVPlayerItemStatusReadyToPlay: video itemSize dimensions : %d x %d", (int)itemSize.width, (int)itemSize.height);
-        //        _resizeTextureSize = itemSize;
-        //        [self makeInternalMetalTexture];
-        break;
-      }
-      case AVPlayerItemStatusFailed: {
-        //[self stopLoadingAnimationAndHandleError:[[_player currentItem] error]];
-        NSLog(@"AVPlayerItemStatusFailed : %@", [[self.player currentItem] error]);
-        break;
-      }
-    }
-  }
-  else {
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-  }
-}
+// FIXME: Should display link interface be constant across different views?
+// So, for example if 2 views are displaying videos that should be in sync
+// then shoudl 1 shared display link object be used between the 2 views?
+// Come back to this detail after splitting notification and init logic
+// into a frame source module.
 
 #pragma mark - DisplayLink
 
@@ -793,7 +729,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   // Calculate approximate FPS
   //float FPS = 1.0f / timeInterval;
-  //float FPS = self->fps;
+  float FPS = self.FPS;
   
 #if defined(DEBUG)
   NSAssert(FPS != 0.0f, @"fps not set when creating display link");
@@ -833,8 +769,6 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 - (void)displayLinkCallback:(CADisplayLink*)sender
 {
-  AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
-  
 #define LOG_DISPLAY_LINK_TIMINGS
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
@@ -865,195 +799,17 @@ void validate_storage_mode(id<MTLTexture> texture)
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
-  // Map time offset to item time
+  id<GPUVFrameSource> frameSource = self.frameSource;
+  GPUVFrame *nextFrame = [frameSource frameForHostTime:hostTime];
   
-  CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
-  
-#if defined(LOG_DISPLAY_LINK_TIMINGS)
-  NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
-#endif // LOG_DISPLAY_LINK_TIMINGS
-  
-  //CFTimeInterval outputItemTime;
-  //outputItemTime = currentFrameNum * (1.0f / 10); // 10 FPS
-  //outputItemTime = currentFrameNum * 1.0f; // 1 FPS
-  //CMTime syncTime = CMTimeMake(round(outputItemTime * 1000.0f), 1000);
-  
-  //NSLog(@"display frame %d : at vsync time %0.2f : %d / %d", (int)self.frameNum + 1, outputItemTime, (int)syncTime.value, (int)syncTime.timescale);
-  
-  if ([playerItemVideoOutput hasNewPixelBufferForItemTime:currentItemTime]) {
-    // Grab the pixel bufer for the current time
-    
-    CVPixelBufferRef rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:currentItemTime itemTimeForDisplay:NULL];
-    
-    if (rgbPixelBuffer != NULL) {
-#if defined(LOG_DISPLAY_LINK_TIMINGS)
-      NSLog(@"LOADED RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
-#endif // LOG_DISPLAY_LINK_TIMINGS
-      
-      GPUVFrame *nextFrame = [[GPUVFrame alloc] init];
-      nextFrame.yCbCrPixelBuffer = rgbPixelBuffer;
-      CVPixelBufferRelease(rgbPixelBuffer);
-      [self nextFrameReady:nextFrame];
-      nextFrame = nil;
-      // Draw frame directly from timer invocation
-      [self draw];
-    } else {
-#if defined(LOG_DISPLAY_LINK_TIMINGS)
-      NSLog(@"did not load RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
-#endif // LOG_DISPLAY_LINK_TIMINGS
-    }
+  if (nextFrame == nil) {
+    // No frame loaded for this time
   } else {
-#if defined(LOG_DISPLAY_LINK_TIMINGS)
-    NSLog(@"hasNewPixelBufferForItemTime is FALSE at vsync time %0.3f", CMTimeGetSeconds(currentItemTime));
-#endif // LOG_DISPLAY_LINK_TIMINGS
+    [self nextFrameReady:nextFrame];
+    nextFrame = nil;
+    // Draw frame directly from this timer invocation
+    [self draw];
   }
-}
-
-- (void) decodeCarSpinAlphaLoop
-{
-  //NSString *resFilename = @"QuickTime_Test_Pattern_HD.mov";
-  NSString *resFilename = @"CarSpin.m4v";
-  [self decodeRGBResourceMovie:resFilename];
-}
-
-- (void) decodeRGBResourceMovie:(NSString*)resFilename
-{
-  self.player = [[AVPlayer alloc] init];
-  
-  NSString *path = [[NSBundle mainBundle] pathForResource:resFilename ofType:nil];
-  NSAssert(path, @"path is nil");
-  
-  NSURL *assetURL = [NSURL fileURLWithPath:path];
-  
-  self.playerItem = [AVPlayerItem playerItemWithURL:assetURL];
-  
-  NSLog(@"PlayerItem URL %@", assetURL);
-  
-  NSDictionary *pixelBufferAttributes = [BGRAToBT709Converter getPixelBufferAttributes];
-  
-  NSMutableDictionary *mDict = [NSMutableDictionary dictionaryWithDictionary:pixelBufferAttributes];
-  
-  // Add kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
-  
-  mDict[(id)kCVPixelBufferPixelFormatTypeKey] = @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
-  
-  pixelBufferAttributes = [NSDictionary dictionaryWithDictionary:mDict];
-  
-  self.playerItemVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixelBufferAttributes];;
-  
-  // FIXME: does this help ?
-  self.playerItemVideoOutput.suppressesPlayerRendering = TRUE;
-  
-  self.playerQueue = dispatch_queue_create("com.decodem4v.carspin_rgb", DISPATCH_QUEUE_SERIAL);
-  
-  __weak GPUVMTKView* weakSelf = self;
-  
-  [self.playerItemVideoOutput setDelegate:weakSelf queue:self.playerQueue];
-  
-#if defined(DEBUG)
-  assert(self.playerItemVideoOutput.delegateQueue == self.playerQueue);
-#endif // DEBUG
-  
-  self.frameNum = 0;
-  
-  // @"CarSpin_alpha.m4v"
-  
-  float ONE_FRAME_DURATION = 1.0f / 10.0f;
-  
-  // Async logic to parse M4V headers to get tracks and other metadata
-  
-  AVAsset *asset = [self.playerItem asset];
-  
-  NSArray *assetKeys = @[@"duration", @"playable", @"tracks"];
-  
-  [asset loadValuesAsynchronouslyForKeys:assetKeys completionHandler:^{
-    
-    // FIXME: Save @"duration" when available here
-    
-    // FIXME: if @"playable" is FALSE then need to return error and not attempt to play
-    
-    if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-      NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-      if ([videoTracks count] > 0) {
-        // Choose the first video track. Ignore other tracks if found
-        const int videoTrackOffset = 0;
-        AVAssetTrack *videoTrack = [videoTracks objectAtIndex:videoTrackOffset];
-        
-        // Must be self contained
-        
-        if (videoTrack.isSelfContained != TRUE) {
-          //NSLog(@"videoTrack.isSelfContained must be TRUE for \"%@\"", movPath);
-          //return FALSE;
-          assert(0);
-        }
-        
-        CGSize itemSize = videoTrack.naturalSize;
-        NSLog(@"video track naturalSize w x h : %d x %d", (int)itemSize.width, (int)itemSize.height);
-        
-        // Allocate render buffer once asset dimensions are known
-        
-        {
-          // FIXME: how would a queue player that has multiple outputs with different asset sizes be handled
-          // here? Would intermediate render buffers be different sizes?
-          
-          dispatch_sync(dispatch_get_main_queue(), ^{
-            GPUVMTKView *strongSelf = weakSelf;
-            if (strongSelf) {
-              // Writing to this property must be done on main thread
-              strongSelf->_resizeTextureSize = itemSize;
-            }
-
-            [weakSelf makeInternalMetalTexture];
-          });
-        }
-        
-        CMTimeRange timeRange = videoTrack.timeRange;
-        float trackDuration = (float)CMTimeGetSeconds(timeRange.duration);
-        NSLog(@"video track time duration %0.3f", trackDuration);
-        
-        CMTime frameDurationTime = videoTrack.minFrameDuration;
-        float frameDuration = (float)CMTimeGetSeconds(frameDurationTime);
-        NSLog(@"video track frame duration %0.3f", frameDuration);
-        
-        {
-          GPUVMTKView *strongSelf = weakSelf;
-          if (strongSelf) {
-            // Once display frame interval has been parsed, create display
-            // frame timer but be sure it is created on the main thread
-            // and that this method invocation completes before the
-            // next call to dispatch_async() to start playback.
-            
-            // FIXME: get closest known FPS time ??
-            float frameDurationSeconds = CMTimeGetSeconds(frameDurationTime);
-            
-            dispatch_sync(dispatch_get_main_queue(), ^{
-              // Note that writing to FPS members must be executed on the
-              // main thread.
-              
-              strongSelf->FPS = frameDurationSeconds;
-
-              [weakSelf makeDisplayLink];
-            });
-          }
-        }
-        
-        float nominalFrameRate = videoTrack.nominalFrameRate;
-        NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-          [weakSelf.playerItem addOutput:weakSelf.playerItemVideoOutput];
-          [weakSelf.player replaceCurrentItemWithPlayerItem:weakSelf.playerItem];
-          [weakSelf addDidPlayToEndTimeNotificationForPlayerItem:weakSelf.playerItem];
-          [weakSelf.playerItem seekToTime:kCMTimeZero completionHandler:nil];
-          [weakSelf.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
-          [weakSelf.player play];
-        });
-      }
-    }
-    
-  }];
-  
-  return;
 }
 
 @end

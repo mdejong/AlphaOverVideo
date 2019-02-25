@@ -21,7 +21,8 @@
 
 #import <MetalKit/MTKView.h>
 
-#include "GPUVFrame.h"
+#import "GPUVFrame.h"
+#import "GPUVFrameSource.h"
 
 // GPUVMTKView extends MTKView
 
@@ -35,6 +36,12 @@
 // Frame currently being displayed
 
 @property (nonatomic, retain) GPUVFrame *currentFrame;
+
+// Protocol that defines how GPUVFrame objects are loaded,
+// the implementation is invoked from a display linked timer
+// to load the next frame of video data to be displayed.
+
+@property (nonatomic, retain) id<GPUVFrameSource> frameSource;
 
 // Configure view properties after view has been loaded from the NIB.
 // Returns TRUE on success, otherwise FALSE is something went wrong.
