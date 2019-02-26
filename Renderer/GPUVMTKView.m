@@ -123,12 +123,6 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 - (BOOL) configure
 {
-  // Configure internal display timer so that it is not active.
-  // An explicit call to draw will be needed to kick off GPU rendering
-  // on the display linked interval.
-  self.enableSetNeedsDisplay = FALSE;
-  self.paused = TRUE;
-  
   return [self configureMetalKitView];
 }
 
@@ -223,7 +217,26 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     if (isCaptureRenderedTextureEnabled) {
       mtkView.framebufferOnly = false;
+    } else {
+#if defined(DEBUG)
+      // framebufferOnly should be TRUE, this
+      // optimization means the GPU will not
+      // have to write rescaled pixels back
+      // to main memory.
+
+      //assert(mtkView.framebufferOnly == TRUE);
+      //mtkView.framebufferOnly = TRUE;
+#endif // DEBUG
     }
+    
+    // Configure internal display timer so that it is not active.
+    // An explicit call to draw will be needed to kick off GPU rendering
+    // on the display linked interval.
+    
+    mtkView.enableSetNeedsDisplay = FALSE;
+    mtkView.paused = TRUE;
+    
+    mtkView.depthStencilPixelFormat = MTLPixelFormatInvalid;
     
     [self.class setupViewPixelFormat:mtkView];
     

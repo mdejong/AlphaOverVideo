@@ -71,6 +71,8 @@
   
   if (renderPassDescriptor != nil)
   {
+    renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionDontCare;
+    
     // Create a render command encoder so we can render into something
     id<MTLRenderCommandEncoder> renderEncoder =
     [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];

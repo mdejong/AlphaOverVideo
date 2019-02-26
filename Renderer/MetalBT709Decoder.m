@@ -641,6 +641,9 @@ renderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor
   
   if (renderPassDescriptor != nil)
   {
+    // Clear operation is never needed for load action since all pixels are written
+    renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionDontCare;
+
     id<MTLRenderCommandEncoder> renderEncoder =
       [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
     renderEncoder.label = label;
