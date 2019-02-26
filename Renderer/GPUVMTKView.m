@@ -216,17 +216,14 @@ void validate_storage_mode(id<MTLTexture> texture)
     isCaptureRenderedTextureEnabled = 0;
     
     if (isCaptureRenderedTextureEnabled) {
-      mtkView.framebufferOnly = false;
+      mtkView.framebufferOnly = FALSE;
     } else {
-#if defined(DEBUG)
       // framebufferOnly should be TRUE, this
       // optimization means the GPU will not
       // have to write rescaled pixels back
       // to main memory.
 
-      //assert(mtkView.framebufferOnly == TRUE);
-      //mtkView.framebufferOnly = TRUE;
-#endif // DEBUG
+      mtkView.framebufferOnly = TRUE;
     }
     
     // Configure internal display timer so that it is not active.
@@ -278,8 +275,8 @@ void validate_storage_mode(id<MTLTexture> texture)
     };
     
     //[frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
-    [frameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
-     //[frameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
+    //[frameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
+    [frameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
     
     //self.metalBT709Decoder.useComputeRenderer = TRUE;
     
@@ -359,6 +356,17 @@ void validate_storage_mode(id<MTLTexture> texture)
     NSLog(@"_resizeTexture not allocated in drawInMTKView");
     return;
   }
+  
+  // Metal has been initialized at this point and the CAMetalLayer
+  // used internally by MTKView has been allocated and configured.
+  // Verify that the framebufferOnly optimization is enabled.
+  
+#if defined(DEBUG)
+  {
+    CAMetalLayer *metalLayer = (CAMetalLayer *) self.layer;
+    assert(metalLayer.framebufferOnly == TRUE);
+  }
+#endif // DEBUG
   
   // Flush texture to release Metal/CoreVideo textures and pixel buffers.
   // Note that this is executed before checking nil conditions so that

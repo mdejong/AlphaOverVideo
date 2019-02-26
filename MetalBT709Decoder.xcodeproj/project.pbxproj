@@ -189,6 +189,9 @@
 		3CBDDE1421FAF9C6008E1E66 /* QuickTime_Test_Pattern_HD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */; };
 		3CBDDE1521FAF9C6008E1E66 /* QuickTime_Test_Pattern_SD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B221DD87D50041ACE3 /* QuickTime_Test_Pattern_SD.mov */; };
 		3CBDDE1621FAF9C6008E1E66 /* Rec709Sample.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3C821A3C21ED84DD006D516F /* Rec709Sample.mp4 */; };
+		3CC2B8E32225D67C007869FD /* BT709tagged.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */; };
+		3CC2B8E42225D67C007869FD /* BT709tagged.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */; };
+		3CC2B8E52225D67C007869FD /* BT709tagged.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */; };
 		3CE62FD022233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
 		3CE62FD122233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
 		3CE62FD222233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
@@ -377,6 +380,7 @@
 		3CBDDDFF21FAF8FD008E1E66 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3CBDDE0121FAF8FD008E1E66 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CBDDE0221FAF8FD008E1E66 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = BT709tagged.mp4; sourceTree = "<group>"; };
 		3CE62FC922233B850003EA70 /* GPUVFrameSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSource.h; sourceTree = "<group>"; };
 		3CE62FCE22233DBA0003EA70 /* GPUVFrameSourceVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSourceVideo.h; sourceTree = "<group>"; };
 		3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVFrameSourceVideo.m; sourceTree = "<group>"; };
@@ -548,6 +552,7 @@
 				3C7E37E0221CC83100116145 /* CarSpin_alpha.m4v */,
 				3C18D3CE221D432E005DAF85 /* CarSpinAF10.m4v */,
 				3C18D3CF221D432E005DAF85 /* CarSpinAF10_alpha.m4v */,
+				3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */,
 				3C1310CA2220D492000C4972 /* GPUVFrame.h */,
 				3C1310CB2220D493000C4972 /* GPUVFrame.m */,
 				3CE62FC922233B850003EA70 /* GPUVFrameSource.h */,
@@ -1040,6 +1045,7 @@
 				3C4A77B521DD87D90041ACE3 /* QuickTime_Test_Pattern_SD.mov in Resources */,
 				3C7E37CA2218BC9F00116145 /* ColorsAlpha4by4_alpha.m4v in Resources */,
 				3C7E37DA2218E52C00116145 /* AlphaBGHalf.png in Resources */,
+				3CC2B8E42225D67C007869FD /* BT709tagged.mp4 in Resources */,
 				3C483FFF22098AE600AC51AC /* big_buck_bunny_HD_srgb.m4v in Resources */,
 				3C9779322216024E003721FD /* RedFadeAlpha256.m4v in Resources */,
 				3C483FF72209196F00AC51AC /* drop-of-water-iPad-2048-1536-apple-crf20.m4v in Resources */,
@@ -1087,6 +1093,7 @@
 				3C8219D721E938CC006D516F /* osxcolor_test_image_iPad_2048_1536.m4v in Resources */,
 				3C4A77B621DD87DA0041ACE3 /* QuickTime_Test_Pattern_SD.mov in Resources */,
 				3C18D3D2221D432F005DAF85 /* CarSpinAF10.m4v in Resources */,
+				3CC2B8E52225D67C007869FD /* BT709tagged.mp4 in Resources */,
 				3CF086C5221773C000FD7802 /* GlobeLEDAlpha_alpha.m4v in Resources */,
 				3C9779332216024E003721FD /* RedFadeAlpha256.m4v in Resources */,
 				3C821A3F21ED84DE006D516F /* Rec709Sample.mp4 in Resources */,
@@ -1103,6 +1110,7 @@
 				3C7E37C62218BC9F00116145 /* ColorsAlpha4by4.m4v in Resources */,
 				3C18D3D3221D432F005DAF85 /* CarSpinAF10_alpha.m4v in Resources */,
 				3C7E37D92218E52C00116145 /* AlphaBGHalf.png in Resources */,
+				3CC2B8E32225D67C007869FD /* BT709tagged.mp4 in Resources */,
 				3C8219D921E950A6006D516F /* clouds_reflecting_off_the_beach-wallpaper-2048x1536.m4v in Resources */,
 				3C02732D220B715C005FB416 /* QuickTime_Test_Pattern_HD_grayscale.m4v in Resources */,
 				3C7E37E2221CC83200116145 /* CarSpin_alpha.m4v in Resources */,
