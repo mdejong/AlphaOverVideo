@@ -52,7 +52,7 @@
 
 // Render into MTKView with 2D scale operation
 
-- (void) renderScaled:(MetalRenderContext*)mrc
+- (BOOL) renderScaled:(MetalRenderContext*)mrc
               mtkView:(nonnull MTKView *)mtkView
           renderWidth:(int)renderWidth
          renderHeight:(int)renderHeight
@@ -99,8 +99,9 @@
     
     [renderEncoder endEncoding];
     
-    // Schedule a present once the framebuffer is complete using the current drawable
-    [commandBuffer presentDrawable:mtkView.currentDrawable];
+    return TRUE;
+  } else {
+    return FALSE;
   }
 }
 

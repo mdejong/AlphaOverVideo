@@ -67,6 +67,7 @@ void validate_storage_mode(id<MTLTexture> texture)
 @property (nonatomic, retain) CADisplayLink *displayLink;
 
 @property (nonatomic, assign) float FPS;
+@property (nonatomic, assign) float frameDuration;
 
 @end
 
@@ -246,9 +247,9 @@ void validate_storage_mode(id<MTLTexture> texture)
       int height = weakFrameSourceVideo.height;
       
       [weakSelf makeInternalMetalTexture:CGSizeMake(width, height)];
-      
-      float FPS = weakFrameSourceVideo.FPS;
-      weakSelf.FPS = FPS;
+
+      weakSelf.FPS = weakFrameSourceVideo.FPS;
+      weakSelf.frameDuration = weakFrameSourceVideo.frameDuration;
       
       // Create display link once framerate is known
       
@@ -263,9 +264,9 @@ void validate_storage_mode(id<MTLTexture> texture)
       [weakFrameSourceVideo play];
     };
     
-    [frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
-    
-    //[self decodeCarSpinAlphaLoop];
+    //[frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
+    [frameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
+     //[frameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
     
     //self.metalBT709Decoder.useComputeRenderer = TRUE;
     
@@ -277,7 +278,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     MetalBT709Gamma decodeGamma = MetalBT709GammaApple;
     
-    if ((1)) {
+    if ((0)) {
       // Explicitly set gamma to sRGB
       decodeGamma = MetalBT709GammaSRGB;
     } else if ((0)) {
@@ -453,8 +454,8 @@ void validate_storage_mode(id<MTLTexture> texture)
                          waitUntilCompleted:FALSE];
     
     if (worked) {
-      // Schedule a present once the framebuffer is complete using the current drawable
-      [commandBuffer presentDrawable:self.currentDrawable];
+      CFTimeInterval minFramerate = self.frameDuration;
+      [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
     }
   } else {
     // Viewport dimensions do not exactly match the input texture
@@ -486,13 +487,23 @@ void validate_storage_mode(id<MTLTexture> texture)
     // Invoke scaling operation to fit the intermediate buffer
     // into the current width and height of the viewport.
     
-    [self.metalScaleRenderContext renderScaled:mrc
+    worked = [self.metalScaleRenderContext renderScaled:mrc
                                        mtkView:self
                                    renderWidth:renderWidth
                                   renderHeight:renderHeight
                                  commandBuffer:commandBuffer
                           renderPassDescriptor:renderPassDescriptor
                                    bgraTexture:_resizeTexture];
+    
+    if (worked) {
+      // Present drawable and make sure it is displayed for at least
+      // this long, this is important to avoid a weird case where
+      // a 60 FPS display link could present a drawable faster
+      // than 30 FPS (assuming the movie is 30 FPS).
+      
+      CFTimeInterval minFramerate = self.frameDuration;
+      [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
+    }
   }
   
   if (isCaptureRenderedTextureEnabled) {
@@ -727,8 +738,6 @@ void validate_storage_mode(id<MTLTexture> texture)
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
   
-  // Calculate approximate FPS
-  //float FPS = 1.0f / timeInterval;
   float FPS = self.FPS;
   
 #if defined(DEBUG)
@@ -748,9 +757,18 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   //self.displayLink.preferredFramesPerSecond = 10;
   
-  float useFPS = (FPS * 10); // Force 10 FPS sampling rate when 1 FPS is detected
+  //float useFPS = (FPS * 10); // Force 10 FPS sampling rate when 1 FPS is detected
+  
+  float useFPS = FPS;
+  
+  // FIXME: What about a framerate like 23.98 ? Should round to 24 or use 30 FPS
+  // sampling rate?
   
   NSInteger intFPS = (NSInteger) round(useFPS);
+  
+  if (intFPS < 1) {
+    intFPS = 1;
+  }
   
   self.displayLink.preferredFramesPerSecond = intFPS;
   

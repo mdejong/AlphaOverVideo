@@ -246,7 +246,12 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
               // Note that writing to FPS members must be executed on the
               // main thread.
               
-              strongSelf.FPS = frameDurationSeconds;
+              float FPS = 1.0f / frameDurationSeconds;
+              if (FPS <= 30.001 && FPS >= 29.999) {
+                FPS = 30;
+              }
+              strongSelf.FPS = FPS;
+              strongSelf.frameDuration = frameDurationSeconds;
               
               //[weakSelf makeDisplayLink];
             });
@@ -256,20 +261,14 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
         float nominalFrameRate = videoTrack.nominalFrameRate;
         NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
         
-        // FIXME: Do not automatically start playback here, deliver
-        // a notification that everything is ready to go and wait for
-        // view or media object to start playback.
-        
-        float ONE_FRAME_DURATION = 1.0f / 10.0f;
+        // Load player and seek to time 0.0 but do not automatically start
         
         dispatch_async(dispatch_get_main_queue(), ^{
           [weakSelf.playerItem addOutput:weakSelf.playerItemVideoOutput];
           [weakSelf.player replaceCurrentItemWithPlayerItem:weakSelf.playerItem];
           [weakSelf addDidPlayToEndTimeNotificationForPlayerItem:weakSelf.playerItem];
           [weakSelf.playerItem seekToTime:kCMTimeZero completionHandler:nil];
-          [weakSelf.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
-//          [weakSelf.player play];
-          //weakSelf.loadedBlock(TRUE);
+          [weakSelf.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:frameDuration];
         });
       }
     }

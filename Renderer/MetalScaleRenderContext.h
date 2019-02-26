@@ -31,7 +31,7 @@
 
 // Render into MTKView with 2D scale operation
 
-- (void) renderScaled:(MetalRenderContext*)mrc
+- (BOOL) renderScaled:(MetalRenderContext*)mrc
               mtkView:(nonnull MTKView *)mtkView
           renderWidth:(int)renderWidth
          renderHeight:(int)renderHeight
