@@ -188,6 +188,9 @@
 		3CC2B8E32225D67C007869FD /* BT709tagged.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */; };
 		3CC2B8E42225D67C007869FD /* BT709tagged.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */; };
 		3CC2B8E52225D67C007869FD /* BT709tagged.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */; };
+		3CE0B329222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */; };
+		3CE0B32A222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */; };
+		3CE0B32B222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */; };
 		3CE62FD022233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
 		3CE62FD122233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
 		3CE62FD222233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
@@ -375,6 +378,8 @@
 		3CBDDE0121FAF8FD008E1E66 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CBDDE0221FAF8FD008E1E66 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = BT709tagged.mp4; sourceTree = "<group>"; };
+		3CE0B327222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSourceAlphaVideo.h; sourceTree = "<group>"; };
+		3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVFrameSourceAlphaVideo.m; sourceTree = "<group>"; };
 		3CE62FC922233B850003EA70 /* GPUVFrameSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSource.h; sourceTree = "<group>"; };
 		3CE62FCE22233DBA0003EA70 /* GPUVFrameSourceVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSourceVideo.h; sourceTree = "<group>"; };
 		3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVFrameSourceVideo.m; sourceTree = "<group>"; };
@@ -552,6 +557,8 @@
 				3CE62FC922233B850003EA70 /* GPUVFrameSource.h */,
 				3CE62FCE22233DBA0003EA70 /* GPUVFrameSourceVideo.h */,
 				3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */,
+				3CE0B327222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.h */,
+				3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */,
 				3C1310CF222214FE000C4972 /* GPUVMTKView.h */,
 				3C1310D0222214FE000C4972 /* GPUVMTKView.m */,
 				3C97793522161CF2003721FD /* MetalScaleRenderContext.h */,
@@ -1190,6 +1197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CA8B6C621E1682600D2B853 /* H264Encoder.m in Sources */,
+				3CE0B32A222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */,
 				3C7E37D22218D03000116145 /* AAPLViewController.m in Sources */,
 				3C4A773321D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				63B42F161ED2063300859D09 /* AAPLShaders.metal in Sources */,
@@ -1219,6 +1227,7 @@
 				3C1310CE2220D899000C4972 /* GPUVFrame.m in Sources */,
 				3C7E37D12218D02F00116145 /* AAPLViewController.m in Sources */,
 				63B42F171ED2063800859D09 /* AAPLShaders.metal in Sources */,
+				3CE0B32B222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */,
 				3AFD656D1F71A8980008A125 /* AAPLAppDelegate.m in Sources */,
 				3C4A773421D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3AFD65731F71A8A10008A125 /* main.m in Sources */,
@@ -1240,6 +1249,7 @@
 				3C1310CC2220D493000C4972 /* GPUVFrame.m in Sources */,
 				3C7E37D32218D03000116145 /* AAPLViewController.m in Sources */,
 				3C97793722161CF3003721FD /* MetalScaleRenderContext.m in Sources */,
+				3CE0B329222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */,
 				63B42F181ED2063C00859D09 /* AAPLShaders.metal in Sources */,
 				3CB6E80221D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
 				3C4A773221D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,

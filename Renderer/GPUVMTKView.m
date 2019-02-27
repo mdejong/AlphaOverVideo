@@ -20,7 +20,13 @@
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
 
+#define LOAD_ALPHA_VIDEO
+
+#if defined(LOAD_ALPHA_VIDEO)
+#import "GPUVFrameSourceAlphaVideo.h"
+#else
 #import "GPUVFrameSourceVideo.h"
+#endif // LOAD_ALPHA_VIDEO
 
 // Define this symbol to enable private texture mode on MacOSX.
 
@@ -299,16 +305,35 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     
     // Decode H.264 to CoreVideo pixel buffer
     
+#if defined(LOAD_ALPHA_VIDEO)
+    if (self.frameSource == nil) {
+      self.frameSource = [[GPUVFrameSourceAlphaVideo alloc] init];
+    }
+    
+    GPUVFrameSourceAlphaVideo *frameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
+#else
     if (self.frameSource == nil) {
       self.frameSource = [[GPUVFrameSourceVideo alloc] init];
     }
-
+    
     GPUVFrameSourceVideo *frameSourceVideo = (GPUVFrameSourceVideo *) self.frameSource;
+#endif // LOAD_ALPHA_VIDEO
 
     __weak GPUVMTKView *weakSelf = self;
+    
+    
+#if defined(LOAD_ALPHA_VIDEO)
+    __weak GPUVFrameSourceAlphaVideo *weakFrameSourceVideo = frameSourceVideo;
+#else
     __weak GPUVFrameSourceVideo *weakFrameSourceVideo = frameSourceVideo;
+#endif // LOAD_ALPHA_VIDEO
     
     frameSourceVideo.loadedBlock = ^(BOOL success){
+      if (!success) {
+        NSLog(@"loadedBlock FAILED");
+        return;
+      }
+      
       // Allocate scaling texture
       
       int width = weakFrameSourceVideo.width;
@@ -328,15 +353,19 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       [weakFrameSourceVideo play];
     };
     
+#if defined(LOAD_ALPHA_VIDEO)
+    [weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
+#else
     [frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
     //[frameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
     //[frameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
+#endif // LOAD_ALPHA_VIDEO
     
     //self.metalBT709Decoder.useComputeRenderer = TRUE;
     
     // Process 32BPP input, a CoreVideo pixel buffer is modified so that
     // an additional channel for Y is retained.
-    self.metalBT709Decoder.hasAlphaChannel = FALSE;
+    self.metalBT709Decoder.hasAlphaChannel = TRUE;
     
     [self setupViewOpaqueProperty:mtkView];
     
