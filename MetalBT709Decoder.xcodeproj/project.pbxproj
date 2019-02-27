@@ -17,9 +17,6 @@
 		3ABBE2791F7319890080C72C /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ABBE2761F7319760080C72C /* MetalKit.framework */; };
 		3ABBE27B1F7319900080C72C /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ABBE2781F7319760080C72C /* MetalKit.framework */; };
 		3ABBE27C1F7319950080C72C /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ABBE2771F7319760080C72C /* MetalKit.framework */; };
-		3AF7EA0A1EB64A46003BB06D /* AAPLRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7E9BF1EB64A46003BB06D /* AAPLRenderer.m */; };
-		3AF7EA0B1EB64A46003BB06D /* AAPLRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7E9BF1EB64A46003BB06D /* AAPLRenderer.m */; };
-		3AF7EA0C1EB64A46003BB06D /* AAPLRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7E9BF1EB64A46003BB06D /* AAPLRenderer.m */; };
 		3AFD655F1F71A71B0008A125 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AFD65591F71A7070008A125 /* Main.storyboard */; };
 		3AFD65631F71A7240008A125 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AFD65471F71A7070008A125 /* LaunchScreen.storyboard */; };
 		3AFD65641F71A7240008A125 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AFD65491F71A7070008A125 /* Main.storyboard */; };
@@ -76,7 +73,6 @@
 		3C4A773221D894720041ACE3 /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */; };
 		3C4A773321D894720041ACE3 /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */; };
 		3C4A773421D894720041ACE3 /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */; };
-		3C4A773821D898AF0041ACE3 /* AAPLRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7E9BF1EB64A46003BB06D /* AAPLRenderer.m */; };
 		3C4A774221D898BE0041ACE3 /* MetalBT709Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80021D6C62A005424E6 /* MetalBT709Decoder.m */; };
 		3C4A774321D898BE0041ACE3 /* MetalRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A770121D8498E0041ACE3 /* MetalRenderContext.m */; };
 		3C4A774421D898BE0041ACE3 /* BGDecodeEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80921D6D15F005424E6 /* BGDecodeEncode.m */; };
@@ -271,8 +267,6 @@
 		3ABBE2761F7319760080C72C /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		3ABBE2771F7319760080C72C /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		3ABBE2781F7319760080C72C /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.0.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
-		3AF7E9BE1EB64A46003BB06D /* AAPLRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLRenderer.h; sourceTree = "<group>"; };
-		3AF7E9BF1EB64A46003BB06D /* AAPLRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AAPLRenderer.m; sourceTree = "<group>"; };
 		3AF7E9C01EB64A46003BB06D /* AAPLShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLShaderTypes.h; sourceTree = "<group>"; };
 		3AF7E9C11EB64A46003BB06D /* AAPLShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = AAPLShaders.metal; sourceTree = "<group>"; };
 		3AF7E9C81EB64A46003BB06D /* MetalBT709Decoder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalBT709Decoder.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -560,8 +554,6 @@
 				3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */,
 				3C1310CF222214FE000C4972 /* GPUVMTKView.h */,
 				3C1310D0222214FE000C4972 /* GPUVMTKView.m */,
-				3AF7E9BE1EB64A46003BB06D /* AAPLRenderer.h */,
-				3AF7E9BF1EB64A46003BB06D /* AAPLRenderer.m */,
 				3C97793522161CF2003721FD /* MetalScaleRenderContext.h */,
 				3C97793622161CF3003721FD /* MetalScaleRenderContext.m */,
 				3CB6E80121D6C62A005424E6 /* MetalBT709Decoder.h */,
@@ -1202,7 +1194,6 @@
 				3C4A773321D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				63B42F161ED2063300859D09 /* AAPLShaders.metal in Sources */,
 				3CB6E80321D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
-				3AF7EA0A1EB64A46003BB06D /* AAPLRenderer.m in Sources */,
 				3CE62FD122233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */,
 				3A30EDF91EB67EA800B4FC0B /* AAPLImage.m in Sources */,
 				3CB6E81521D73BB5005424E6 /* CGFrameBuffer.m in Sources */,
@@ -1228,7 +1219,6 @@
 				3C1310CE2220D899000C4972 /* GPUVFrame.m in Sources */,
 				3C7E37D12218D02F00116145 /* AAPLViewController.m in Sources */,
 				63B42F171ED2063800859D09 /* AAPLShaders.metal in Sources */,
-				3AF7EA0B1EB64A46003BB06D /* AAPLRenderer.m in Sources */,
 				3AFD656D1F71A8980008A125 /* AAPLAppDelegate.m in Sources */,
 				3C4A773421D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3AFD65731F71A8A10008A125 /* main.m in Sources */,
@@ -1254,7 +1244,6 @@
 				3CB6E80221D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
 				3C4A773221D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3A30EDFE1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
-				3AF7EA0C1EB64A46003BB06D /* AAPLRenderer.m in Sources */,
 				3CB6E80A21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
 				3CE62FD022233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */,
 			);
@@ -1292,7 +1281,6 @@
 				3C4A770E21D892BA0041ACE3 /* AppDelegate.m in Sources */,
 				3C4A774321D898BE0041ACE3 /* MetalRenderContext.m in Sources */,
 				3C4A774221D898BE0041ACE3 /* MetalBT709Decoder.m in Sources */,
-				3C4A773821D898AF0041ACE3 /* AAPLRenderer.m in Sources */,
 				3C4A774721D898CA0041ACE3 /* AAPLShaders.metal in Sources */,
 				3C4A774421D898BE0041ACE3 /* BGDecodeEncode.m in Sources */,
 			);

@@ -26,7 +26,7 @@
 
 // GPUVMTKView extends MTKView
 
-@interface GPUVMTKView : MTKView
+@interface GPUVMTKView : MTKView <MTKViewDelegate>
 
 // Previous frame, ref to the previous frame is dropped as
 // soon as the next frame is delivered.

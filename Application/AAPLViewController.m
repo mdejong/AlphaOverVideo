@@ -6,7 +6,6 @@ Implementation of our cross-platform view controller
 */
 
 #import "AAPLViewController.h"
-#import "AAPLRenderer.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -21,8 +20,6 @@ Implementation of our cross-platform view controller
 #endif // TARGET_OS_IOS
   
     IBOutlet GPUVMTKView *mtkView;
-
-    AAPLRenderer *_renderer;
 }
 
 - (void)viewDidLoad
@@ -92,26 +89,13 @@ Implementation of our cross-platform view controller
         return;
     }
 
-    _renderer = [[AAPLRenderer alloc] initWithMetalKitView:mtkView];
-
-    if(!_renderer)
-    {
-        NSLog(@"Renderer failed initialization");
-        return;
-    }
-
-    // Initialize our renderer with the view size
-    [_renderer mtkView:mtkView drawableSizeWillChange:mtkView.drawableSize];
-
-    // Setup Metal and playback logic
+    // Configure Metal view and playback logic
     BOOL worked = [mtkView configure];
     if(!worked)
     {
       NSLog(@"configure failed for GPUVMTKView");
       return;
     }
-  
-    mtkView.delegate = _renderer;
 }
 
 @end

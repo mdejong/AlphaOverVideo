@@ -332,18 +332,40 @@ renderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor
   // Require iOS 12 or newer to access kCVImageBufferTransferFunction_sRGB and kCVImageBufferTransferFunction_Linear
   //const NSString *kCVImageBufferTransferFunction_sRGB_str = @"IEC_sRGB";
   //const NSString *kCVImageBufferTransferFunction_Linear_str = @"Linear";
+  
+  MetalBT709Gamma gamma = self.gamma;
  
-  BOOL isBT709Gamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_ITU_R_709_2, 0) == kCFCompareEqualTo);
-  //BOOL isSRGBGamma = (CFStringCompare(transferFunctionKeyAttachment, (__bridge CFStringRef)kCVImageBufferTransferFunction_sRGB_str, 0) == kCFCompareEqualTo);
-  BOOL isSRGBGamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_sRGB, 0) == kCFCompareEqualTo);
-  //BOOL isLinearGamma = (CFStringCompare(transferFunctionKeyAttachment, (__bridge CFStringRef)kCVImageBufferTransferFunction_Linear_str, 0) == kCFCompareEqualTo);
-  BOOL isLinearGamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_Linear, 0) == kCFCompareEqualTo);
+  BOOL isBT709Gamma = FALSE;
+  BOOL isSRGBGamma = FALSE;
+  BOOL isLinearGamma = FALSE;
+  
+  if (transferFunctionKeyAttachment == NULL) {
+#if TARGET_OS_IOS
+    // nop
+#else
+    // MacOSX
+    
+    // The "CVImageBufferTransferFunction" pixel buffer key is not include in "propagatedAttachments"
+    // under MacOSX so there is no way to check the gamma setting. Need to assume user configured
+    // this input correctly since there is no way to detect at runtime.
+    
+    if (gamma == MetalBT709GammaApple) {
+      isBT709Gamma = TRUE;
+    } else if (gamma == MetalBT709GammaSRGB) {
+      isSRGBGamma = TRUE;
+    } else if (gamma == MetalBT709GammaLinear) {
+      isLinearGamma = TRUE;
+    }
+#endif // TARGET_OS_IOS
+  } else {
+    isBT709Gamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_ITU_R_709_2, 0) == kCFCompareEqualTo);
+    isSRGBGamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_sRGB, 0) == kCFCompareEqualTo);
+    isLinearGamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_Linear, 0) == kCFCompareEqualTo);
+  }
   
 #if defined(DEBUG)
   //NSLog(@"isBT709Gamma %d : isSRGBGamma %d : isSRGBGamma %d", isBT709Gamma, isSRGBGamma, isLinearGamma);
 #endif // DEBUG
-  
-  MetalBT709Gamma gamma = self.gamma;
   
   if (gamma == MetalBT709GammaApple) {
     if (isBT709Gamma == FALSE) {

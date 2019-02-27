@@ -67,7 +67,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1)) {
-    NSLog(@"frameForHostTime at host time %.3f", CACurrentMediaTime());
+    NSLog(@"frameForHostTime at host time %.3f : CACurrentMediaTime() %.3f", hostTime, CACurrentMediaTime());
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
@@ -170,9 +170,6 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 #endif // DEBUG
   
   //self.frameNum = 0;
-  
-  // @"CarSpin_alpha.m4v"
-  
   
   // Async logic to parse M4V headers to get tracks and other metadata
   

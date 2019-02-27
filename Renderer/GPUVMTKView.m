@@ -64,12 +64,52 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 @property (nonatomic, retain) MetalScaleRenderContext *metalScaleRenderContext;
 
+#if TARGET_OS_IOS
 @property (nonatomic, retain) CADisplayLink *displayLink;
+#else
+#endif // TARGET_OS_IOS
 
 @property (nonatomic, assign) float FPS;
 @property (nonatomic, assign) float frameDuration;
 
+#if TARGET_OS_IOS
+// nop
+#else
+- (void)displayLinkCallback:(CFTimeInterval)hostTime;
+#endif // TARGET_OS_IOS
+
 @end
+
+#if !TARGET_OS_IPHONE
+static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
+                                          const CVTimeStamp *inNow,
+                                          const CVTimeStamp *inOutputTime,
+                                          CVOptionFlags flagsIn,
+                                          CVOptionFlags *flagsOut,
+                                          void *displayLinkContext)
+{
+  @autoreleasepool {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      GPUVMTKView *view = (__bridge GPUVMTKView *) displayLinkContext;
+      
+      //CFTimeInterval totalSeconds = CACurrentMediaTime();
+      
+      CFTimeInterval totalSeconds = ((float)inNow->videoTime) / inNow->videoTimeScale;
+      
+      if ((0))
+      {
+        CVTime displayLinkVsyncDuration = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLink);
+        CFTimeInterval displayLinkVsyncDurationSeconds = ((float)displayLinkVsyncDuration.timeValue) / displayLinkVsyncDuration.timeScale;
+        printf("displayLinkVsyncDuration %0.3f : AKA %0.2f FPS\n", displayLinkVsyncDurationSeconds, 1.0f / displayLinkVsyncDurationSeconds);
+      }
+      
+      [view displayLinkCallback:totalSeconds];
+    });
+  }
+  
+  return kCVReturnSuccess;
+}
+#endif
 
 @implementation GPUVMTKView
 {
@@ -90,10 +130,18 @@ void validate_storage_mode(id<MTLTexture> texture)
   // non-zero when writing to a sRGB texture is possible, certain versions
   // of MacOSX do not support sRGB texture write operations.
   int hasWriteSRGBTextureSupport;
+  
+#if TARGET_OS_IOS
+  // nop
+#else
+  CVDisplayLinkRef _displayLink;
+#endif // TARGET_OS_IOS
 }
 
 - (void) dealloc
 {
+  [self cancelDisplayLink];
+  
   MetalBT709Decoder *metalBT709Decoder = self.metalBT709Decoder;
   
   self.prevFrame = nil;
@@ -130,7 +178,10 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 - (void) layoutSubviews
 {
+#if TARGET_OS_IOS
   [super layoutSubviews];
+#endif // TARGET_OS_IOS
+  
   CGSize size = self.bounds.size;
 
   CGFloat scaledWidth = size.width * self.layer.contentsScale;
@@ -212,6 +263,13 @@ void validate_storage_mode(id<MTLTexture> texture)
 {
   GPUVMTKView *mtkView = self;
   
+  [self checkSRGBPixelSupport];
+  
+  [mtkView mtkView:mtkView drawableSizeWillChange:mtkView.drawableSize];
+  
+  __weak GPUVMTKView *weakSelf = self;
+  mtkView.delegate = weakSelf;
+  
   {
     isCaptureRenderedTextureEnabled = 0;
     
@@ -265,18 +323,14 @@ void validate_storage_mode(id<MTLTexture> texture)
       
       [weakSelf makeDisplayLink];
       
-      if (weakSelf.displayLink.paused == TRUE) {
-        weakSelf.displayLink.paused = FALSE;
-        
-        NSLog(@"loadedBlock : paused = FALSE : start display link at host time %.3f", CACurrentMediaTime());
-      }
+      [weakSelf startDisplayLink];
       
       [weakFrameSourceVideo play];
     };
     
-    //[frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
+    [frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
     //[frameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
-    [frameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
+    //[frameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
     
     //self.metalBT709Decoder.useComputeRenderer = TRUE;
     
@@ -288,7 +342,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     MetalBT709Gamma decodeGamma = MetalBT709GammaApple;
     
-    if ((0)) {
+    if ((1)) {
       // Explicitly set gamma to sRGB
       decodeGamma = MetalBT709GammaSRGB;
     } else if ((0)) {
@@ -314,9 +368,6 @@ void validate_storage_mode(id<MTLTexture> texture)
     [metalScaleRenderContext setupRenderPipelines:self.metalBT709Decoder.metalRenderContext mtkView:mtkView];
     
     self.metalScaleRenderContext = metalScaleRenderContext;
-        
-    viewportWidth = 0;
-    viewportHeight = 0;
   }
   
   return TRUE;
@@ -324,6 +375,9 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 - (void)drawRect:(CGRect)rect
 {
+  // FIXME: need to support draw with no frame tey, since the view can be
+  // rendered before decoding for video has started.
+  
   // FIXME: If there is no frame object available then clear the display.
   
 //  if (self.frameObj != nil) {
@@ -348,12 +402,12 @@ void validate_storage_mode(id<MTLTexture> texture)
   int renderHeight = viewportHeight;
   
   if (viewportWidth == 0) {
-    NSLog(@"view dimensions not configured during drawInMTKView");
+    NSLog(@"view dimensions not configured during displayFrame");
     return;
   }
   
   if (_resizeTexture == nil) {
-    NSLog(@"_resizeTexture not allocated in drawInMTKView");
+    NSLog(@"_resizeTexture not allocated in displayFrame");
     return;
   }
   
@@ -385,7 +439,7 @@ void validate_storage_mode(id<MTLTexture> texture)
 //  }
   
   if (self.currentFrame == nil) {
-    NSLog(@"currentFrame is nil in drawInMTKView");
+    NSLog(@"currentFrame is nil in displayFrame");
     return;
   }
   
@@ -475,8 +529,12 @@ void validate_storage_mode(id<MTLTexture> texture)
                          waitUntilCompleted:FALSE];
     
     if (worked) {
+#if TARGET_OS_IOS
       CFTimeInterval minFramerate = self.frameDuration;
       [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
+#else
+      [commandBuffer presentDrawable:self.currentDrawable];
+#endif // TARGET_OS_IOS
     }
   } else {
     // Viewport dimensions do not exactly match the input texture
@@ -522,8 +580,12 @@ void validate_storage_mode(id<MTLTexture> texture)
       // a 60 FPS display link could present a drawable faster
       // than 30 FPS (assuming the movie is 30 FPS).
       
+#if TARGET_OS_IOS
       CFTimeInterval minFramerate = self.frameDuration;
       [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
+#else
+      [commandBuffer presentDrawable:self.currentDrawable];
+#endif // TARGET_OS_IOS
     }
   }
   
@@ -640,6 +702,34 @@ void validate_storage_mode(id<MTLTexture> texture)
   }
 }
 
+- (void) checkSRGBPixelSupport
+{
+  // Indicate that each pixel has a blue, green, red, and alpha channel, where each channel is
+  // an 8-bit unsigned normalized value (i.e. 0 maps to 0.0 and 255 maps to 1.0) as sRGB
+  
+#if TARGET_OS_IOS
+  hasWriteSRGBTextureSupport = 1;
+#else
+  // MacOSX 10.14 or newer needed to support sRGB texture writes
+  
+  if (hasWriteSRGBTextureSupport == 1) {
+    return;
+  }
+  
+  NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
+  
+  if (version.majorVersion >= 10 && version.minorVersion >= 14) {
+    // Supports sRGB texture write feature.
+    hasWriteSRGBTextureSupport = 1;
+  } else {
+    hasWriteSRGBTextureSupport = 0;
+  }
+  
+  // Force 16 bit float texture to be used (about 2x slower for IO bound shader)
+  //hasWriteSRGBTextureSupport = 0;
+#endif // TARGET_OS_IOS
+}
+
 - (BOOL) makeInternalMetalTexture:(CGSize)_resizeTextureSize
 {
 #if defined(DEBUG)
@@ -673,27 +763,6 @@ void validate_storage_mode(id<MTLTexture> texture)
   MTLTextureDescriptor *textureDescriptor = [[MTLTextureDescriptor alloc] init];
   
   textureDescriptor.textureType = MTLTextureType2D;
-  
-  // Indicate that each pixel has a blue, green, red, and alpha channel, where each channel is
-  // an 8-bit unsigned normalized value (i.e. 0 maps to 0.0 and 255 maps to 1.0) as sRGB
-  
-#if TARGET_OS_IOS
-  hasWriteSRGBTextureSupport = 1;
-#else
-  // MacOSX 10.14 or newer needed to support sRGB texture writes
-  
-  NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
-  
-  if (version.majorVersion >= 10 && version.minorVersion >= 14) {
-    // Supports sRGB texture write feature.
-    hasWriteSRGBTextureSupport = 1;
-  } else {
-    hasWriteSRGBTextureSupport = 0;
-  }
-  
-  // Force 16 bit float texture to be used (about 2x slower for IO bound shader)
-  //hasWriteSRGBTextureSupport = 0;
-#endif // TARGET_OS_IOS
   
 #if TARGET_OS_IOS
   textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
@@ -765,12 +834,23 @@ void validate_storage_mode(id<MTLTexture> texture)
   NSAssert(FPS != 0.0f, @"fps not set when creating display link");
 #endif // DEBUG
   
+  if ((0)) {
+    // Force display link framerate that is 2x a 30 FPS interval,
+    // this should not change the render result since a minimum
+    // frame time is indicated with each render present operation.
+    FPS = 60;
+  }
+  
+#if TARGET_OS_IOS
   // CADisplayLink
   
   assert(self.displayLink == nil);
   
   self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback:)];
   self.displayLink.paused = TRUE;
+#else
+  // nop
+#endif // TARGET_OS_IOS
   
   // FIXME: configure preferredFramesPerSecond based on parsed FPS from video file
   
@@ -791,23 +871,70 @@ void validate_storage_mode(id<MTLTexture> texture)
     intFPS = 1;
   }
   
+#if TARGET_OS_IOS
   self.displayLink.preferredFramesPerSecond = intFPS;
   
   // FIXME: what to pass as forMode? Should this be
   // NSRunLoopCommonModes cs NSDefaultRunLoopMode
   
   [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+#else
+  // CVDisplayLink
+  CGDirectDisplayID displayID = CGMainDisplayID();
+  CVReturn error = CVDisplayLinkCreateWithCGDisplay(displayID, &_displayLink);
+  if ( error ) {
+    NSLog(@"DisplayLink created with error:%d", error);
+    _displayLink = NULL;
+  }
+  // FIXME: this must not hold ref to self with bridge cast, better to not hold ref
+  // and put implicit cancel in dealloc!
+  CVDisplayLinkSetOutputCallback(_displayLink, displayLinkRenderCallback, (__bridge void *)self);
+#endif // TARGET_OS_IOS
+}
+
+- (void) startDisplayLink
+{
+#if TARGET_OS_IOS
+  if (self.displayLink.paused == TRUE) {
+    self.displayLink.paused = FALSE;
+    
+    NSLog(@"loadedBlock : paused = FALSE : start display link at host time %.3f", CACurrentMediaTime());
+  }
+#else
+  assert(_displayLink != NULL);
+  
+  if (CVDisplayLinkIsRunning(_displayLink) == FALSE) {
+    CVDisplayLinkStart(_displayLink);
+    
+    NSLog(@"loadedBlock : paused = FALSE : start display link at host time %.3f", CACurrentMediaTime());
+  }
+#endif // TARGET_OS_IOS
 }
 
 - (void) cancelDisplayLink
 {
+#if TARGET_OS_IOS
   self.displayLink.paused = TRUE;
   [self.displayLink invalidate];
   self.displayLink = nil;
+#else
+  if ( !_displayLink ) return;
+  CVDisplayLinkStop(_displayLink);
+  CVDisplayLinkRelease(_displayLink);
+  _displayLink = NULL;
+#endif // TARGET_OS_IOS
 }
 
-- (void)displayLinkCallback:(CADisplayLink*)sender
+#if TARGET_OS_IOS
+- (void)displayLinkCallback:(CADisplayLink*)displayLink
+#else
+- (void)displayLinkCallback:(CFTimeInterval)hostTime
+#endif // TARGET_OS_IOS
 {
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+
 #define LOG_DISPLAY_LINK_TIMINGS
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
@@ -825,18 +952,22 @@ void validate_storage_mode(id<MTLTexture> texture)
   // by targetTimestamp (assuming a frame is decoded there).
   // This will sync as long as all video data is 1 frame behind.
   
-  CFTimeInterval hostTime = sender.timestamp + sender.duration;
-  
+#if TARGET_OS_IOS
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1)) {
-    CFTimeInterval prevFrameTime = sender.timestamp;
-    CFTimeInterval nextFrameTime = sender.targetTimestamp;
+    CFTimeInterval prevFrameTime = displayLink.timestamp;
+    CFTimeInterval nextFrameTime = displayLink.targetTimestamp;
     CFTimeInterval duration = nextFrameTime - prevFrameTime;
     
-    NSLog(@"prev %0.3f -> next %0.3f : duration %0.2f : sender.duration %0.2f", prevFrameTime, nextFrameTime, duration, sender.duration);
+    NSLog(@"prev %0.3f -> next %0.3f : duration %0.2f : sender.duration %0.2f", prevFrameTime, nextFrameTime, duration, displayLink.duration);
     NSLog(@"");
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
+  
+  CFTimeInterval hostTime = displayLink.timestamp + displayLink.duration;
+#else
+  // nop
+#endif // TARGET_OS_IOS
   
   id<GPUVFrameSource> frameSource = self.frameSource;
   GPUVFrame *nextFrame = [frameSource frameForHostTime:hostTime];
@@ -849,6 +980,22 @@ void validate_storage_mode(id<MTLTexture> texture)
     // Draw frame directly from this timer invocation
     [self draw];
   }
+}
+
+#pragma mark - MTKViewDelegate
+
+- (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
+{
+#if TARGET_OS_IOS
+  // nop
+#else
+  [self layoutSubviews];
+#endif // TARGET_OS_IOS
+}
+
+- (void)drawInMTKView:(nonnull MTKView *)view
+{
+  return;
 }
 
 @end
