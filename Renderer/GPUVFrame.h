@@ -24,8 +24,13 @@
 @property (nonatomic, assign) CVPixelBufferRef yCbCrPixelBuffer;
 @property (nonatomic, assign) CVPixelBufferRef alphaPixelBuffer;
 
-//@property (atomic, assign) BOOL finished;
+// The frame number is calculated from the presentation timestamp
+// in the video stream.
+
+@property (atomic, assign) int frameNum;
 
 - (NSString*) description;
+
++ (int) calcFrameNum:(CVPixelBufferRef)cvPixelBuffer;
 
 @end

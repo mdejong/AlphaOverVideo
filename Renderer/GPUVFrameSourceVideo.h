@@ -46,4 +46,11 @@
 
 - (void) play;
 
+// Kick of play operation where the zero time implicitly
+// gets synced to the indicated host time. This means
+// that 2 different calls to play on two different
+// players will start in sync.
+
+- (void) play:(CFTimeInterval)syncTime;
+
 @end

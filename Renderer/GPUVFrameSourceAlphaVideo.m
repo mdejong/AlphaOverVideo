@@ -45,13 +45,17 @@
 // given host time then nil is returned.
 
 - (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
-{
+{  
   // Dispatch a host time to both sources and decode a frame for each one.
   // If a given time does not load a new frame for both sources then
   // the RGB and Alpha decoding is not in sync and the frame must be dropped.
   
   GPUVFrame *rgbFrame = [self.rgbSource frameForHostTime:hostTime];
   GPUVFrame *alphaFrame = [self.alphaSource frameForHostTime:hostTime];
+
+  int rgbFrameNum = [GPUVFrame calcFrameNum:rgbFrame.yCbCrPixelBuffer];
+  int alphaFrameNum = [GPUVFrame calcFrameNum:alphaFrame.yCbCrPixelBuffer];  
+  NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
 
   if (rgbFrame == nil && alphaFrame == nil) {
     // No frame avilable from either source
@@ -227,8 +231,14 @@
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
   
-  [self.rgbSource play];
-  [self.alphaSource play];
+  if ((0)) {
+    [self.rgbSource play];
+    [self.alphaSource play];
+  } else {
+    CFTimeInterval hostTime = CACurrentMediaTime();
+    [self.rgbSource play:hostTime];
+    [self.alphaSource play:hostTime];
+  }
 }
 
 @end

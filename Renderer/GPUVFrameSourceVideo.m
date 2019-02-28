@@ -60,6 +60,15 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     NSLog(@"player not playing yet in frameForHostTime");
     return nil;
   }
+  
+  if ((1))
+  {
+    CMTime currentTime = self.player.currentItem.currentTime;
+    
+    //NSLog(@"%p frameForHostTime %.3f :  %d / %d -> itemTime %0.3f", self, hostTime, (unsigned int)currentTime.value, (int)currentTime.timescale, CMTimeGetSeconds(currentTime));
+    
+    NSLog(@"%p frameForHostTime %.3f : itemTime %0.3f", self, hostTime, CMTimeGetSeconds(currentTime));
+  }
 
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
   
@@ -91,6 +100,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
       
       GPUVFrame *nextFrame = [[GPUVFrame alloc] init];
       nextFrame.yCbCrPixelBuffer = rgbPixelBuffer;
+      nextFrame.frameNum = [GPUVFrame calcFrameNum:nextFrame.yCbCrPixelBuffer];
       CVPixelBufferRelease(rgbPixelBuffer);
       return nextFrame;
     } else {
@@ -284,7 +294,30 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 #endif // DEBUG
   
   [self.player play];
+}
+
+// Kick of play operation where the zero time implicitly
+// gets synced to the indicated host time. This means
+// that 2 different calls to play on two different
+// players will start in sync.
+
+- (void) play:(CFTimeInterval)syncTime
+{
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
   
+  // Sync item time 0.0 to supplied host time (system clock)
+  
+  AVPlayerItem *item = self.player.currentItem;
+  
+  NSLog(@"AVPlayer play sync itemTime 0.0 to %.3f", syncTime);
+  
+  self.player.automaticallyWaitsToMinimizeStalling = FALSE;
+  CMTime hostTimeCM = CMTimeMake(syncTime * 1000.0f, 1000);
+  [self.player setRate:1.0 time:kCMTimeZero atHostTime:hostTimeCM];
+  
+  NSLog(@"AVPlayer.item %d / %d : %0.3f", (int)item.currentTime.value, (int)item.currentTime.timescale, CMTimeGetSeconds(item.currentTime));
 }
 
 #pragma mark - AVPlayerItemOutputPullDelegate

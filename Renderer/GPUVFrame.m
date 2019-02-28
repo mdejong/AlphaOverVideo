@@ -78,4 +78,29 @@
           alphaRetainCount];
 }
 
++ (int) calcFrameNum:(CVPixelBufferRef)cvPixelBuffer
+{
+  if (cvPixelBuffer == NULL) {
+    return -1;
+  }
+  
+  NSDictionary *movieTimeDict = (__bridge NSDictionary *) CVBufferGetAttachment(cvPixelBuffer, kCVBufferMovieTimeKey, NULL);
+  
+//  2 : <CFString 0x1dd16ad88 [0x1dcbfd5e0]>{contents = "QTMovieTime"} = <CFBasicHash 0x282f2bf40 [0x1dcbfd5e0]>{type = mutable dict, count = 2,
+//    entries =>
+//    0 : <CFString 0x1dd16ada8 [0x1dcbfd5e0]>{contents = "TimeValue"} = <CFNumber 0xf3e5608b93a8a324 [0x1dcbfd5e0]>{value = +0, type = kCFNumberSInt64Type}
+//    1 : <CFString 0x1dd16adc8 [0x1dcbfd5e0]>{contents = "TimeScale"} = <CFNumber 0xf3e5608b93a89da5 [0x1dcbfd5e0]>{value = +1000, type = kCFNumberSInt32Type}
+//  }
+  
+  NSNumber *timeValueNum = movieTimeDict[@"TimeValue"];
+  NSNumber *timeScaleNum = movieTimeDict[@"TimeScale"];
+  
+  float timeValue = [timeValueNum floatValue];
+  float timeScale = [timeScaleNum floatValue];
+  
+  float frameNum = timeValue / timeScale;
+  
+  return (int) round(frameNum);
+}
+
 @end
