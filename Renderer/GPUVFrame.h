@@ -31,6 +31,6 @@
 
 - (NSString*) description;
 
-+ (int) calcFrameNum:(CVPixelBufferRef)cvPixelBuffer;
++ (int) calcFrameNum:(CVPixelBufferRef)cvPixelBuffer frameDuration:(float)frameDuration;
 
 @end

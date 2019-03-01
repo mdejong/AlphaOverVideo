@@ -32,6 +32,11 @@
 
 @property (nonatomic, copy, nullable) void (^loadedBlock)(BOOL success);
 
+// This block is invoked on the main thread after the source has finished
+// decoding the item.
+
+@property (nonatomic, copy, nullable) void (^finishedBlock)(void);
+
 // Init from asset name
 
 - (BOOL) loadFromAsset:(NSString*)resFilename;
@@ -52,5 +57,14 @@
 // players will start in sync.
 
 - (void) play:(CFTimeInterval)syncTime;
+
+// Define a CMTimescale that will be used by the player, this
+// implicitly assumes that the timeline has a rate of 0.0
+// and that the caller will start playback by setting the
+// timescale rate.
+
+- (void) useMasterClock:(CMClockRef)masterClock;
+
+- (void) seekToTimeZero;
 
 @end

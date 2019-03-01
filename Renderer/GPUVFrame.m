@@ -78,7 +78,7 @@
           alphaRetainCount];
 }
 
-+ (int) calcFrameNum:(CVPixelBufferRef)cvPixelBuffer
++ (int) calcFrameNum:(CVPixelBufferRef)cvPixelBuffer frameDuration:(float)frameDuration
 {
   if (cvPixelBuffer == NULL) {
     return -1;
@@ -95,11 +95,27 @@
   NSNumber *timeValueNum = movieTimeDict[@"TimeValue"];
   NSNumber *timeScaleNum = movieTimeDict[@"TimeScale"];
   
+  /*
+  
+  unsigned long long timeValue = [timeValueNum unsignedLongLongValue];
+  unsigned int timeScale = [timeScaleNum unsignedIntValue];
+  
+  unsigned int frameNum = (unsigned int) (timeValue / timeScale);
+  
+  NSLog(@"%d / %d -> %d", (int)timeValue, timeScale, frameNum);
+  
+  return frameNum;
+  */
+  
   float timeValue = [timeValueNum floatValue];
   float timeScale = [timeScaleNum floatValue];
   
-  float frameNum = timeValue / timeScale;
+  float seconds = timeValue / timeScale;
   
+  NSLog(@"%7d / %7d -> %.3f", (int)[timeValueNum unsignedLongLongValue], [timeScaleNum unsignedIntValue], seconds);
+  
+  //float frameDuration = (1.0f / 30);
+  float frameNum = seconds / frameDuration;
   return (int) round(frameNum);
 }
 

@@ -100,7 +100,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
       
       GPUVFrame *nextFrame = [[GPUVFrame alloc] init];
       nextFrame.yCbCrPixelBuffer = rgbPixelBuffer;
-      nextFrame.frameNum = [GPUVFrame calcFrameNum:nextFrame.yCbCrPixelBuffer];
+      nextFrame.frameNum = [GPUVFrame calcFrameNum:nextFrame.yCbCrPixelBuffer frameDuration:self.frameDuration];
       CVPixelBufferRelease(rgbPixelBuffer);
       return nextFrame;
     } else {
@@ -315,9 +315,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   self.player.automaticallyWaitsToMinimizeStalling = FALSE;
   CMTime hostTimeCM = CMTimeMake(syncTime * 1000.0f, 1000);
-  [self.player setRate:1.0 time:kCMTimeZero atHostTime:hostTimeCM];
+  //[self.player setRate:1.0 time:kCMTimeZero atHostTime:hostTimeCM];
+  [self.player setRate:1.0 time:kCMTimeInvalid atHostTime:hostTimeCM];
   
-  NSLog(@"AVPlayer.item %d / %d : %0.3f", (int)item.currentTime.value, (int)item.currentTime.timescale, CMTimeGetSeconds(item.currentTime));
+  NSLog(@"play AVPlayer.item %d / %d : %0.3f", (int)item.currentTime.value, (int)item.currentTime.timescale, CMTimeGetSeconds(item.currentTime));
 }
 
 #pragma mark - AVPlayerItemOutputPullDelegate
@@ -361,8 +362,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
   _notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:AVPlayerItemDidPlayToEndTimeNotification object:item queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
-    // Simple item playback rewind.
-    [self.playerItem seekToTime:kCMTimeZero completionHandler:nil];
+    if (self.finishedBlock) {
+      self.finishedBlock();
+      //self.finishedBlock = nil;
+    }
   }];
 }
 
@@ -407,6 +410,22 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   else {
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
   }
+}
+
+// Define a CMTimescale that will be used by the player, this
+// implicitly assumes that the timeline has a rate of 0.0
+// and that the caller will start playback by setting the
+// timescale rate.
+
+- (void) useMasterClock:(CMClockRef)masterClock
+{
+  self.player.masterClock = masterClock;
+//  self.player.
+}
+
+- (void) seekToTimeZero
+{
+  [self.player.currentItem seekToTime:kCMTimeZero completionHandler:nil];
 }
 
 @end

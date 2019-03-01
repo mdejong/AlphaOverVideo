@@ -47,4 +47,6 @@
 
 - (void) play;
 
+- (void) useMasterClock:(CMClockRef)masterClock;
+
 @end

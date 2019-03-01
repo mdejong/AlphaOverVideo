@@ -20,6 +20,9 @@
 @property (nonatomic, assign) BOOL rgbSourceLoaded;
 @property (nonatomic, assign) BOOL alphaSourceLoaded;
 
+@property (nonatomic, assign) BOOL rgbSourceEnded;
+@property (nonatomic, assign) BOOL alphaSourceEnded;
+
 @end
 
 @implementation GPUVFrameSourceAlphaVideo
@@ -50,11 +53,15 @@
   // If a given time does not load a new frame for both sources then
   // the RGB and Alpha decoding is not in sync and the frame must be dropped.
   
+  NSLog(@"rgb and alpha frameForHostTime %.3f", hostTime);
+  
   GPUVFrame *rgbFrame = [self.rgbSource frameForHostTime:hostTime];
   GPUVFrame *alphaFrame = [self.alphaSource frameForHostTime:hostTime];
 
-  int rgbFrameNum = [GPUVFrame calcFrameNum:rgbFrame.yCbCrPixelBuffer];
-  int alphaFrameNum = [GPUVFrame calcFrameNum:alphaFrame.yCbCrPixelBuffer];  
+  NSLog(@"check rgbFrameNum and alphaFrameNum");
+  
+  int rgbFrameNum = [GPUVFrame calcFrameNum:rgbFrame.yCbCrPixelBuffer frameDuration:self.rgbSource.frameDuration];
+  int alphaFrameNum = [GPUVFrame calcFrameNum:alphaFrame.yCbCrPixelBuffer frameDuration:self.alphaSource.frameDuration];
   NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
 
   if (rgbFrame == nil && alphaFrame == nil) {
@@ -67,6 +74,9 @@
   } else if (rgbFrame == nil && alphaFrame != nil) {
     // alpha returned a frame but RGB did not
     NSLog(@"alpha returned a frame but RGB did not");
+    return nil;
+  } else if (rgbFrameNum != alphaFrameNum) {
+    NSLog(@"RGB vs Alpha decode frame mismatch");
     return nil;
   } else {
     rgbFrame.alphaPixelBuffer = alphaFrame.yCbCrPixelBuffer;
@@ -178,6 +188,28 @@
 //      }
     }
   };
+  
+  // Set end of stream callbacks
+  
+  self.rgbSource.finishedBlock = ^{
+    NSLog(@"self.rgbSource.finishedBlock");
+    weakSelf.rgbSourceEnded = TRUE;
+    if (weakSelf.rgbSourceEnded && weakSelf.alphaSourceEnded) {
+      weakSelf.rgbSourceEnded = FALSE;
+      weakSelf.alphaSourceEnded = FALSE;
+      [weakSelf play];
+    }
+  };
+  
+  self.alphaSource.finishedBlock = ^{
+    NSLog(@"self.alphaSource.finishedBlock");
+    weakSelf.alphaSourceEnded = TRUE;
+    if (weakSelf.rgbSourceEnded && weakSelf.alphaSourceEnded) {
+      weakSelf.rgbSourceEnded = FALSE;
+      weakSelf.alphaSourceEnded = FALSE;
+      [weakSelf play];
+    }
+  };
 }
 
 // Invoked once both videos have been successfully loaded
@@ -234,11 +266,31 @@
   if ((0)) {
     [self.rgbSource play];
     [self.alphaSource play];
-  } else {
+  } else if ((1)) {
     CFTimeInterval hostTime = CACurrentMediaTime();
+    
+    [self.rgbSource seekToTimeZero];
+    [self.alphaSource seekToTimeZero];
+    
+    [self.rgbSource play:hostTime];
+    [self.alphaSource play:hostTime];
+  } else {
+    // Assign same master clock to both players
+    
+    CFTimeInterval hostTime = CACurrentMediaTime();
+    
+    CMClockRef hostTimeMasterClock = CMClockGetHostTimeClock();
+    [self useMasterClock:hostTimeMasterClock];
+    
     [self.rgbSource play:hostTime];
     [self.alphaSource play:hostTime];
   }
+}
+
+- (void) useMasterClock:(CMClockRef)masterClock
+{
+  [self.rgbSource useMasterClock:masterClock];
+  [self.alphaSource useMasterClock:masterClock];
 }
 
 @end
