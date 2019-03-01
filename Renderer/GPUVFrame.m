@@ -112,7 +112,9 @@
   
   float seconds = timeValue / timeScale;
   
-  NSLog(@"%7d / %7d -> %.3f", (int)[timeValueNum unsignedLongLongValue], [timeScaleNum unsignedIntValue], seconds);
+  if ((0)) {
+  NSLog(@"%7llu / %7d -> %.3f", [timeValueNum unsignedLongLongValue], [timeScaleNum unsignedIntValue], seconds);
+  }
   
   //float frameDuration = (1.0f / 30);
   float frameNum = seconds / frameDuration;

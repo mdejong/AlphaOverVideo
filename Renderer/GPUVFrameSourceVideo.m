@@ -61,6 +61,11 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     return nil;
   }
   
+  AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
+  
+//#define LOG_DISPLAY_LINK_TIMINGS
+
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1))
   {
     CMTime currentTime = self.player.currentItem.currentTime;
@@ -69,10 +74,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     
     NSLog(@"%p frameForHostTime %.3f : itemTime %0.3f", self, hostTime, CMTimeGetSeconds(currentTime));
   }
-
-  AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
-  
-#define LOG_DISPLAY_LINK_TIMINGS
+#endif // LOG_DISPLAY_LINK_TIMINGS
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1)) {
@@ -81,6 +83,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
   // Map time offset to item time
+  
+  // FIXME: Seems that a lot of CPU time in itemTimeForHostTime is being
+  // spent getting the master clock for the host. It is better performance
+  // wise to always set the master clock at the start of playback ?
   
   CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
   

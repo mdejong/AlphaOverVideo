@@ -48,21 +48,30 @@
 // given host time then nil is returned.
 
 - (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
-{  
+{
+  const int debugDumpForHostTimeValues = 0;
+  
   // Dispatch a host time to both sources and decode a frame for each one.
   // If a given time does not load a new frame for both sources then
   // the RGB and Alpha decoding is not in sync and the frame must be dropped.
   
+  if (debugDumpForHostTimeValues) {
   NSLog(@"rgb and alpha frameForHostTime %.3f", hostTime);
+  }
   
   GPUVFrame *rgbFrame = [self.rgbSource frameForHostTime:hostTime];
   GPUVFrame *alphaFrame = [self.alphaSource frameForHostTime:hostTime];
 
+  if (debugDumpForHostTimeValues) {
   NSLog(@"check rgbFrameNum and alphaFrameNum");
+  }
   
   int rgbFrameNum = [GPUVFrame calcFrameNum:rgbFrame.yCbCrPixelBuffer frameDuration:self.rgbSource.frameDuration];
   int alphaFrameNum = [GPUVFrame calcFrameNum:alphaFrame.yCbCrPixelBuffer frameDuration:self.alphaSource.frameDuration];
+  
+  if (debugDumpForHostTimeValues) {
   NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
+  }
 
   if (rgbFrame == nil && alphaFrame == nil) {
     // No frame avilable from either source
@@ -76,7 +85,10 @@
     NSLog(@"alpha returned a frame but RGB did not");
     return nil;
   } else if (rgbFrameNum != alphaFrameNum) {
+    if ((1)) {
+    NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
     NSLog(@"RGB vs Alpha decode frame mismatch");
+    }
     return nil;
   } else {
     rgbFrame.alphaPixelBuffer = alphaFrame.yCbCrPixelBuffer;

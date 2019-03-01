@@ -964,7 +964,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
 
-#define LOG_DISPLAY_LINK_TIMINGS
+//#define LOG_DISPLAY_LINK_TIMINGS
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1)) {
@@ -995,8 +995,11 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   
   //CFTimeInterval hostTime = displayLink.timestamp + displayLink.duration;
   CFTimeInterval hostTime = (displayLink.timestamp + displayLink.targetTimestamp) / 2.0f;
-  
+
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
   NSLog(@"host half time %0.3f", hostTime);
+#endif // LOG_DISPLAY_LINK_TIMINGS
+  
 #else
   // nop
 #endif // TARGET_OS_IOS
