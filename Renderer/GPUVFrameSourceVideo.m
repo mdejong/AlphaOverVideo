@@ -219,93 +219,115 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     // FIXME: if @"playable" is FALSE then need to return error and not attempt to play
     
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-      NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-      if ([videoTracks count] > 0) {
-        // Choose the first video track. Ignore other tracks if found
-        const int videoTrackOffset = 0;
-        AVAssetTrack *videoTrack = [videoTracks objectAtIndex:videoTrackOffset];
-        
-        // Must be self contained
-        
-        if (videoTrack.isSelfContained != TRUE) {
-          //NSLog(@"videoTrack.isSelfContained must be TRUE for \"%@\"", movPath);
-          //return FALSE;
-          assert(0);
-        }
-        
-        CGSize itemSize = videoTrack.naturalSize;
-        NSLog(@"video track naturalSize w x h : %d x %d", (int)itemSize.width, (int)itemSize.height);
-        
-        // Allocate render buffer once asset dimensions are known
-        
-        {
-          // FIXME: how would a queue player that has multiple outputs with different asset sizes be handled
-          // here? Would intermediate render buffers be different sizes?
-          
-          dispatch_sync(dispatch_get_main_queue(), ^{
-            GPUVFrameSourceVideo *strongSelf = weakSelf;
-            if (strongSelf) {
-              // Writing to this property must be done on main thread
-              //strongSelf.resizeTextureSize = itemSize;
-              strongSelf.width = (int) itemSize.width;
-              strongSelf.height = (int) itemSize.height;
-            }
-            
-            //[weakSelf makeInternalMetalTexture];
-          });
-        }
-        
-        CMTimeRange timeRange = videoTrack.timeRange;
-        float trackDuration = (float)CMTimeGetSeconds(timeRange.duration);
-        NSLog(@"video track time duration %0.3f", trackDuration);
-        
-        CMTime frameDurationTime = videoTrack.minFrameDuration;
-        float frameDuration = (float)CMTimeGetSeconds(frameDurationTime);
-        NSLog(@"video track frame duration %0.3f", frameDuration);
-        
-        {
-          GPUVFrameSourceVideo *strongSelf = weakSelf;
-          if (strongSelf) {
-            // Once display frame interval has been parsed, create display
-            // frame timer but be sure it is created on the main thread
-            // and that this method invocation completes before the
-            // next call to dispatch_async() to start playback.
-            
-            // FIXME: get closest known FPS time ??
-            float frameDurationSeconds = CMTimeGetSeconds(frameDurationTime);
-            
-            dispatch_sync(dispatch_get_main_queue(), ^{
-              // Note that writing to FPS members must be executed on the
-              // main thread.
-              
-              float FPS = 1.0f / frameDurationSeconds;
-              if (FPS <= 30.001 && FPS >= 29.999) {
-                FPS = 30;
-              }
-              strongSelf.FPS = FPS;
-              strongSelf.frameDuration = frameDurationSeconds;
-              
-              //[weakSelf makeDisplayLink];
-            });
+      dispatch_sync(dispatch_get_main_queue(), ^{
+        BOOL worked = [weakSelf asyncTracksReady:asset];
+
+        if (worked == FALSE) {
+          // In the failed to load case, invoke callback
+          if (weakSelf.loadedBlock != nil) {
+            weakSelf.loadedBlock(FALSE);
+            weakSelf.loadedBlock = nil;
           }
         }
-        
-        float nominalFrameRate = videoTrack.nominalFrameRate;
-        NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
-        
-        // Load player and seek to time 0.0 but do not automatically start
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-          [weakSelf.playerItem addOutput:weakSelf.playerItemVideoOutput];
-          [weakSelf.player replaceCurrentItemWithPlayerItem:weakSelf.playerItem];
-          [weakSelf addDidPlayToEndTimeNotificationForPlayerItem:weakSelf.playerItem];
-          [weakSelf.playerItem seekToTime:kCMTimeZero completionHandler:nil];
-          [weakSelf.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:frameDuration];
-        });
-      }
+      });
     }
     
   }];
+  
+  return TRUE;
+}
+
+// Async callback that is invoked when the "tracks" property has been
+// loaded and is ready to be inspected.
+
+- (BOOL) asyncTracksReady:(AVAsset*)asset
+{
+  // Verify that the status for this specific key is ready to be read
+  
+#if defined(DEBUG)
+  // Callback must be processed on main thread
+  
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+  
+  AVKeyValueStatus status = [asset statusOfValueForKey:@"tracks" error:nil];
+  NSAssert(status == AVKeyValueStatusLoaded, @"status != AVKeyValueStatusLoaded : %d", (int)status);
+#endif // DEBUG
+  
+  NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+  int numTracks = (int) [videoTracks count];
+  
+  if (numTracks == 0) {
+    return FALSE;
+  }
+  
+  // Choose the first video track. Ignore other tracks if found
+  const int videoTrackOffset = 0;
+  AVAssetTrack *videoTrack = [videoTracks objectAtIndex:videoTrackOffset];
+  
+  // Must be self contained
+  
+  if (videoTrack.isSelfContained != TRUE) {
+    if ([self isKindOfClass:AVURLAsset.class]) {
+      AVURLAsset *urlAsset = (AVURLAsset*) asset;
+      NSString *path = [urlAsset.URL path];
+      NSLog(@"videoTrack.isSelfContained must be TRUE for \"%@\"", path);
+    }
+    return FALSE;
+  }
+  
+  CGSize itemSize = videoTrack.naturalSize;
+  NSLog(@"video track naturalSize w x h : %d x %d", (int)itemSize.width, (int)itemSize.height);
+  
+  // Allocate render buffer once asset dimensions are known
+  
+  // Writing to this property must be done on main thread
+  //strongSelf.resizeTextureSize = itemSize;
+  self.width = (int) itemSize.width;
+  self.height = (int) itemSize.height;
+  
+  //[weakSelf makeInternalMetalTexture];
+  
+  CMTimeRange timeRange = videoTrack.timeRange;
+  float trackDuration = (float)CMTimeGetSeconds(timeRange.duration);
+  NSLog(@"video track time duration %0.3f", trackDuration);
+  
+  CMTime frameDurationTime = videoTrack.minFrameDuration;
+  float frameDuration = (float)CMTimeGetSeconds(frameDurationTime);
+  NSLog(@"video track frame duration %0.3f", frameDuration);
+  
+  // Once display frame interval has been parsed, create display
+  // frame timer but be sure it is created on the main thread
+  // and that this method invocation completes before the
+  // next call to dispatch_async() to start playback.
+  
+  // FIXME: get closest known FPS time ??
+  float frameDurationSeconds = CMTimeGetSeconds(frameDurationTime);
+  
+  {
+    // Note that writing to FPS members must be executed on the
+    // main thread.
+    
+    float FPS = 1.0f / frameDurationSeconds;
+    if (FPS <= 30.001 && FPS >= 29.999) {
+      FPS = 30;
+    }
+    self.FPS = FPS;
+    self.frameDuration = frameDurationSeconds;
+    
+    //[self makeDisplayLink];
+  }
+  
+  // Init player with current item, seek to time = 0.0
+  // but do not start playback automatically
+  
+  float nominalFrameRate = videoTrack.nominalFrameRate;
+  NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
+  
+  [self.playerItem addOutput:self.playerItemVideoOutput];
+  [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
+  [self addDidPlayToEndTimeNotificationForPlayerItem:self.playerItem];
+  [self.playerItem seekToTime:kCMTimeZero completionHandler:nil];
+  [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:frameDuration];
   
   return TRUE;
 }
@@ -368,8 +390,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   __weak GPUVFrameSourceVideo *weakSelf = self;
   
   dispatch_async(dispatch_get_main_queue(), ^{
-    weakSelf.loadedBlock(TRUE);
-    weakSelf.loadedBlock = nil;
+    if (weakSelf.loadedBlock != nil) {
+      weakSelf.loadedBlock(TRUE);
+      weakSelf.loadedBlock = nil;
+    }
   });
   
   return;
