@@ -97,11 +97,14 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   if ([playerItemVideoOutput hasNewPixelBufferForItemTime:currentItemTime]) {
     // Grab the pixel bufer for the current time
     
-    CVPixelBufferRef rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:currentItemTime itemTimeForDisplay:NULL];
+    CMTime presentationTime = kCMTimeZero;
+    
+    CVPixelBufferRef rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:currentItemTime itemTimeForDisplay:&presentationTime];
     
     if (rgbPixelBuffer != NULL) {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
       NSLog(@"LOADED RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
+      NSLog(@"                  display time %0.3f", CMTimeGetSeconds(presentationTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
       
       GPUVFrame *nextFrame = [[GPUVFrame alloc] init];
@@ -170,6 +173,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   pixelBufferAttributes = [NSDictionary dictionaryWithDictionary:mDict];
   
+  // FIXME: Create AVPlayerItemVideoOutput after AVPlayerItem status is ready to play
+  // https://forums.developer.apple.com/thread/27589
+  // https://github.com/seriouscyrus/AVPlayerTest
+  
   self.playerItemVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixelBufferAttributes];;
   
   // FIXME: does this help ?
@@ -189,7 +196,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   // Async logic to parse M4V headers to get tracks and other metadata
   
-  AVAsset *asset = [self.playerItem asset];
+  AVAsset *asset = [self.player.currentItem asset];
   
   NSArray *assetKeys = @[@"duration", @"playable", @"tracks"];
   
@@ -338,12 +345,14 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput*)sender
 {
-  dispatch_async(dispatch_get_main_queue(), ^{
-    self.loadedBlock(TRUE);    
-    self.loadedBlock = nil;
-  });
-  
   NSLog(@"outputMediaDataWillChange");
+  
+  __weak GPUVFrameSourceVideo *weakSelf = self;
+  
+  dispatch_async(dispatch_get_main_queue(), ^{
+    weakSelf.loadedBlock(TRUE);
+    weakSelf.loadedBlock = nil;
+  });
   
   return;
 }
@@ -426,7 +435,6 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 - (void) useMasterClock:(CMClockRef)masterClock
 {
   self.player.masterClock = masterClock;
-//  self.player.
 }
 
 - (void) seekToTimeZero

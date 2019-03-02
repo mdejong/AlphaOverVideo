@@ -59,6 +59,12 @@
   NSLog(@"rgb and alpha frameForHostTime %.3f", hostTime);
   }
   
+  // FIXME: Split rgb and alpha frame read so that if no frame can be read for
+  // the rgb channel then a read on the alpha channel is not executed.
+  // Might also be useful to calculate the host time for the RGB and Alpha
+  // streams first and then skip reading both frames if one of the two
+  // is more than a frame off the other.
+  
   GPUVFrame *rgbFrame = [self.rgbSource frameForHostTime:hostTime];
   GPUVFrame *alphaFrame = [self.alphaSource frameForHostTime:hostTime];
 

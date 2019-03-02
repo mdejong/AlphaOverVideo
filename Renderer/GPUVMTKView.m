@@ -994,7 +994,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
   //CFTimeInterval hostTime = displayLink.timestamp + displayLink.duration;
-  CFTimeInterval hostTime = (displayLink.timestamp + displayLink.targetTimestamp) / 2.0f;
+  CFTimeInterval hostTime = (displayLink.timestamp + displayLink.targetTimestamp) * 0.5f;
 
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   NSLog(@"host half time %0.3f", hostTime);
