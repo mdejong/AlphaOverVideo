@@ -58,6 +58,10 @@
 
 - (void) play:(CFTimeInterval)syncTime;
 
+// Stop playback by setting player rate to 0.0
+
+- (void) stop;
+
 // Define a CMTimescale that will be used by the player, this
 // implicitly assumes that the timeline has a rate of 0.0
 // and that the caller will start playback by setting the

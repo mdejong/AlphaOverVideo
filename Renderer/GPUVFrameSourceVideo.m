@@ -194,9 +194,21 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   //self.frameNum = 0;
   
+  // Default end of stream callback, implements non-seamless looping
+  
+  self.finishedBlock = ^{
+    NSLog(@"GPUVFrameSourceVideo.finishedBlock");
+    [weakSelf seekToTimeZero];
+    [weakSelf play];
+  };
+  
   // Async logic to parse M4V headers to get tracks and other metadata
   
-  AVAsset *asset = [self.player.currentItem asset];
+  NSAssert(self.playerItem, @"curent item is nil");
+  
+  AVAsset *asset = [self.playerItem asset];
+
+  NSAssert(asset, @"curent item asset is nil");
   
   NSArray *assetKeys = @[@"duration", @"playable", @"tracks"];
   
@@ -309,6 +321,12 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   [self.player play];
 }
 
+- (void) stop
+{
+  [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
+  [self.player setRate:0.0];
+}
+
 // Kick of play operation where the zero time implicitly
 // gets synced to the indicated host time. This means
 // that 2 different calls to play on two different
@@ -345,7 +363,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput*)sender
 {
-  NSLog(@"outputMediaDataWillChange");
+  NSLog(@"outputMediaDataWillChange : sender %p", sender);
   
   __weak GPUVFrameSourceVideo *weakSelf = self;
   

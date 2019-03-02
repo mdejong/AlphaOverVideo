@@ -20,7 +20,7 @@
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
 
-#define LOAD_ALPHA_VIDEO
+//#define LOAD_ALPHA_VIDEO
 
 #if defined(LOAD_ALPHA_VIDEO)
 #import "GPUVFrameSourceAlphaVideo.h"
@@ -365,7 +365,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     
     // Process 32BPP input, a CoreVideo pixel buffer is modified so that
     // an additional channel for Y is retained.
-    self.metalBT709Decoder.hasAlphaChannel = TRUE;
+    self.metalBT709Decoder.hasAlphaChannel = FALSE;
     
     [self setupViewOpaqueProperty:mtkView];
     
