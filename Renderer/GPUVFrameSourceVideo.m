@@ -451,6 +451,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
       case AVPlayerItemStatusUnknown:
         break;
       case AVPlayerItemStatusReadyToPlay: {
+        NSLog(@"AVPlayerItemStatusReadyToPlay");
         //        CGSize itemSize = [[self.player currentItem] presentationSize];
         //        NSLog(@"AVPlayerItemStatusReadyToPlay: video itemSize dimensions : %d x %d", (int)itemSize.width, (int)itemSize.height);
         //        _resizeTextureSize = itemSize;
