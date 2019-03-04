@@ -73,6 +73,8 @@ void validate_storage_mode(id<MTLTexture> texture)
 #if TARGET_OS_IOS
 @property (nonatomic, retain) CADisplayLink *displayLink;
 #else
+// Hold active ref to object passed to display link callback
+@property (nonatomic, retain) NSObject *displayLinkHoldref;
 #endif // TARGET_OS_IOS
 
 @property (nonatomic, assign) float FPS;
@@ -80,13 +82,53 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 #if TARGET_OS_IOS
 // nop
-#else
-- (void)displayLinkCallback:(CFTimeInterval)hostTime;
+#else // TARGET_OS_IOS
+
+// As each frame is decoded, the time to present the frame must be defined.
+@property (nonatomic, assign) CFTimeInterval presentationTime;
+
+- (void)displayLinkCallback:(CFTimeInterval)frameTime displayAt:(CFTimeInterval)displayTime;
 #endif // TARGET_OS_IOS
 
 @end
 
 #if !TARGET_OS_IPHONE
+
+@interface DisplayLinkPrivateInterface : NSObject
+
+// Ref to the view the display link is associated with
+
+@property (atomic, weak) GPUVMTKView *gpuvMtkView;
+
+// frameInterval = 1 indicates 60 FPS
+// frameInterval = 2 indicates 30 FPS
+
+@property (nonatomic, assign) NSInteger frameInterval;
+@property (nonatomic, assign) NSUInteger deliveryCounter;
+
+@property (nonatomic, assign) float frameDuration;
+
+@end
+
+// Implementation DisplayLinkPrivateInterface
+
+@implementation DisplayLinkPrivateInterface
+
+- (void) dealloc
+{
+  if ((0)) {
+    NSLog(@"dealloc %@", self);
+  }
+  return;
+}
+
+- (NSString*) description
+{
+  return [NSString stringWithFormat:@"DisplayLinkPrivateInterface %p : gpuvMtkView %p", self, self.gpuvMtkView];
+}
+
+@end // end DisplayLinkPrivateInterface
+
 static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
                                           const CVTimeStamp *inNow,
                                           const CVTimeStamp *inOutputTime,
@@ -95,22 +137,104 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
                                           void *displayLinkContext)
 {
   @autoreleasepool {
-    dispatch_async(dispatch_get_main_queue(), ^{
-      GPUVMTKView *view = (__bridge GPUVMTKView *) displayLinkContext;
+    DisplayLinkPrivateInterface *displayLinkPrivateInterface = (__bridge DisplayLinkPrivateInterface *) displayLinkContext;
+    GPUVMTKView *view = displayLinkPrivateInterface.gpuvMtkView;
+    
+    const int debugPrintAll = 1;
+    const int debugPrintDeliveredToMainThread = 1;
+    
+    // If view was deallocated before display link fires then nop
+    
+    if (view == nil) {
+      if (debugPrintAll) {
+        printf("displayLinkPrivateInterface.gpuvMtkView is nil, nop\n");
+      }
+      return kCVReturnSuccess;
+    }
+    
+    CFTimeInterval nowSeconds = inNow->hostTime / CVGetHostClockFrequency();
+    
+    // Output time indicates when vsync should be executed
+    
+    CFTimeInterval outSeconds = inOutputTime->hostTime / CVGetHostClockFrequency();
+
+    CFTimeInterval frameSeconds;
+    CFTimeInterval displaySeconds;
+    
+    if (debugPrintAll)
+    {
+      printf("displayLinkVsyncDuration at Video NOW            %.6f\n", nowSeconds);
+      printf("displayLinkVsyncDuration at Video OUT            %.6f\n", outSeconds);
+      printf("duration                          NOW -> OUT     %.6f\n", outSeconds-nowSeconds);
+    }
+    
+    BOOL deliverToMainThread = FALSE;
+    
+    if (displayLinkPrivateInterface.frameInterval == 2) {
+      // 30 FPS, deliver to main thread on every other vsync
       
-      //CFTimeInterval totalSeconds = CACurrentMediaTime();
-      
-      CFTimeInterval totalSeconds = ((float)inNow->videoTime) / inNow->videoTimeScale;
-      
-      if ((0))
-      {
-        CVTime displayLinkVsyncDuration = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLink);
-        CFTimeInterval displayLinkVsyncDurationSeconds = ((float)displayLinkVsyncDuration.timeValue) / displayLinkVsyncDuration.timeScale;
-        printf("displayLinkVsyncDuration %0.3f : AKA %0.2f FPS\n", displayLinkVsyncDurationSeconds, 1.0f / displayLinkVsyncDurationSeconds);
+      if ((displayLinkPrivateInterface.deliveryCounter & 0x1) == 1) {
+        // Odd numbered frame does not deliver to main thread
+        deliverToMainThread = FALSE;
+      } else {
+        deliverToMainThread = TRUE;
       }
       
-      [view displayLinkCallback:totalSeconds];
-    });
+      // FIXME: this only works for 30 FPS exactly.
+      
+      // At 30 FPS, load frame at time of first vsync and then
+      // display at second vsync.
+      
+      frameSeconds = outSeconds;
+      displaySeconds = outSeconds + displayLinkPrivateInterface.frameDuration;
+    } else {
+      // 60 FPS, deliver to main thread on every vsync
+      deliverToMainThread = TRUE;
+      
+      // At 60 FPS the outTime should be 1/2 the 60 FPS interval, use
+      // halfway time to get the best time in between
+      
+      float halfFrameDuration = displayLinkPrivateInterface.frameDuration * 0.5f;
+      frameSeconds = outSeconds - halfFrameDuration;
+      
+      displaySeconds = outSeconds;
+    }
+    
+    if (debugPrintAll)
+    {
+      printf("deliveryCounter %d -> deliverToMainThread %d\n", (int)displayLinkPrivateInterface.deliveryCounter, (int)deliverToMainThread);
+    }
+    
+    displayLinkPrivateInterface.deliveryCounter = displayLinkPrivateInterface.deliveryCounter + 1;
+    
+    if (debugPrintAll)
+    {
+      CVTime displayLinkVsyncDuration = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLink);
+      CFTimeInterval displayLinkVsyncDurationSeconds = ((float)displayLinkVsyncDuration.timeValue) / displayLinkVsyncDuration.timeScale;
+      printf("displayLinkVsyncDuration %0.3f : AKA %0.2f FPS\n", displayLinkVsyncDurationSeconds, 1.0f / displayLinkVsyncDurationSeconds);
+    }
+    
+    if (debugPrintAll || debugPrintDeliveredToMainThread) {
+      fflush(stdout);
+    }
+    
+    //displayLinkPrivateInterface.lastDisplayLinkInvocationTime = nowSeconds;
+    
+    // Send to main thread only when needed
+    
+    if (deliverToMainThread) {
+      //displayLinkPrivateInterface.lastDisplayLinkDeliveryTime = nowSeconds;
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+#if defined(DEBUG)
+        if (debugPrintAll) {
+        printf("before displayLinkCallback in main thread CACurrentMediaTime() %.6f\n", CACurrentMediaTime());
+        }
+#endif // DEBUG
+        
+        [view displayLinkCallback:frameSeconds displayAt:displaySeconds];
+      });
+    }
   }
   
   return kCVReturnSuccess;
@@ -147,6 +271,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 - (void) dealloc
 {
   [self cancelDisplayLink];
+  self.displayLinkHoldref = nil;
   
   MetalBT709Decoder *metalBT709Decoder = self.metalBT709Decoder;
   
@@ -356,9 +481,10 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 #if defined(LOAD_ALPHA_VIDEO)
     [weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
 #else
-    [frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
+    //[frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
     //[frameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
     //[frameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
+    [frameSourceVideo loadFromAsset:@"CountToTen.m4v"];
 #endif // LOAD_ALPHA_VIDEO
     
     //self.metalBT709Decoder.useComputeRenderer = TRUE;
@@ -562,7 +688,9 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       CFTimeInterval minFramerate = self.frameDuration;
       [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
 #else
-      [commandBuffer presentDrawable:self.currentDrawable];
+      //[commandBuffer presentDrawable:self.currentDrawable];
+      CFTimeInterval presentationTime = self.presentationTime;
+      [self.currentDrawable presentAtTime:presentationTime];
 #endif // TARGET_OS_IOS
     }
   } else {
@@ -613,7 +741,9 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       CFTimeInterval minFramerate = self.frameDuration;
       [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
 #else
-      [commandBuffer presentDrawable:self.currentDrawable];
+      //[commandBuffer presentDrawable:self.currentDrawable];
+      CFTimeInterval presentationTime = self.presentationTime;
+      [self.currentDrawable presentAtTime:presentationTime];
 #endif // TARGET_OS_IOS
     }
   }
@@ -915,9 +1045,22 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     NSLog(@"DisplayLink created with error:%d", error);
     _displayLink = NULL;
   }
-  // FIXME: this must not hold ref to self with bridge cast, better to not hold ref
-  // and put implicit cancel in dealloc!
-  CVDisplayLinkSetOutputCallback(_displayLink, displayLinkRenderCallback, (__bridge void *)self);
+
+  // Note that this arguent does not hold a ref to the view which avoids ref count loop
+  
+  DisplayLinkPrivateInterface *displayLinkPrivateInterface = [[DisplayLinkPrivateInterface alloc] init];
+  displayLinkPrivateInterface.gpuvMtkView = self;
+  
+  displayLinkPrivateInterface.frameDuration = self.frameDuration;
+  
+  if (intFPS > 30) {
+    displayLinkPrivateInterface.frameInterval = 1; // 60 FPS
+  } else {
+    displayLinkPrivateInterface.frameInterval = 2; // 30 FPS
+  }
+  
+  self.displayLinkHoldref = displayLinkPrivateInterface;
+  CVDisplayLinkSetOutputCallback(_displayLink, displayLinkRenderCallback, (__bridge void *)displayLinkPrivateInterface);
 #endif // TARGET_OS_IOS
 }
 
@@ -957,14 +1100,14 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 #if TARGET_OS_IOS
 - (void)displayLinkCallback:(CADisplayLink*)displayLink
 #else
-- (void)displayLinkCallback:(CFTimeInterval)hostTime
+- (void)displayLinkCallback:(CFTimeInterval)frameTime displayAt:(CFTimeInterval)displayTime
 #endif // TARGET_OS_IOS
 {
 #if defined(DEBUG)
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
 
-//#define LOG_DISPLAY_LINK_TIMINGS
+#define LOG_DISPLAY_LINK_TIMINGS
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1)) {
@@ -997,11 +1140,23 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   CFTimeInterval hostTime = (displayLink.timestamp + displayLink.targetTimestamp) * 0.5f;
 
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-  NSLog(@"host half time %0.3f", hostTime);
+  NSLog(@"host half time %0.3f : offset from timestamp %0.3f", hostTime, hostTime-displayLink.timestamp);
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
-#else
-  // nop
+#else // TARGET_OS_IOS
+  CFTimeInterval hostTime = frameTime;
+  
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
+  if ((1)) {
+    CFTimeInterval prevFrameTime = displayTime - self.frameDuration;
+    CFTimeInterval nextFrameTime = displayTime;
+
+    NSLog(@"frameTime %0.3f", frameTime);
+    NSLog(@"prev %0.3f -> next %0.3f : frameDuration %0.2f", prevFrameTime, nextFrameTime, nextFrameTime - prevFrameTime);
+    NSLog(@"");
+  }
+#endif // LOG_DISPLAY_LINK_TIMINGS
+
 #endif // TARGET_OS_IOS
   
   id<GPUVFrameSource> frameSource = self.frameSource;
@@ -1010,6 +1165,12 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   if (nextFrame == nil) {
     // No frame loaded for this time
   } else {
+#if TARGET_OS_IOS
+    // nop
+#else
+    self.presentationTime = displayTime;
+#endif // TARGET_OS_IOS
+    
     [self nextFrameReady:nextFrame];
     nextFrame = nil;
     // Draw frame directly from this timer invocation

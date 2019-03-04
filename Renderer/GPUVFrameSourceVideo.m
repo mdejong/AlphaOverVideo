@@ -63,10 +63,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
   
-//#define LOG_DISPLAY_LINK_TIMINGS
+#define LOG_DISPLAY_LINK_TIMINGS
 
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-  if ((1))
+  if ((0))
   {
     CMTime currentTime = self.player.currentItem.currentTime;
     

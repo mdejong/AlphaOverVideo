@@ -188,6 +188,9 @@
 		3CC2B8E32225D67C007869FD /* BT709tagged.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */; };
 		3CC2B8E42225D67C007869FD /* BT709tagged.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */; };
 		3CC2B8E52225D67C007869FD /* BT709tagged.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */; };
+		3CC9ECB3222C7A1000C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
+		3CC9ECB4222C7A1200C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
+		3CC9ECB5222C7A1300C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
 		3CE0B329222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */; };
 		3CE0B32A222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */; };
 		3CE0B32B222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */; };
@@ -378,6 +381,7 @@
 		3CBDDE0121FAF8FD008E1E66 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CBDDE0221FAF8FD008E1E66 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = BT709tagged.mp4; sourceTree = "<group>"; };
+		3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CountToTen.m4v; sourceTree = "<group>"; };
 		3CE0B327222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSourceAlphaVideo.h; sourceTree = "<group>"; };
 		3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVFrameSourceAlphaVideo.m; sourceTree = "<group>"; };
 		3CE62FC922233B850003EA70 /* GPUVFrameSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSource.h; sourceTree = "<group>"; };
@@ -552,6 +556,7 @@
 				3C18D3CE221D432E005DAF85 /* CarSpinAF10.m4v */,
 				3C18D3CF221D432E005DAF85 /* CarSpinAF10_alpha.m4v */,
 				3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */,
+				3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */,
 				3C1310CA2220D492000C4972 /* GPUVFrame.h */,
 				3C1310CB2220D493000C4972 /* GPUVFrame.m */,
 				3CE62FC922233B850003EA70 /* GPUVFrameSource.h */,
@@ -1038,6 +1043,7 @@
 				3C4A77B821DD87DA0041ACE3 /* QuickTime_Test_Pattern_HD.mov in Resources */,
 				3C483FFD22098AE600AC51AC /* big_buck_bunny_HD_apple.m4v in Resources */,
 				3AFD65641F71A7240008A125 /* Main.storyboard in Resources */,
+				3CC9ECB4222C7A1200C1CA09 /* CountToTen.m4v in Resources */,
 				3C7E37D62218D23C00116145 /* AlphaBG.png in Resources */,
 				3C18D3D1221D432F005DAF85 /* CarSpinAF10.m4v in Resources */,
 				3C8219DA21E950A6006D516F /* clouds_reflecting_off_the_beach-wallpaper-2048x1536.m4v in Resources */,
@@ -1072,6 +1078,7 @@
 			files = (
 				3CF086CA22178F0600FD7802 /* RedCircleOverWhiteA.m4v in Resources */,
 				3C8219DB21E950A6006D516F /* clouds_reflecting_off_the_beach-wallpaper-2048x1536.m4v in Resources */,
+				3CC9ECB5222C7A1300C1CA09 /* CountToTen.m4v in Resources */,
 				3C7E37DF221BF9CF00116145 /* BigBuckBunny640x360.m4v in Resources */,
 				3CF086CD22178F0600FD7802 /* RedCircleOverWhiteA_alpha.m4v in Resources */,
 				3A1857F11EB7AF9E007D4F50 /* Image.tga in Resources */,
@@ -1132,6 +1139,7 @@
 				3C4A77B421DD87D80041ACE3 /* QuickTime_Test_Pattern_SD.mov in Resources */,
 				3C7E37C92218BC9F00116145 /* ColorsAlpha4by4_alpha.m4v in Resources */,
 				3C7E37DD221BF9CF00116145 /* BigBuckBunny640x360.m4v in Resources */,
+				3CC9ECB3222C7A1000C1CA09 /* CountToTen.m4v in Resources */,
 				3C821A3D21ED84DE006D516F /* Rec709Sample.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
