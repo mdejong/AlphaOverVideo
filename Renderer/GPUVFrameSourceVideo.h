@@ -58,6 +58,11 @@
 
 - (void) play:(CFTimeInterval)syncTime;
 
+// restart will rewind and then play, in the case where the video is already
+// playing then a call to restart will just rewind.
+
+- (void) restart;
+
 // Stop playback by setting player rate to 0.0
 
 - (void) stop;

@@ -198,8 +198,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   self.finishedBlock = ^{
     NSLog(@"GPUVFrameSourceVideo.finishedBlock");
-    [weakSelf seekToTimeZero];
-    [weakSelf play];
+    [weakSelf restart];
   };
   
   // Async logic to parse M4V headers to get tracks and other metadata
@@ -340,7 +339,12 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
   
-  [self.player play];
+  if ((0)) {
+    [self.player play];
+  } else {
+    CFTimeInterval syncTime = CACurrentMediaTime();
+    [self play:syncTime];
+  }
 }
 
 - (void) stop
@@ -372,6 +376,23 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   [self.player setRate:1.0 time:kCMTimeInvalid atHostTime:hostTimeCM];
   
   NSLog(@"play AVPlayer.item %d / %d : %0.3f", (int)item.currentTime.value, (int)item.currentTime.timescale, CMTimeGetSeconds(item.currentTime));
+}
+
+// restart will rewind and then play, in the case where the video is already
+// playing then a call to restart will just rewind.
+
+- (void) restart {
+  [self seekToTimeZero];
+  
+  AVPlayerTimeControlStatus timeControlStatus = self.player.timeControlStatus;
+  
+  if (timeControlStatus == AVPlayerTimeControlStatusPlaying ||
+      timeControlStatus == AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate) {
+    // Currently playing
+  } else {
+    // Not playing
+    [self play];
+  }
 }
 
 #pragma mark - AVPlayerItemOutputPullDelegate
