@@ -305,7 +305,10 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 - (void) dealloc
 {
   [self cancelDisplayLink];
-  self.displayLinkHoldref = nil;
+#if TARGET_OS_IOS
+#else
+    self.displayLinkHoldref = nil;
+#endif // TARGET_OS_IOS
   
   MetalBT709Decoder *metalBT709Decoder = self.metalBT709Decoder;
   
@@ -515,10 +518,10 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 #if defined(LOAD_ALPHA_VIDEO)
     [weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
 #else
-    //[frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
+    [frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
     //[frameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
     //[frameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
-    [frameSourceVideo loadFromAsset:@"CountToTen.m4v"];
+    //[frameSourceVideo loadFromAsset:@"CountToTen.m4v"];
 #endif // LOAD_ALPHA_VIDEO
     
     //self.metalBT709Decoder.useComputeRenderer = TRUE;
@@ -1142,7 +1145,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 #define LOG_DISPLAY_LINK_TIMINGS
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-  if ((1)) {
+  if ((0)) {
     NSLog(@"displayLinkCallback at host time %.3f", CACurrentMediaTime());
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
@@ -1226,5 +1229,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 {
   return;
 }
+
+// FIXME: cancel display link when view is hidden or removed from hier
 
 @end
