@@ -388,6 +388,8 @@ renderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor
   
   if (alphaPixelBuffer != NULL) {
     CFTypeRef transferFunctionKeyAttachment = CVBufferGetAttachment(alphaPixelBuffer, kCVImageBufferTransferFunctionKey, NULL);
+    // On MacOSX the kCVImageBufferTransferFunctionKey key always returns nil
+#if TARGET_OS_IOS
 #if defined(DEBUG)
     assert(transferFunctionKeyAttachment != NULL);
 #endif // DEBUG
@@ -397,6 +399,10 @@ renderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor
       NSLog(@"Decoder alpha pixel buffer TransferFunction must be linear, it was \"%@\"", transferFunctionKeyAttachment);
       return FALSE;
     }
+#else
+    // nop on MacOSX
+    transferFunctionKeyAttachment = transferFunctionKeyAttachment;
+#endif // TARGET_OS_IOS
   }
   
   // Map Metal texture to the CoreVideo pixel buffer

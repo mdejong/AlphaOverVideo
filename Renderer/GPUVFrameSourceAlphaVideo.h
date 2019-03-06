@@ -47,6 +47,18 @@
 
 - (void) play;
 
+// Initiate playback by preloading for a specific rate (typically 1.0)
+// and invoke block callback.
+
+- (void) playWithPreroll:(float)rate block:(void (^)(void))block;
+
+// Invoke player setRate to actually begin playing back a video
+// source once playWithPreroll invokes the block callback
+// with a specific host time to sync to.
+
+- (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime;
+
 - (void) useMasterClock:(CMClockRef)masterClock;
+
 
 @end

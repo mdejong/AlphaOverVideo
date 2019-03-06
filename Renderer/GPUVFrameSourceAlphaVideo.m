@@ -65,20 +65,23 @@
   // streams first and then skip reading both frames if one of the two
   // is more than a frame off the other.
   
-  GPUVFrame *rgbFrame = [self.rgbSource frameForHostTime:hostTime];
-  GPUVFrame *alphaFrame = [self.alphaSource frameForHostTime:hostTime];
+  GPUVFrameSourceVideo *rgbSource = self.rgbSource;
+  GPUVFrameSourceVideo *alphaSource = self.alphaSource;
+  
+  GPUVFrame *rgbFrame = [rgbSource frameForHostTime:hostTime];
+  GPUVFrame *alphaFrame = [alphaSource frameForHostTime:hostTime];
 
   if (debugDumpForHostTimeValues) {
   NSLog(@"check rgbFrameNum and alphaFrameNum");
   }
   
-  int rgbFrameNum = [GPUVFrame calcFrameNum:rgbFrame.yCbCrPixelBuffer frameDuration:self.rgbSource.frameDuration];
-  int alphaFrameNum = [GPUVFrame calcFrameNum:alphaFrame.yCbCrPixelBuffer frameDuration:self.alphaSource.frameDuration];
+  int rgbFrameNum = [GPUVFrame calcFrameNum:rgbFrame.yCbCrPixelBuffer frameDuration:rgbSource.frameDuration];
+  int alphaFrameNum = [GPUVFrame calcFrameNum:alphaFrame.yCbCrPixelBuffer frameDuration:alphaSource.frameDuration];
   
   if (debugDumpForHostTimeValues) {
   NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
   }
-
+  
   if (rgbFrame == nil && alphaFrame == nil) {
     // No frame avilable from either source
     return nil;
@@ -117,6 +120,9 @@
 {
   self.rgbSource = [[GPUVFrameSourceVideo alloc] init];
   self.alphaSource = [[GPUVFrameSourceVideo alloc] init];
+  
+  self.rgbSource.uid = @"rgb";
+  self.alphaSource.uid = @"alpha";
   
   [self setBothLoadCallbacks];
 }
@@ -215,7 +221,7 @@
     if (weakSelf.rgbSourceEnded && weakSelf.alphaSourceEnded) {
       weakSelf.rgbSourceEnded = FALSE;
       weakSelf.alphaSourceEnded = FALSE;
-      [weakSelf play];
+      [weakSelf restart];
     }
   };
   
@@ -225,7 +231,7 @@
     if (weakSelf.rgbSourceEnded && weakSelf.alphaSourceEnded) {
       weakSelf.rgbSourceEnded = FALSE;
       weakSelf.alphaSourceEnded = FALSE;
-      [weakSelf play];
+      [weakSelf restart];
     }
   };
 }
@@ -273,6 +279,49 @@
   self.loadedBlock = nil;
 }
 
+// Preroll with callback block
+
+- (void) playWithPreroll:(float)rate block:(void (^)(void))block
+{
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+  
+  // FIXME: Need a block that waits for a callback to be
+  // invoked for each source, then the user supplied block
+  // gets invoked once to kick off the play op.
+  
+  __block BOOL wait1Finished = FALSE;
+  __block BOOL wait2Finished = FALSE;
+  
+  void (^waitBlock1)(void) = ^{
+    wait1Finished = TRUE;
+    if (wait2Finished) {
+      block();
+    }
+  };
+  
+  void (^waitBlock2)(void) = ^{
+    wait2Finished = TRUE;
+    if (wait1Finished) {
+      block();
+    }
+  };
+  
+  [self.rgbSource playWithPreroll:rate block:waitBlock1];
+  [self.alphaSource playWithPreroll:rate block:waitBlock2];
+}
+
+// Invoke player setRate to actually begin playing back a video
+// source once playWithPreroll invokes the block callback
+// with a specific host time to sync to.
+
+- (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime
+{
+  [self.rgbSource setRate:rate atHostTime:atHostTime];
+  [self.alphaSource setRate:rate atHostTime:atHostTime];
+}
+
 // Kick of play operation
 
 - (void) play
@@ -309,6 +358,23 @@
 {
   [self.rgbSource useMasterClock:masterClock];
   [self.alphaSource useMasterClock:masterClock];
+}
+
+- (void) stop
+{
+  [self.rgbSource stop];
+  [self.alphaSource stop];
+}
+
+- (void) seekToTimeZero
+{
+  [self.rgbSource seekToTimeZero];
+  [self.alphaSource seekToTimeZero];
+}
+
+- (void) restart {
+  [self.rgbSource restart];
+  [self.alphaSource restart];
 }
 
 @end

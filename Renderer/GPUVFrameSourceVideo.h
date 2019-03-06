@@ -20,6 +20,8 @@
 
 @interface GPUVFrameSourceVideo : NSObject <GPUVFrameSource>
 
+@property (nonatomic, copy) NSString *uid;
+
 @property (nonatomic, assign) float FPS;
 @property (nonatomic, assign) float frameDuration;
 
@@ -75,5 +77,16 @@
 - (void) useMasterClock:(CMClockRef)masterClock;
 
 - (void) seekToTimeZero;
+
+// Initiate playback by preloading for a specific rate (typically 1.0)
+// and invoke block callback.
+
+- (void) playWithPreroll:(float)rate block:(void (^)(void))block;
+
+// Invoke player setRate to actually begin playing back a video
+// source once playWithPreroll invokes the block callback
+// with a specific host time to sync to.
+
+- (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime;
 
 @end

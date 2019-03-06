@@ -20,7 +20,7 @@
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
 
-//#define LOAD_ALPHA_VIDEO
+#define LOAD_ALPHA_VIDEO
 
 #if defined(LOAD_ALPHA_VIDEO)
 #import "GPUVFrameSourceAlphaVideo.h"
@@ -76,6 +76,14 @@ void validate_storage_mode(id<MTLTexture> texture)
 // Hold active ref to object passed to display link callback
 @property (nonatomic, retain) NSObject *displayLinkHoldref;
 #endif // TARGET_OS_IOS
+
+// Once media data is loaded and readty to play, this field is set to TRUE
+
+@property (nonatomic, assign) BOOL isReadyToPlay;
+
+// The last N display link vsync events will be tracked with this array.
+
+@property (nonatomic, retain) NSMutableArray *displayLinkVsyncTimes;
 
 @property (nonatomic, assign) float FPS;
 @property (nonatomic, assign) float frameDuration;
@@ -259,6 +267,8 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     if (deliverToMainThread) {
       // FIXME: should this use dispatch_async() or dispatch_sync() so that display link thread is blocked?
       
+      // dispatch_async()
+      // dispatch_sync()
       dispatch_async(dispatch_get_main_queue(), ^{
 #if defined(DEBUG)
         if (debugPrintAll) {
@@ -512,7 +522,41 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       
       [weakSelf startDisplayLink];
       
-      [weakFrameSourceVideo play];
+      // FIXME: generate sync time in preroll finished block.
+      // The "sync time" needs to come from the next vsync
+      
+      //CFTimeInterval syncTime = CACurrentMediaTime();
+      
+      const float rate = 1.0f;
+      
+      [weakFrameSourceVideo playWithPreroll:rate block:^{
+        NSLog(@"frameSourceVideo playWithPreroll block");
+
+        // The display link is already running at this point, wait
+        // until there is a vsync available so that this time
+        // can be used to define the "zero" time on the video
+        // timeline.
+        
+        // FIXME: Define repeating callback that will set isReadyToPlay
+        // once the preload is finished and there are enough vsync times
+        
+        weakSelf.isReadyToPlay = TRUE;
+        
+        // Grab most recent vsync time on video interval. If for example
+        // this video is at 30 FPS, then
+
+        if (weakSelf.displayLinkVsyncTimes.count == 0) {
+          NSAssert(weakSelf.displayLinkVsyncTimes.count > 0, @"displayLinkVsyncTimes");
+        }
+        
+//        if (weakSelf.displayLinkVsyncTimes.count < 2) {
+//          NSAssert(weakSelf.displayLinkVsyncTimes.count >= 2, @"displayLinkVsyncTimes");
+//        }
+        
+        NSNumber *vsyncNum = [weakSelf.displayLinkVsyncTimes lastObject];
+        CFTimeInterval syncTime = [vsyncNum doubleValue];
+        [weakFrameSourceVideo setRate:rate atHostTime:syncTime];
+      }];
     };
     
 #if defined(LOAD_ALPHA_VIDEO)
@@ -528,7 +572,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     
     // Process 32BPP input, a CoreVideo pixel buffer is modified so that
     // an additional channel for Y is retained.
-    self.metalBT709Decoder.hasAlphaChannel = FALSE;
+    self.metalBT709Decoder.hasAlphaChannel = TRUE;
     
     [self setupViewOpaqueProperty:mtkView];
     
@@ -1099,6 +1143,8 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 #endif // TARGET_OS_IOS
 }
 
+// Note that this method is a nop if invoked when display link is already running
+
 - (void) startDisplayLink
 {
 #if TARGET_OS_IOS
@@ -1142,13 +1188,15 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
 
-#define LOG_DISPLAY_LINK_TIMINGS
+//#define LOG_DISPLAY_LINK_TIMINGS
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((0)) {
     NSLog(@"displayLinkCallback at host time %.3f", CACurrentMediaTime());
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
+  
+  CFTimeInterval vSyncTime, hostTime;
   
   // hostTime is the previous vsync time plus the amount of time
   // between the vsync and the invocation of this callback. It is
@@ -1172,13 +1220,16 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
   //CFTimeInterval hostTime = displayLink.timestamp + displayLink.duration;
-  CFTimeInterval hostTime = (displayLink.timestamp + displayLink.targetTimestamp) * 0.5f;
+  hostTime = (displayLink.timestamp + displayLink.targetTimestamp) * 0.5f;
+  // Save next vsync time
+  vSyncTime = displayLink.targetTimestamp;
 
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   NSLog(@"host half time %0.3f : offset from timestamp %0.3f", hostTime, hostTime-displayLink.timestamp);
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
 #else // TARGET_OS_IOS
+  // MacOSX
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1)) {
@@ -1192,8 +1243,38 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
 
-  CFTimeInterval hostTime = frameTime;
+  hostTime = frameTime;
+  // Save next vsync time
+  vSyncTime = displayTime;
 #endif // TARGET_OS_IOS
+  
+  // Record timing info until the next vsync can be predicted
+  
+  NSMutableArray *displayLinkVsyncTimes = self.displayLinkVsyncTimes;
+  
+  if (self.displayLinkVsyncTimes == nil) {
+    self.displayLinkVsyncTimes = [NSMutableArray array];
+    displayLinkVsyncTimes = self.displayLinkVsyncTimes;
+  }
+  
+  {
+    NSNumber *prevVsync = [NSNumber numberWithDouble:vSyncTime];
+    [displayLinkVsyncTimes addObject:prevVsync];
+    
+    if (displayLinkVsyncTimes.count > 3) {
+      [displayLinkVsyncTimes removeObjectAtIndex:0];
+    }
+  }
+
+  if (self.isReadyToPlay == FALSE) {
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
+    if ((1)) {
+      NSLog(@"isReadyToPlay is FALSE");
+    }
+#endif // LOG_DISPLAY_LINK_TIMINGS
+    
+    return;
+  }
   
   id<GPUVFrameSource> frameSource = self.frameSource;
   GPUVFrame *nextFrame = [frameSource frameForHostTime:hostTime];

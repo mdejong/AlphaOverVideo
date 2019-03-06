@@ -44,8 +44,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   int width = self.width;
   int height = self.height;
   
-  return [NSString stringWithFormat:@"GPUVFrameSourceVideo %p %dx%d ",
+  return [NSString stringWithFormat:@"GPUVFrameSourceVideo %p (%@) %dx%d ",
           self,
+          self.uid,
           width,
           height];
 }
@@ -78,7 +79,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1)) {
-    NSLog(@"frameForHostTime at host time %.3f : CACurrentMediaTime() %.3f", hostTime, CACurrentMediaTime());
+    NSLog(@"%@ : frameForHostTime at host time %.3f : CACurrentMediaTime() %.3f", self, hostTime, CACurrentMediaTime());
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
@@ -351,6 +352,43 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 {
   [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
   [self.player setRate:0.0];
+}
+
+// Initiate playback by preloading for a specific rate (typically 1.0)
+// and invoke block callback.
+
+- (void) playWithPreroll:(float)rate block:(void (^)(void))block
+{
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+  
+  // Sync item time 0.0 to supplied host time (system clock)
+  
+  AVPlayer *player = self.player;
+  
+  NSLog(@"AVPlayer playWithPreroll : %.2f", rate);
+  
+  player.automaticallyWaitsToMinimizeStalling = FALSE;
+  
+  [player prerollAtRate:rate completionHandler:^(BOOL finished){
+    // FIXME: Should finished be passed to block to cancel?
+    // FIXME: Should pass rate to block
+    
+    if (finished) {
+      block();
+    }
+  }];
+}
+
+// Invoke player setRate to actually begin playing back a video
+// source once playWithPreroll invokes the block callback
+// with a specific host time to sync to.
+
+- (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime
+{
+  CMTime hostTimeCM = CMTimeMake(atHostTime * 1000.0f, 1000);
+  [self.player setRate:rate time:kCMTimeInvalid atHostTime:hostTimeCM];
 }
 
 // Kick of play operation where the zero time implicitly
