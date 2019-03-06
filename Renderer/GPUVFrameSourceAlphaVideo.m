@@ -123,8 +123,6 @@
   
   self.rgbSource.uid = @"rgb";
   self.alphaSource.uid = @"alpha";
-  
-  [self setBothLoadCallbacks];
 }
 
 // Init from pair of asset names
@@ -140,6 +138,10 @@
   if (worked) {
     worked = [self.alphaSource loadFromAsset:resAlphaFilename];
   }
+  
+  // redefine finished callbacks
+  
+  [self setBothLoadCallbacks];
   
   return worked;
 }

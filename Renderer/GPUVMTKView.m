@@ -572,7 +572,11 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     
     // Process 32BPP input, a CoreVideo pixel buffer is modified so that
     // an additional channel for Y is retained.
+#if defined(LOAD_ALPHA_VIDEO)
     self.metalBT709Decoder.hasAlphaChannel = TRUE;
+#else
+    self.metalBT709Decoder.hasAlphaChannel = FALSE;
+#endif // LOAD_ALPHA_VIDEO
     
     [self setupViewOpaqueProperty:mtkView];
     
