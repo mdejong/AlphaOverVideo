@@ -14,6 +14,8 @@
 
 static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
+//#define STORE_TIMES
+
 // Private API
 
 @interface GPUVFrameSourceVideo ()
@@ -26,6 +28,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 @property (nonatomic, retain) dispatch_queue_t playerQueue;
 
 @property (nonatomic, assign) int frameNum;
+
+#if defined(STORE_TIMES)
+@property (nonatomic, retain) NSMutableArray *times;
+#endif // STORE_TIMES
 
 @end
 
@@ -64,6 +70,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
   
+  GPUVFrame *nextFrame = nil;
+  
 #define LOG_DISPLAY_LINK_TIMINGS
 
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
@@ -85,6 +93,14 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   // Map time offset to item time
   
+#if defined(STORE_TIMES)
+  if (self.times == nil) {
+    self.times = [NSMutableArray array];
+  }
+  
+  NSMutableArray *timeArr = [NSMutableArray array];
+#endif // STORE_TIMES
+  
   // FIXME: Seems that a lot of CPU time in itemTimeForHostTime is being
   // spent getting the master clock for the host. It is better performance
   // wise to always set the master clock at the start of playback ?
@@ -94,6 +110,14 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
+  
+#if defined(STORE_TIMES)
+  // Media time when this frame data is being processed, ahead of hostTime since
+  // the hostTime value is determined in relation to vsync bounds.
+  [timeArr addObject:@(CACurrentMediaTime())];
+  [timeArr addObject:@(hostTime)];
+  [timeArr addObject:@(CMTimeGetSeconds(currentItemTime))];
+#endif // STORE_TIMES
 
   if ([playerItemVideoOutput hasNewPixelBufferForItemTime:currentItemTime]) {
     // Grab the pixel bufer for the current time
@@ -108,23 +132,38 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
       NSLog(@"                  display time %0.3f", CMTimeGetSeconds(presentationTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
       
-      GPUVFrame *nextFrame = [[GPUVFrame alloc] init];
+      nextFrame = [[GPUVFrame alloc] init];
       nextFrame.yCbCrPixelBuffer = rgbPixelBuffer;
       nextFrame.frameNum = [GPUVFrame calcFrameNum:nextFrame.yCbCrPixelBuffer frameDuration:self.frameDuration];
       CVPixelBufferRelease(rgbPixelBuffer);
-      return nextFrame;
+      
+#if defined(STORE_TIMES)
+      [timeArr addObject:@(nextFrame.frameNum)];
+#endif // STORE_TIMES
     } else {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
       NSLog(@"did not load RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
+      
+#if defined(STORE_TIMES)
+      [timeArr addObject:@(-1)];
+#endif // STORE_TIMES
     }
   } else {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
     NSLog(@"hasNewPixelBufferForItemTime is FALSE at vsync time %0.3f", CMTimeGetSeconds(currentItemTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
+    
+#if defined(STORE_TIMES)
+    [timeArr addObject:@(-1)];
+#endif // STORE_TIMES
   }
   
-  return nil;
+#if defined(STORE_TIMES)
+  [self.times addObject:timeArr];
+#endif // STORE_TIMES
+  
+  return nextFrame;
 }
 
 // Return TRUE if more frames can be returned by this frame source,

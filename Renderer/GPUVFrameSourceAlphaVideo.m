@@ -10,6 +10,18 @@
 
 //#import <QuartzCore/QuartzCore.h>
 
+#define STORE_TIMES
+
+// Private API
+
+@interface GPUVFrameSourceVideo ()
+
+@property (nonatomic, retain) AVPlayer *player;
+@property (nonatomic, retain) AVPlayerItemVideoOutput *playerItemVideoOutput;
+@property (nonatomic, assign) int frameNum;
+
+@end
+
 // Private API
 
 @interface GPUVFrameSourceAlphaVideo ()
@@ -22,6 +34,10 @@
 
 @property (nonatomic, assign) BOOL rgbSourceEnded;
 @property (nonatomic, assign) BOOL alphaSourceEnded;
+
+#if defined(STORE_TIMES)
+@property (nonatomic, retain) NSMutableArray *times;
+#endif // STORE_TIMES
 
 @end
 
@@ -49,7 +65,15 @@
 
 - (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
 {
-  const int debugDumpForHostTimeValues = 0;
+  const int debugDumpForHostTimeValues = 1;
+  
+#if defined(STORE_TIMES)
+  if (self.times == nil) {
+    self.times = [NSMutableArray array];
+  }
+  
+  NSMutableArray *timeArr = [NSMutableArray array];
+#endif // STORE_TIMES
   
   // Dispatch a host time to both sources and decode a frame for each one.
   // If a given time does not load a new frame for both sources then
@@ -82,28 +106,64 @@
   NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
   }
   
+#if defined(STORE_TIMES)
+  // Media time when this frame data is being processed, ahead of hostTime since
+  // the hostTime value is determined in relation to vsync bounds.
+  [timeArr addObject:@(CACurrentMediaTime())];  
+  [timeArr addObject:@(hostTime)];
+
+  {
+    AVPlayerItemVideoOutput *playerItemVideoOutput = rgbSource.playerItemVideoOutput;
+    CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
+  
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
+  NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
+#endif // LOG_DISPLAY_LINK_TIMINGS
+    
+    [timeArr addObject:@(CMTimeGetSeconds(currentItemTime))];
+    [timeArr addObject:@(rgbFrameNum)];
+  }
+
+  {
+    AVPlayerItemVideoOutput *playerItemVideoOutput = alphaSource.playerItemVideoOutput;
+    CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
+    
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
+    NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
+#endif // LOG_DISPLAY_LINK_TIMINGS
+    
+    [timeArr addObject:@(CMTimeGetSeconds(currentItemTime))];
+    [timeArr addObject:@(alphaFrameNum)];
+  }
+#endif // STORE_TIMES
+  
   if (rgbFrame == nil && alphaFrame == nil) {
     // No frame avilable from either source
-    return nil;
+    rgbFrame = nil;
   } else if (rgbFrame != nil && alphaFrame == nil) {
     // RGB returned a frame but alpha did not
     NSLog(@"RGB returned a frame but alpha did not");
-    return nil;
+    rgbFrame = nil;
   } else if (rgbFrame == nil && alphaFrame != nil) {
     // alpha returned a frame but RGB did not
     NSLog(@"alpha returned a frame but RGB did not");
-    return nil;
+    rgbFrame = nil;
   } else if (rgbFrameNum != alphaFrameNum) {
     if ((1)) {
     NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
     NSLog(@"RGB vs Alpha decode frame mismatch");
     }
-    return nil;
+    rgbFrame = nil;
   } else {
     rgbFrame.alphaPixelBuffer = alphaFrame.yCbCrPixelBuffer;
     alphaFrame = nil;
-    return rgbFrame;
   }
+  
+#if defined(STORE_TIMES)
+  [self.times addObject:timeArr];
+#endif // STORE_TIMES
+
+  return rgbFrame;
 }
 
 // Return TRUE if more frames can be returned by this frame source,
