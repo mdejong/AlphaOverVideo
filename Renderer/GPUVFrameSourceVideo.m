@@ -197,42 +197,13 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (BOOL) decodeFromRGBResourceVideo:(NSURL*)URL
 {
-  self.player = [[AVPlayer alloc] init];
-  
   self.playerItem = [AVPlayerItem playerItemWithURL:URL];
+  
+  self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
   
   NSLog(@"PlayerItem URL %@", URL);
   
-  NSDictionary *pixelBufferAttributes = [BGRAToBT709Converter getPixelBufferAttributes];
-  
-  NSMutableDictionary *mDict = [NSMutableDictionary dictionaryWithDictionary:pixelBufferAttributes];
-  
-  // Add kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
-  
-  mDict[(id)kCVPixelBufferPixelFormatTypeKey] = @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
-  
-  pixelBufferAttributes = [NSDictionary dictionaryWithDictionary:mDict];
-  
-  // FIXME: Create AVPlayerItemVideoOutput after AVPlayerItem status is ready to play
-  // https://forums.developer.apple.com/thread/27589
-  // https://github.com/seriouscyrus/AVPlayerTest
-  
-  self.playerItemVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixelBufferAttributes];;
-  
-  // FIXME: does this help ?
-  self.playerItemVideoOutput.suppressesPlayerRendering = TRUE;
-  
-  self.playerQueue = dispatch_queue_create("com.decodem4v.carspin_rgb", DISPATCH_QUEUE_SERIAL);
-  
   __weak GPUVFrameSourceVideo *weakSelf = self;
-  
-  [self.playerItemVideoOutput setDelegate:weakSelf queue:self.playerQueue];
-  
-#if defined(DEBUG)
-  assert(self.playerItemVideoOutput.delegateQueue == self.playerQueue);
-#endif // DEBUG
-  
-  //self.frameNum = 0;
   
   // Default end of stream callback, implements non-seamless looping
   
@@ -276,11 +247,46 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   return TRUE;
 }
 
+// Util method that creates AVPlayerItemVideoOutput instance
+
+- (void) makeVideoOutput {
+  NSDictionary *pixelBufferAttributes = [BGRAToBT709Converter getPixelBufferAttributes];
+  
+  NSMutableDictionary *mDict = [NSMutableDictionary dictionaryWithDictionary:pixelBufferAttributes];
+  
+  // Add kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+  
+  mDict[(id)kCVPixelBufferPixelFormatTypeKey] = @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
+  
+  pixelBufferAttributes = [NSDictionary dictionaryWithDictionary:mDict];
+  
+  // FIXME: Create AVPlayerItemVideoOutput after AVPlayerItem status is ready to play
+  // https://forums.developer.apple.com/thread/27589
+  // https://github.com/seriouscyrus/AVPlayerTest
+  
+  self.playerItemVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixelBufferAttributes];;
+  
+  // FIXME: does this help ?
+  self.playerItemVideoOutput.suppressesPlayerRendering = TRUE;
+  
+  self.playerQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
+  
+  __weak GPUVFrameSourceVideo *weakSelf = self;
+  
+  [self.playerItemVideoOutput setDelegate:weakSelf queue:self.playerQueue];
+  
+#if defined(DEBUG)
+  assert(self.playerItemVideoOutput.delegateQueue == self.playerQueue);
+#endif // DEBUG
+}
+
 // Async callback that is invoked when the "tracks" property has been
 // loaded and is ready to be inspected.
 
 - (BOOL) asyncTracksReady:(AVAsset*)asset
 {
+  NSLog(@"asyncTracksReady");
+  
   // Verify that the status for this specific key is ready to be read
   
 #if defined(DEBUG)
@@ -362,13 +368,25 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   float nominalFrameRate = videoTrack.nominalFrameRate;
   NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
   
-  [self.playerItem addOutput:self.playerItemVideoOutput];
-  [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
-  [self addDidPlayToEndTimeNotificationForPlayerItem:self.playerItem];
-  [self.playerItem seekToTime:kCMTimeZero completionHandler:nil];
-  [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:frameDuration];
+  [self regiserForItemNotificaitons];
   
   return TRUE;
+}
+
+- (void) assetReadyToPlay
+{
+  [self makeVideoOutput];
+  
+  [self.playerItem addOutput:self.playerItemVideoOutput];
+  
+  [self addDidPlayToEndTimeNotificationForPlayerItem:self.playerItem];
+
+  __weak GPUVFrameSourceVideo *weakSelf = self;
+  [self.playerItem seekToTime:kCMTimeZero completionHandler:^void(BOOL finished){
+    if (finished) {
+      [weakSelf.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:weakSelf.frameDuration];
+    }
+  }];
 }
 
 // Kick of play operation
@@ -389,6 +407,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void) stop
 {
+  [self unregiserForItemNotificaitons];
   [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
   [self.player setRate:0.0];
 }
@@ -550,10 +569,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
         break;
       case AVPlayerItemStatusReadyToPlay: {
         NSLog(@"AVPlayerItemStatusReadyToPlay");
-        //        CGSize itemSize = [[self.player currentItem] presentationSize];
-        //        NSLog(@"AVPlayerItemStatusReadyToPlay: video itemSize dimensions : %d x %d", (int)itemSize.width, (int)itemSize.height);
-        //        _resizeTextureSize = itemSize;
-        //        [self makeInternalMetalTexture];
+        AVPlayer* player = self.player;
+        if (player.status == AVPlayerStatusReadyToPlay) {
+          [self assetReadyToPlay];
+        }
         break;
       }
       case AVPlayerItemStatusFailed: {
