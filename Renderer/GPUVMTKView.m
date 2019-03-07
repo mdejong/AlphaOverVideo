@@ -77,7 +77,8 @@ void validate_storage_mode(id<MTLTexture> texture)
 @property (nonatomic, retain) NSObject *displayLinkHoldref;
 #endif // TARGET_OS_IOS
 
-// Once media data is loaded and readty to play, this field is set to TRUE
+// Once media data has been prerolled and vsync timing is available
+// then the view can begin to render data from a video source.
 
 @property (nonatomic, assign) BOOL isReadyToPlay;
 
@@ -87,6 +88,11 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 @property (nonatomic, assign) float FPS;
 @property (nonatomic, assign) float frameDuration;
+
+// If sync start special case is needed then these fields are used to
+// wait until a couple of vsyncs are delivered.
+@property (nonatomic, retain) NSTimer *syncStartTimer;
+@property (nonatomic, assign) float syncStartRate;
 
 #if TARGET_OS_IOS
 // nop
@@ -333,6 +339,9 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   self.metalBT709Decoder = nil;
   self.metalScaleRenderContext = nil;
   
+  [self.syncStartTimer invalidate];
+  self.syncStartTimer = nil;
+  
   return;
 }
 
@@ -532,30 +541,44 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       [weakFrameSourceVideo playWithPreroll:rate block:^{
         NSLog(@"frameSourceVideo playWithPreroll block");
 
-        // The display link is already running at this point, wait
-        // until there is a vsync available so that this time
-        // can be used to define the "zero" time on the video
-        // timeline.
+        // The display link should be running, but there is a possible
+        // race condition when the preroll completes before a display
+        // link time has been delivered. The view will not actually
+        // render until isReadyToPlay has been set to TRUE, so take
+        // care of the race condition with a timer.
         
-        // FIXME: Define repeating callback that will set isReadyToPlay
-        // once the preload is finished and there are enough vsync times
+        // It should not be possible to kick off the timer twice
         
-        weakSelf.isReadyToPlay = TRUE;
+//#if defined(DEBUG)
+        NSAssert(weakSelf.syncStartTimer == nil, @"syncStartTimer is already set");
+        NSAssert(weakSelf.isReadyToPlay == FALSE, @"isReadyToPlay is already TRUE");
+//#endif // DEBUG
         
-        // Grab most recent vsync time on video interval. If for example
-        // this video is at 30 FPS, then
+        NSArray *displayLinkVsyncTimes = [NSArray arrayWithArray:weakSelf.displayLinkVsyncTimes];
 
-        if (weakSelf.displayLinkVsyncTimes.count == 0) {
-          NSAssert(weakSelf.displayLinkVsyncTimes.count > 0, @"displayLinkVsyncTimes");
+        if (displayLinkVsyncTimes.count < 1) {
+          NSAssert(weakSelf.syncStartTimer == nil, @"syncStartTimer is already set");
+  
+          weakSelf.syncStartRate = rate;
+          
+          NSTimer *timer = [NSTimer timerWithTimeInterval:1.0f/60.0f
+                                                   target:weakSelf
+                                                 selector:@selector(syncStartCheck)
+                                                 userInfo:nil
+                                                  repeats:TRUE];
+          
+          weakSelf.syncStartTimer = timer;
+          
+          [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+        } else {
+          // vSync times available sync item start to upcoming time
+          
+          weakSelf.isReadyToPlay = TRUE;
+          
+          NSNumber *vsyncNum = [displayLinkVsyncTimes lastObject];
+          CFTimeInterval syncTime = [vsyncNum doubleValue];
+          [weakSelf syncStart:rate atHostTime:syncTime];
         }
-        
-//        if (weakSelf.displayLinkVsyncTimes.count < 2) {
-//          NSAssert(weakSelf.displayLinkVsyncTimes.count >= 2, @"displayLinkVsyncTimes");
-//        }
-        
-        NSNumber *vsyncNum = [weakSelf.displayLinkVsyncTimes lastObject];
-        CFTimeInterval syncTime = [vsyncNum doubleValue];
-        [weakFrameSourceVideo setRate:rate atHostTime:syncTime];
       }];
     };
     
@@ -1297,6 +1320,35 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     nextFrame = nil;
     // Draw frame directly from this timer invocation
     [self draw];
+  }
+}
+
+// This method is invoked when a video has been preloaded
+// and the video is ready to sync start at a given host time.
+
+- (void) syncStart:(float)rate atHostTime:(CFTimeInterval)atHostTime
+{
+  GPUVFrameSourceAlphaVideo *frameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
+  [frameSourceVideo setRate:rate atHostTime:atHostTime];
+}
+
+- (void) syncStartCheck
+{
+  NSArray *displayLinkVsyncTimes = [NSArray arrayWithArray:self.displayLinkVsyncTimes];
+  
+  if (displayLinkVsyncTimes.count >= 1) {
+    // At least 1 vsync times, ready to start
+    
+    [self.syncStartTimer invalidate];
+    self.syncStartTimer = nil;
+    
+    self.isReadyToPlay = TRUE;
+    
+    NSNumber *vsyncNum = [displayLinkVsyncTimes lastObject];
+    CFTimeInterval syncTime = [vsyncNum doubleValue];
+    
+    float rate = self.syncStartRate;
+    [self syncStart:rate atHostTime:syncTime];
   }
 }
 
