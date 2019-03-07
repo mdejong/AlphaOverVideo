@@ -10,7 +10,7 @@
 
 //#import <QuartzCore/QuartzCore.h>
 
-#define STORE_TIMES
+//#define STORE_TIMES
 
 // Private API
 
@@ -116,9 +116,9 @@
     AVPlayerItemVideoOutput *playerItemVideoOutput = rgbSource.playerItemVideoOutput;
     CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
   
-#if defined(LOG_DISPLAY_LINK_TIMINGS)
-  NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
-#endif // LOG_DISPLAY_LINK_TIMINGS
+    if ((0)) {
+      NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
+    }
     
     [timeArr addObject:@(CMTimeGetSeconds(currentItemTime))];
     [timeArr addObject:@(rgbFrameNum)];
@@ -128,10 +128,10 @@
     AVPlayerItemVideoOutput *playerItemVideoOutput = alphaSource.playerItemVideoOutput;
     CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
     
-#if defined(LOG_DISPLAY_LINK_TIMINGS)
-    NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
-#endif // LOG_DISPLAY_LINK_TIMINGS
-    
+    if ((0)) {
+      NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
+    }
+
     [timeArr addObject:@(CMTimeGetSeconds(currentItemTime))];
     [timeArr addObject:@(alphaFrameNum)];
   }

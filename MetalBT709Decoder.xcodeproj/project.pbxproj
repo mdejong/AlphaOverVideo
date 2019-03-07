@@ -97,6 +97,12 @@
 		3C4A77C121DEA5290041ACE3 /* encode_h264.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A77C021DEA5280041ACE3 /* encode_h264.m */; };
 		3C4A77C521DEAB0E0041ACE3 /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */; };
 		3C4A77C621DEAB0E0041ACE3 /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */; };
+		3C76939422308A81000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
+		3C76939522308A84000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
+		3C76939622308A84000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
+		3C76939722308A84000D03CE /* CountToTenA_alpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939322308A7F000D03CE /* CountToTenA_alpha.m4v */; };
+		3C76939822308A84000D03CE /* CountToTenA_alpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939322308A7F000D03CE /* CountToTenA_alpha.m4v */; };
+		3C76939922308A84000D03CE /* CountToTenA_alpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939322308A7F000D03CE /* CountToTenA_alpha.m4v */; };
 		3C7E37C62218BC9F00116145 /* ColorsAlpha4by4.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C7E37C42218BC9D00116145 /* ColorsAlpha4by4.m4v */; };
 		3C7E37C72218BC9F00116145 /* ColorsAlpha4by4.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C7E37C42218BC9D00116145 /* ColorsAlpha4by4.m4v */; };
 		3C7E37C82218BC9F00116145 /* ColorsAlpha4by4.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C7E37C42218BC9D00116145 /* ColorsAlpha4by4.m4v */; };
@@ -344,6 +350,8 @@
 		3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = QuickTime_Test_Pattern_HD.mov; sourceTree = "<group>"; };
 		3C4A77BE21DEA50F0041ACE3 /* encode_h264 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = encode_h264; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C4A77C021DEA5280041ACE3 /* encode_h264.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = encode_h264.m; sourceTree = "<group>"; };
+		3C76939222308A7B000D03CE /* CountToTenA.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CountToTenA.m4v; sourceTree = "<group>"; };
+		3C76939322308A7F000D03CE /* CountToTenA_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CountToTenA_alpha.m4v; sourceTree = "<group>"; };
 		3C7E37C42218BC9D00116145 /* ColorsAlpha4by4.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = ColorsAlpha4by4.m4v; sourceTree = "<group>"; };
 		3C7E37C52218BC9E00116145 /* ColorsAlpha4by4_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = ColorsAlpha4by4_alpha.m4v; sourceTree = "<group>"; };
 		3C7E37D42218D23C00116145 /* AlphaBG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AlphaBG.png; sourceTree = "<group>"; };
@@ -557,6 +565,8 @@
 				3C18D3CF221D432E005DAF85 /* CarSpinAF10_alpha.m4v */,
 				3CC2B8E22225D67C007869FD /* BT709tagged.mp4 */,
 				3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */,
+				3C76939222308A7B000D03CE /* CountToTenA.m4v */,
+				3C76939322308A7F000D03CE /* CountToTenA_alpha.m4v */,
 				3C1310CA2220D492000C4972 /* GPUVFrame.h */,
 				3C1310CB2220D493000C4972 /* GPUVFrame.m */,
 				3CE62FC922233B850003EA70 /* GPUVFrameSource.h */,
@@ -1038,6 +1048,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C8219D621E938CC006D516F /* osxcolor_test_image_iPad_2048_1536.m4v in Resources */,
+				3C76939822308A84000D03CE /* CountToTenA_alpha.m4v in Resources */,
 				3C18D3D4221D432F005DAF85 /* CarSpinAF10_alpha.m4v in Resources */,
 				3C97792F2216024E003721FD /* RedFadeAlpha256_alpha.m4v in Resources */,
 				3C4A77B821DD87DA0041ACE3 /* QuickTime_Test_Pattern_HD.mov in Resources */,
@@ -1050,6 +1061,7 @@
 				3C4A77B521DD87D90041ACE3 /* QuickTime_Test_Pattern_SD.mov in Resources */,
 				3C7E37CA2218BC9F00116145 /* ColorsAlpha4by4_alpha.m4v in Resources */,
 				3C7E37DA2218E52C00116145 /* AlphaBGHalf.png in Resources */,
+				3C76939522308A84000D03CE /* CountToTenA.m4v in Resources */,
 				3CC2B8E42225D67C007869FD /* BT709tagged.mp4 in Resources */,
 				3C483FFF22098AE600AC51AC /* big_buck_bunny_HD_srgb.m4v in Resources */,
 				3C9779322216024E003721FD /* RedFadeAlpha256.m4v in Resources */,
@@ -1076,6 +1088,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C76939922308A84000D03CE /* CountToTenA_alpha.m4v in Resources */,
 				3CF086CA22178F0600FD7802 /* RedCircleOverWhiteA.m4v in Resources */,
 				3C8219DB21E950A6006D516F /* clouds_reflecting_off_the_beach-wallpaper-2048x1536.m4v in Resources */,
 				3CC9ECB5222C7A1300C1CA09 /* CountToTen.m4v in Resources */,
@@ -1096,6 +1109,7 @@
 				3C18D3D5221D432F005DAF85 /* CarSpinAF10_alpha.m4v in Resources */,
 				3CB6E80721D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */,
 				3C9779302216024E003721FD /* RedFadeAlpha256_alpha.m4v in Resources */,
+				3C76939622308A84000D03CE /* CountToTenA.m4v in Resources */,
 				3C8219D721E938CC006D516F /* osxcolor_test_image_iPad_2048_1536.m4v in Resources */,
 				3C4A77B621DD87DA0041ACE3 /* QuickTime_Test_Pattern_SD.mov in Resources */,
 				3C18D3D2221D432F005DAF85 /* CarSpinAF10.m4v in Resources */,
@@ -1118,6 +1132,7 @@
 				3C7E37D92218E52C00116145 /* AlphaBGHalf.png in Resources */,
 				3CC2B8E32225D67C007869FD /* BT709tagged.mp4 in Resources */,
 				3C8219D921E950A6006D516F /* clouds_reflecting_off_the_beach-wallpaper-2048x1536.m4v in Resources */,
+				3C76939422308A81000D03CE /* CountToTenA.m4v in Resources */,
 				3C02732D220B715C005FB416 /* QuickTime_Test_Pattern_HD_grayscale.m4v in Resources */,
 				3C7E37E2221CC83200116145 /* CarSpin_alpha.m4v in Resources */,
 				3C18D3D0221D432F005DAF85 /* CarSpinAF10.m4v in Resources */,
@@ -1135,6 +1150,7 @@
 				3CB6E80521D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */,
 				3C7E37E3221CC83200116145 /* CarSpin.m4v in Resources */,
 				3C8219D521E938CC006D516F /* osxcolor_test_image_iPad_2048_1536.m4v in Resources */,
+				3C76939722308A84000D03CE /* CountToTenA_alpha.m4v in Resources */,
 				3CF086C3221773C000FD7802 /* GlobeLEDAlpha_alpha.m4v in Resources */,
 				3C4A77B421DD87D80041ACE3 /* QuickTime_Test_Pattern_SD.mov in Resources */,
 				3C7E37C92218BC9F00116145 /* ColorsAlpha4by4_alpha.m4v in Resources */,
