@@ -22,6 +22,8 @@
 
 #define LOAD_ALPHA_VIDEO
 
+//#define LOG_DISPLAY_LINK_TIMINGS
+
 #if defined(LOAD_ALPHA_VIDEO)
 #import "GPUVFrameSourceAlphaVideo.h"
 #else
@@ -1227,8 +1229,6 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 #if defined(DEBUG)
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
-
-//#define LOG_DISPLAY_LINK_TIMINGS
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((0)) {

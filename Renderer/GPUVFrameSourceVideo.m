@@ -14,6 +14,7 @@
 
 static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
+//#define LOG_DISPLAY_LINK_TIMINGS
 //#define STORE_TIMES
 
 // Private API
@@ -78,8 +79,6 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   }
   
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
-  
-#define LOG_DISPLAY_LINK_TIMINGS
 
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((0))
@@ -128,8 +127,6 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
   
   GPUVFrame *nextFrame = nil;
-  
-#define LOG_DISPLAY_LINK_TIMINGS
   
   // Map time offset to item time
   
