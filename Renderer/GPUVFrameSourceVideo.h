@@ -89,4 +89,29 @@
 
 - (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime;
 
+// The next 3 APIs map time to a specific video frame. The
+// frameForHostTime API is the higher level interface where
+// system "host" time is mapped to the item timeline and then
+// the frame is looked up based on the item time. The
+// itemTimeForHostTime and frameForItemTime APIs can be used
+// to manually convert host time to item time and then item
+// time can be used to lookup the specific frame.
+
+// Given a host time offset, return a GPUVFrame that corresponds
+// to the given host time. If no new frame is avilable for the
+// given host time then nil is returned.
+
+- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime;
+
+// Map host time to item time for the current item.
+
+- (CMTime) itemTimeForHostTime:(CFTimeInterval)hostTime;
+
+// Get frame that corresponds to item time. The item time range is
+// (0.0, (N * frameDuration))
+// Note that hostTime is used only for debug output here
+
+- (GPUVFrame*) frameForItemTime:(CMTime)itemTime
+                       hostTime:(CFTimeInterval)hostTime;
+
 @end

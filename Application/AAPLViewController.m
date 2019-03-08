@@ -43,7 +43,7 @@ Implementation of our cross-platform view controller
       }
     }
 
-    BOOL alphaImageBackground = FALSE;
+    BOOL alphaImageBackground = TRUE;
     // If alphaImageBackground is FALSE, background can be black or white
     BOOL blackBackground = FALSE;
 

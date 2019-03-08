@@ -92,8 +92,15 @@
   GPUVFrameSourceVideo *rgbSource = self.rgbSource;
   GPUVFrameSourceVideo *alphaSource = self.alphaSource;
   
-  GPUVFrame *rgbFrame = [rgbSource frameForHostTime:hostTime];
-  GPUVFrame *alphaFrame = [alphaSource frameForHostTime:hostTime];
+  CMTime itemTime = [rgbSource itemTimeForHostTime:hostTime];
+
+  if ((0)) {
+    NSLog(@"%@ : frameForHostTime at host time %.3f : CACurrentMediaTime() %.3f", self, hostTime, CACurrentMediaTime());
+    NSLog(@"item time %.3f", CMTimeGetSeconds(itemTime));
+  }
+  
+  GPUVFrame *rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime];
+  GPUVFrame *alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime];
 
   if (debugDumpForHostTimeValues) {
   NSLog(@"check rgbFrameNum and alphaFrameNum");

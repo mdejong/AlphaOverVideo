@@ -57,6 +57,15 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
           height];
 }
 
+// Map host time to item time for the current item.
+
+- (CMTime) itemTimeForHostTime:(CFTimeInterval)hostTime
+{
+  AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
+  CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
+  return currentItemTime;
+}
+
 // Given a host time offset, return a GPUVFrame that corresponds
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
@@ -69,8 +78,6 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   }
   
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
-  
-  GPUVFrame *nextFrame = nil;
   
 #define LOG_DISPLAY_LINK_TIMINGS
 
@@ -91,6 +98,39 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
+  // FIXME: Seems that a lot of CPU time in itemTimeForHostTime is being
+  // spent getting the master clock for the host. It is better performance
+  // wise to always set the master clock at the start of playback ?
+  
+  CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
+  
+  // FIXME: would it be possible to use the RGB stream as the master timeline
+  // and then treat the alpha timeline as the slave timeline so that this
+  // itemTimeForHostTime to convert hostTime -> currentItemTime would only
+  // be done for one of the timelines? Could this avoid the sync issue related
+  // to calling seek and setRate at very slightly different times? Would the
+  // next hasNewPixelBufferForItemTime always be in sync for the 2 streams?
+  
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
+  NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
+#endif // LOG_DISPLAY_LINK_TIMINGS
+  
+  return [self frameForItemTime:currentItemTime hostTime:hostTime];
+}
+
+// Get frame that corresponds to item time. The item time range is
+// (0.0, (N * frameDuration))
+// Note that hostTime is used only for debug output here
+
+- (GPUVFrame*) frameForItemTime:(CMTime)itemTime
+                       hostTime:(CFTimeInterval)hostTime
+{
+  AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
+  
+  GPUVFrame *nextFrame = nil;
+  
+#define LOG_DISPLAY_LINK_TIMINGS
+  
   // Map time offset to item time
   
 #if defined(STORE_TIMES)
@@ -105,10 +145,15 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   // spent getting the master clock for the host. It is better performance
   // wise to always set the master clock at the start of playback ?
   
-  CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
+  // FIXME: would it be possible to use the RGB stream as the master timeline
+  // and then treat the alpha timeline as the slave timeline so that this
+  // itemTimeForHostTime to convert hostTime -> currentItemTime would only
+  // be done for one of the timelines? Could this avoid the sync issue related
+  // to calling seek and setRate at very slightly different times? Would the
+  // next hasNewPixelBufferForItemTime always be in sync for the 2 streams?
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-  NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
+  NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(itemTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
 #if defined(STORE_TIMES)
@@ -116,20 +161,20 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   // the hostTime value is determined in relation to vsync bounds.
   [timeArr addObject:@(CACurrentMediaTime())];
   [timeArr addObject:@(hostTime)];
-  [timeArr addObject:@(CMTimeGetSeconds(currentItemTime))];
+  [timeArr addObject:@(CMTimeGetSeconds(itemTime))];
 #endif // STORE_TIMES
 
-  if ([playerItemVideoOutput hasNewPixelBufferForItemTime:currentItemTime]) {
+  if ([playerItemVideoOutput hasNewPixelBufferForItemTime:itemTime]) {
     // Grab the pixel bufer for the current time
     
     CMTime presentationTime = kCMTimeZero;
     
-    CVPixelBufferRef rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:currentItemTime itemTimeForDisplay:&presentationTime];
+    CVPixelBufferRef rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:itemTime itemTimeForDisplay:&presentationTime];
     
     if (rgbPixelBuffer != NULL) {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-      NSLog(@"LOADED RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
-      NSLog(@"                  display time %0.3f", CMTimeGetSeconds(presentationTime));
+      NSLog(@"LOADED %5@  frame for item time %0.3f", self.uid, CMTimeGetSeconds(itemTime));
+      NSLog(@"                   display time %0.3f", CMTimeGetSeconds(presentationTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
       
       nextFrame = [[GPUVFrame alloc] init];
@@ -142,7 +187,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 #endif // STORE_TIMES
     } else {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-      NSLog(@"did not load RGB frame for item time %0.3f", CMTimeGetSeconds(currentItemTime));
+      NSLog(@"did not load RGB frame for item time %0.3f", CMTimeGetSeconds(itemTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
       
 #if defined(STORE_TIMES)
@@ -151,7 +196,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     }
   } else {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-    NSLog(@"hasNewPixelBufferForItemTime is FALSE at vsync time %0.3f", CMTimeGetSeconds(currentItemTime));
+    NSLog(@"hasNewPixelBufferForItemTime is FALSE at vsync time %0.3f", CMTimeGetSeconds(itemTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
     
 #if defined(STORE_TIMES)
@@ -441,7 +486,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 // Invoke player setRate to actually begin playing back a video
 // source once playWithPreroll invokes the block callback
-// with a specific host time to sync to.
+// with a specific host time to sync to. Note that this API
+// always uses the current time as the sync point.
 
 - (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime
 {
@@ -553,7 +599,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput*)output
 {
-  NSLog(@"outputSequenceWasFlushed");
+  NSLog(@"%p outputSequenceWasFlushed", self);
   
   return;
 }
