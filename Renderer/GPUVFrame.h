@@ -31,6 +31,13 @@
 
 - (NSString*) description;
 
-+ (int) calcFrameNum:(CVPixelBufferRef)cvPixelBuffer frameDuration:(float)frameDuration;
+// Given an item time calculate the corresponding integer frame number in the range (0, N-1)
+//
+// For example:
+// 0.10 with frameDuration = 0.33 -> 0
+// 0.33 with frameDuration = 0.33 -> 1
+// 0.60 with frameDuration = 0.33 -> 2
+
++ (int) calcFrameNum:(float)itemTime frameDuration:(float)frameDuration;
 
 @end

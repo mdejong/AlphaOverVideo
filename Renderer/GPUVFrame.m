@@ -78,6 +78,8 @@
           alphaRetainCount];
 }
 
+/*
+
 + (int) calcFrameNum:(CVPixelBufferRef)cvPixelBuffer frameDuration:(float)frameDuration
 {
   if (cvPixelBuffer == NULL) {
@@ -92,20 +94,17 @@
 //    1 : <CFString 0x1dd16adc8 [0x1dcbfd5e0]>{contents = "TimeScale"} = <CFNumber 0xf3e5608b93a89da5 [0x1dcbfd5e0]>{value = +1000, type = kCFNumberSInt32Type}
 //  }
   
-  NSNumber *timeValueNum = movieTimeDict[@"TimeValue"];
-  NSNumber *timeScaleNum = movieTimeDict[@"TimeScale"];
-  
-  /*
-  
-  unsigned long long timeValue = [timeValueNum unsignedLongLongValue];
-  unsigned int timeScale = [timeScaleNum unsignedIntValue];
-  
-  unsigned int frameNum = (unsigned int) (timeValue / timeScale);
-  
-  NSLog(@"%d / %d -> %d", (int)timeValue, timeScale, frameNum);
-  
-  return frameNum;
-  */
+//  NSNumber *timeValueNum = movieTimeDict[@"TimeValue"];
+//  NSNumber *timeScaleNum = movieTimeDict[@"TimeScale"];
+//
+//  unsigned long long timeValue = [timeValueNum unsignedLongLongValue];
+//  unsigned int timeScale = [timeScaleNum unsignedIntValue];
+//
+//  unsigned int frameNum = (unsigned int) (timeValue / timeScale);
+//
+//  NSLog(@"%d / %d -> %d", (int)timeValue, timeScale, frameNum);
+//
+//  return frameNum;
   
   float timeValue = [timeValueNum floatValue];
   float timeScale = [timeScaleNum floatValue];
@@ -119,6 +118,26 @@
   //float frameDuration = (1.0f / 30);
   float frameNum = seconds / frameDuration;
   return (int) round(frameNum);
+}
+
+*/
+
+// Given an item time calculate the corresponding integer frame number in the range (0, N-1)
+//
+// For example:
+// 0.10 with frameDuration = 0.33 -> 0
+// 0.33 with frameDuration = 0.33 -> 1
+// 0.60 with frameDuration = 0.33 -> 2
+
++ (int) calcFrameNum:(float)itemTime frameDuration:(float)frameDuration
+{
+  // FIXME: replace float divide by MULT (1.0 / frameDuration)
+  float frameNumF = (itemTime / frameDuration);
+  unsigned int frameNum = (unsigned int) frameNumF;
+  if (frameNum > 5) {
+    ;
+  }
+  return frameNum;
 }
 
 @end

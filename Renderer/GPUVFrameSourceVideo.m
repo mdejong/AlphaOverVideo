@@ -174,12 +174,12 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     if (rgbPixelBuffer != NULL) {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
       NSLog(@"LOADED %5@  frame for item time %0.3f", self.uid, CMTimeGetSeconds(itemTime));
-      NSLog(@"                   display time %0.3f", CMTimeGetSeconds(presentationTime));
+      NSLog(@"                     display time %0.3f", CMTimeGetSeconds(presentationTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
       
       nextFrame = [[GPUVFrame alloc] init];
       nextFrame.yCbCrPixelBuffer = rgbPixelBuffer;
-      nextFrame.frameNum = [GPUVFrame calcFrameNum:nextFrame.yCbCrPixelBuffer frameDuration:self.frameDuration];
+      nextFrame.frameNum = [GPUVFrame calcFrameNum:CMTimeGetSeconds(presentationTime) frameDuration:self.frameDuration];
       CVPixelBufferRelease(rgbPixelBuffer);
       
 #if defined(STORE_TIMES)

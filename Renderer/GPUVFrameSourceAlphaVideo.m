@@ -101,13 +101,9 @@
   
   GPUVFrame *rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime];
   GPUVFrame *alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime];
-
-  if (debugDumpForHostTimeValues) {
-  NSLog(@"check rgbFrameNum and alphaFrameNum");
-  }
   
-  int rgbFrameNum = [GPUVFrame calcFrameNum:rgbFrame.yCbCrPixelBuffer frameDuration:rgbSource.frameDuration];
-  int alphaFrameNum = [GPUVFrame calcFrameNum:alphaFrame.yCbCrPixelBuffer frameDuration:alphaSource.frameDuration];
+  int rgbFrameNum = rgbFrame.frameNum;
+  int alphaFrameNum = alphaFrame.frameNum;
   
   if (debugDumpForHostTimeValues) {
   NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
@@ -118,30 +114,10 @@
   // the hostTime value is determined in relation to vsync bounds.
   [timeArr addObject:@(CACurrentMediaTime())];  
   [timeArr addObject:@(hostTime)];
-
-  {
-    AVPlayerItemVideoOutput *playerItemVideoOutput = rgbSource.playerItemVideoOutput;
-    CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
   
-    if ((0)) {
-      NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
-    }
-    
-    [timeArr addObject:@(CMTimeGetSeconds(currentItemTime))];
-    [timeArr addObject:@(rgbFrameNum)];
-  }
-
-  {
-    AVPlayerItemVideoOutput *playerItemVideoOutput = alphaSource.playerItemVideoOutput;
-    CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
-    
-    if ((0)) {
-      NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
-    }
-
-    [timeArr addObject:@(CMTimeGetSeconds(currentItemTime))];
-    [timeArr addObject:@(alphaFrameNum)];
-  }
+  [timeArr addObject:@(CMTimeGetSeconds(itemTime))];
+  [timeArr addObject:@(rgbFrameNum)];
+  [timeArr addObject:@(alphaFrameNum)];
 #endif // STORE_TIMES
   
   if (rgbFrame == nil && alphaFrame == nil) {
