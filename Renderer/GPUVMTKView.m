@@ -236,10 +236,22 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     if (displayLinkPrivateInterface.numVsyncCounter == displayLinkPrivateInterface.numVsyncStepsInFrameDuration) {
       deliverToMainThread = TRUE;
       
-      // Decode time is always calculated as 1/2 way between vsync times.
+      // Calculate "decode time", this is 1/2 way between "frame" durations
+      // which can include multiple vsync intervals. The goal here is to get
+      // a host time to pass into the video frame display layer that is
+      // as far away from the frame change at the start or end of the interval
+      // as possible.
       
-      float halfVsyncDuration = displayLinkPrivateInterface.vsyncDuration * 0.5f;
-      frameSeconds = outSeconds - halfVsyncDuration;
+      float frameDuration = (displayLinkPrivateInterface.vsyncDuration * displayLinkPrivateInterface.numVsyncStepsInFrameDuration);
+      float halfFrameDuration = 0.5f * frameDuration;
+      frameSeconds = outSeconds - halfFrameDuration;
+      
+      if (debugPrintAll)
+      {
+        printf("outSeconds     %.6f\n", outSeconds);
+        printf("frame times    [%.6f %.6f]\n", outSeconds-frameDuration, outSeconds);
+        printf("frameSeconds   %.6f\n", frameSeconds);
+      }
 
       if (displayLinkPrivateInterface.numVsyncStepsInFrameDuration == 1) {
         // 60 FPS
