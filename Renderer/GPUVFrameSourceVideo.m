@@ -47,6 +47,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void) dealloc
 {
+  [self.playerItemVideoOutput setDelegate:nil queue:nil];
+  
   return;
 }
 
