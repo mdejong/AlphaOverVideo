@@ -22,6 +22,9 @@
 
 @property (nonatomic, copy) NSString *uid;
 
+@property (nonatomic, assign) CFTimeInterval syncTime;
+@property (nonatomic, assign) float playRate;
+
 @property (nonatomic, assign) float FPS;
 @property (nonatomic, assign) float frameDuration;
 
@@ -34,10 +37,19 @@
 
 @property (nonatomic, copy, nullable) void (^loadedBlock)(BOOL success);
 
-// This block is invoked on the main thread after the source has finished
-// decoding the item.
+// This block is invoked when an item is played all the way to the end.
+// This callback is invoked at the end of the display interval for the
+// final frame of a specific clip. By default, this block will invoke
+// the stop method so that a clip plays once and then stops playback.
 
-@property (nonatomic, copy, nullable) void (^finishedBlock)(void);
+@property (nonatomic, copy, nullable) void (^playedToEndBlock)(void);
+
+// This block is invoked after the final frame for an item has been
+// both decoded and displayed. When this callback is invoked, the
+// final frame will continue to display for one more frameDuration
+// interval.
+
+@property (nonatomic, copy, nullable) void (^finalFrameBlock)(void);
 
 // Init from asset name
 
@@ -101,7 +113,7 @@
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
 
-- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime;
+- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime presentationTime:(CFTimeInterval)presentationTime;
 
 // Map host time to item time for the current item.
 

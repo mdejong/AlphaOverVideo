@@ -30,6 +30,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 @property (nonatomic, assign) int frameNum;
 
+// If a reported time is larger than this time, then on the final frame
+
+@property (nonatomic, assign) CFTimeInterval finalFrameTime;
+
 #if defined(STORE_TIMES)
 @property (nonatomic, retain) NSMutableArray *times;
 #endif // STORE_TIMES
@@ -71,12 +75,14 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
 
-- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
+- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime presentationTime:(CFTimeInterval)presentationTime
 {
   if (self.player.currentItem == nil) {
     NSLog(@"player not playing yet in frameForHostTime");
     return nil;
   }
+  
+  self.syncTime = presentationTime;
   
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
 
@@ -205,6 +211,24 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   [self.times addObject:timeArr];
 #endif // STORE_TIMES
   
+  // The logic above attempts to load a specific video frame, but it is possible
+  // that the clock time is now at or past the final frame of video. Check for
+  // this "final frame" condition even is loading a video frame was not
+  // successful to handle the case where a frame at the end of the video
+  // has a display duration longer than one frame.
+  
+  if (self.finalFrameBlock != nil) {
+    float itemSeconds = CMTimeGetSeconds(itemTime);
+    
+    //NSLog(@"itemSeconds >= finalFrameTime : %.3f >= %.3f", itemSeconds, self.finalFrameTime);
+    
+    if (itemSeconds >= self.finalFrameTime) {
+      NSLog(@"past finalFrameTime %.3f >= %.3f", itemSeconds, self.finalFrameTime);
+      
+      self.finalFrameBlock();
+    }
+  }
+  
   return nextFrame;
 }
 
@@ -247,11 +271,11 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   __weak GPUVFrameSourceVideo *weakSelf = self;
   
-  // Default end of stream callback, implements non-seamless looping
+  // Default setting for end of clip will stop playback
   
-  self.finishedBlock = ^{
-    NSLog(@"GPUVFrameSourceVideo.finishedBlock");
-    [weakSelf restart];
+  self.playedToEndBlock = ^{
+    NSLog(@"GPUVFrameSourceVideo.playedToEndBlock %.3f", CACurrentMediaTime());
+    [weakSelf stop];
   };
   
   // Async logic to parse M4V headers to get tracks and other metadata
@@ -379,16 +403,13 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   NSLog(@"video track time duration %0.3f", trackDuration);
   
   CMTime frameDurationTime = videoTrack.minFrameDuration;
-  float frameDuration = (float)CMTimeGetSeconds(frameDurationTime);
-  NSLog(@"video track frame duration %0.3f", frameDuration);
+  float frameDurationSeconds = (float)CMTimeGetSeconds(frameDurationTime);
+  NSLog(@"video track frame duration %0.3f", frameDurationSeconds);
   
   // Once display frame interval has been parsed, create display
   // frame timer but be sure it is created on the main thread
   // and that this method invocation completes before the
   // next call to dispatch_async() to start playback.
-  
-  // FIXME: get closest known FPS time ??
-  float frameDurationSeconds = CMTimeGetSeconds(frameDurationTime);
   
   {
     // Note that writing to FPS members must be executed on the
@@ -397,6 +418,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     float FPS = 1.0f / frameDurationSeconds;
     if (FPS <= 30.001 && FPS >= 29.999) {
       FPS = 30;
+      frameDurationSeconds = 1.0f / 30.0f;
     }
     self.FPS = FPS;
     self.frameDuration = frameDurationSeconds;
@@ -404,6 +426,14 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     //[self makeDisplayLink];
   }
   
+  {
+    // Calculate the frame number of the final frame
+
+    self.finalFrameTime = trackDuration - frameDurationSeconds - (frameDurationSeconds * 0.10);
+    
+    NSLog(@"video finalFrameTime %.3f", self.finalFrameTime);
+  }
+
   // Init player with current item, seek to time = 0.0
   // but do not start playback automatically
   
@@ -439,6 +469,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
   
+  if (self.playRate == 0.0f) {
+    self.playRate = 1.0f;
+  }
+
   if ((0)) {
     [self.player play];
   } else {
@@ -462,6 +496,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 #if defined(DEBUG)
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
+  
+  self.playRate = rate;
   
   // Sync item time 0.0 to supplied host time (system clock)
   
@@ -521,17 +557,23 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 // playing then a call to restart will just rewind.
 
 - (void) restart {
+//  [self seekToTimeZero];
+//
+//  AVPlayerTimeControlStatus timeControlStatus = self.player.timeControlStatus;
+//
+//  if (timeControlStatus == AVPlayerTimeControlStatusPlaying ||
+//      timeControlStatus == AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate) {
+//    // Currently playing
+//  } else {
+//    // Not playing
+//    [self play];
+//  }
+  
+  CFTimeInterval syncTime = self.syncTime;
+  float playRate = self.playRate;
+  
   [self seekToTimeZero];
-  
-  AVPlayerTimeControlStatus timeControlStatus = self.player.timeControlStatus;
-  
-  if (timeControlStatus == AVPlayerTimeControlStatusPlaying ||
-      timeControlStatus == AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate) {
-    // Currently playing
-  } else {
-    // Not playing
-    [self play];
-  }
+  [self setRate:playRate atHostTime:syncTime];
 }
 
 #pragma mark - AVPlayerItemOutputPullDelegate
@@ -579,9 +621,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
   _notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:AVPlayerItemDidPlayToEndTimeNotification object:item queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
-    if (self.finishedBlock) {
-      self.finishedBlock();
-      //self.finishedBlock = nil;
+    if (self.playedToEndBlock) {
+      self.playedToEndBlock();
     }
   }];
 }

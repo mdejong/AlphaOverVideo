@@ -159,6 +159,9 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     const int debugPrintAll = 0;
     const int debugPrintDeliveredToMainThread = 0;
     
+    // FIXME: Need to address thread safety for each of these properties,
+    // all properties should be set inside a single lock on self.
+    
     // If view was deallocated before display link fires then nop
     
     if (view == nil) {
@@ -296,6 +299,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
         }
 #endif // DEBUG
         
+        GPUVMTKView *view = displayLinkPrivateInterface.gpuvMtkView;
         [view displayLinkCallback:frameSeconds displayAt:displaySeconds];
       });
     }
@@ -597,8 +601,8 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     };
     
 #if defined(LOAD_ALPHA_VIDEO)
-    //[weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
-    [weakFrameSourceVideo loadFromAssets:@"CountToTenA.m4v" alphaResFilename:@"CountToTenA_alpha.m4v"];    
+    [weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
+    //[weakFrameSourceVideo loadFromAssets:@"CountToTenA.m4v" alphaResFilename:@"CountToTenA_alpha.m4v"];    
 #else
     [frameSourceVideo loadFromAsset:@"CarSpin.m4v"];
     //[frameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
@@ -1317,7 +1321,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   }
   
   id<GPUVFrameSource> frameSource = self.frameSource;
-  GPUVFrame *nextFrame = [frameSource frameForHostTime:hostTime];
+  GPUVFrame *nextFrame = [frameSource frameForHostTime:hostTime presentationTime:vSyncTime];
   
   if (nextFrame == nil) {
     // No frame loaded for this time
@@ -1325,7 +1329,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 #if TARGET_OS_IOS
     // nop
 #else
-    self.presentationTime = displayTime;
+    self.presentationTime = vSyncTime;
 #endif // TARGET_OS_IOS
     
     [self nextFrameReady:nextFrame];

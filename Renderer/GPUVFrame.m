@@ -68,59 +68,16 @@
     alphaRetainCount = (int)CFGetRetainCount(self.alphaPixelBuffer);
   }
 
-  return [NSString stringWithFormat:@"GPUVFrame %p %dx%d self.yCbCrPixelBuffer %p (%d) self.alphaPixelBuffer %p (%d)",
+  return [NSString stringWithFormat:@"GPUVFrame %p %dx%d self.yCbCrPixelBuffer %p (%d) self.alphaPixelBuffer %p (%d) F=%05d",
           self,
           width,
           height,
           self.yCbCrPixelBuffer,
           rgbRetainCount,
           self.alphaPixelBuffer,
-          alphaRetainCount];
+          alphaRetainCount,
+          self.frameNum];
 }
-
-/*
-
-+ (int) calcFrameNum:(CVPixelBufferRef)cvPixelBuffer frameDuration:(float)frameDuration
-{
-  if (cvPixelBuffer == NULL) {
-    return -1;
-  }
-  
-  NSDictionary *movieTimeDict = (__bridge NSDictionary *) CVBufferGetAttachment(cvPixelBuffer, kCVBufferMovieTimeKey, NULL);
-  
-//  2 : <CFString 0x1dd16ad88 [0x1dcbfd5e0]>{contents = "QTMovieTime"} = <CFBasicHash 0x282f2bf40 [0x1dcbfd5e0]>{type = mutable dict, count = 2,
-//    entries =>
-//    0 : <CFString 0x1dd16ada8 [0x1dcbfd5e0]>{contents = "TimeValue"} = <CFNumber 0xf3e5608b93a8a324 [0x1dcbfd5e0]>{value = +0, type = kCFNumberSInt64Type}
-//    1 : <CFString 0x1dd16adc8 [0x1dcbfd5e0]>{contents = "TimeScale"} = <CFNumber 0xf3e5608b93a89da5 [0x1dcbfd5e0]>{value = +1000, type = kCFNumberSInt32Type}
-//  }
-  
-//  NSNumber *timeValueNum = movieTimeDict[@"TimeValue"];
-//  NSNumber *timeScaleNum = movieTimeDict[@"TimeScale"];
-//
-//  unsigned long long timeValue = [timeValueNum unsignedLongLongValue];
-//  unsigned int timeScale = [timeScaleNum unsignedIntValue];
-//
-//  unsigned int frameNum = (unsigned int) (timeValue / timeScale);
-//
-//  NSLog(@"%d / %d -> %d", (int)timeValue, timeScale, frameNum);
-//
-//  return frameNum;
-  
-  float timeValue = [timeValueNum floatValue];
-  float timeScale = [timeScaleNum floatValue];
-  
-  float seconds = timeValue / timeScale;
-  
-  if ((0)) {
-  NSLog(@"%7llu / %7d -> %.3f", [timeValueNum unsignedLongLongValue], [timeScaleNum unsignedIntValue], seconds);
-  }
-  
-  //float frameDuration = (1.0f / 30);
-  float frameNum = seconds / frameDuration;
-  return (int) round(frameNum);
-}
-
-*/
 
 // Given an item time calculate the corresponding integer frame number in the range (0, N-1)
 //
@@ -134,9 +91,6 @@
   // FIXME: replace float divide by MULT (1.0 / frameDuration)
   float frameNumF = (itemTime / frameDuration);
   unsigned int frameNum = (unsigned int) frameNumF;
-  if (frameNum > 5) {
-    ;
-  }
   return frameNum;
 }
 

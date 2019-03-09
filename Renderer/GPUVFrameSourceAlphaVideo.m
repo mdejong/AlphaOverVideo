@@ -32,8 +32,8 @@
 @property (nonatomic, assign) BOOL rgbSourceLoaded;
 @property (nonatomic, assign) BOOL alphaSourceLoaded;
 
-@property (nonatomic, assign) BOOL rgbSourceEnded;
-@property (nonatomic, assign) BOOL alphaSourceEnded;
+@property (nonatomic, retain) GPUVFrame *heldRGBFrame;
+@property (nonatomic, retain) GPUVFrame *heldAlphaFrame;
 
 #if defined(STORE_TIMES)
 @property (nonatomic, retain) NSMutableArray *times;
@@ -63,9 +63,9 @@
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
 
-- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
+- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime presentationTime:(CFTimeInterval)presentationTime
 {
-  const int debugDumpForHostTimeValues = 1;
+  const int debugDumpForHostTimeValues = 0;
   
 #if defined(STORE_TIMES)
   if (self.times == nil) {
@@ -83,11 +83,7 @@
   NSLog(@"rgb and alpha frameForHostTime %.3f", hostTime);
   }
   
-  // FIXME: Split rgb and alpha frame read so that if no frame can be read for
-  // the rgb channel then a read on the alpha channel is not executed.
-  // Might also be useful to calculate the host time for the RGB and Alpha
-  // streams first and then skip reading both frames if one of the two
-  // is more than a frame off the other.
+  self.syncTime = presentationTime;
   
   GPUVFrameSourceVideo *rgbSource = self.rgbSource;
   GPUVFrameSourceVideo *alphaSource = self.alphaSource;
@@ -99,14 +95,62 @@
     NSLog(@"item time %.3f", CMTimeGetSeconds(itemTime));
   }
   
-  GPUVFrame *rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime];
-  GPUVFrame *alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime];
+  GPUVFrame *rgbFrame = nil;
+  GPUVFrame *alphaFrame = nil;
+
+#if defined(DEBUG)
+  if (self.heldRGBFrame) {
+    NSAssert(self.heldAlphaFrame == nil, @"heldAlphaFrame");
+  }
+  if (self.heldAlphaFrame) {
+    NSAssert(self.heldRGBFrame == nil, @"heldRGBFrame");
+  }
+#endif // DEBUG
   
-  int rgbFrameNum = rgbFrame.frameNum;
-  int alphaFrameNum = alphaFrame.frameNum;
+  BOOL isHeldOver = FALSE;
+  
+  if (self.heldRGBFrame != nil) {
+    rgbFrame = self.heldRGBFrame;
+    self.heldRGBFrame = nil;
+    isHeldOver = TRUE;
+  } else {
+    rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime];
+  }
+  
+  // Note the case where RGB has already failed to load a frame, do not
+  // the load alpha frame in this case.
+  
+  if (self.heldAlphaFrame != nil) {
+    alphaFrame = self.heldAlphaFrame;
+    self.heldAlphaFrame = nil;
+    isHeldOver = TRUE;
+  } else if (rgbFrame != nil) {
+    alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime];
+  }
+  
+#if defined(DEBUG)
+  NSAssert(self.heldAlphaFrame == nil, @"heldAlphaFrame");
+  NSAssert(self.heldRGBFrame == nil, @"heldRGBFrame");
+#endif // DEBUG
+  
+  int rgbFrameNum = (rgbFrame == nil) ? -1 : rgbFrame.frameNum;
+  int alphaFrameNum = (alphaFrame == nil) ? -1 : alphaFrame.frameNum;
   
   if (debugDumpForHostTimeValues) {
   NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
+  }
+  
+  if (isHeldOver) {
+    if (rgbFrameNum == alphaFrameNum) {
+      NSLog(@"isHeldOver REPAIRED");
+    } else if (rgbFrameNum != alphaFrameNum) {
+      NSLog(@"isHeldOver mismatch with %d != %d", rgbFrameNum, alphaFrameNum);
+      NSLog(@"");
+      
+      // FIXME: if the held over frame value does not match the one just
+      // decoded for the item time, then decode for that item time to
+      // see if that would repair the mismatched frame pair.
+    }
   }
   
 #if defined(STORE_TIMES)
@@ -136,6 +180,19 @@
     NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
     NSLog(@"RGB vs Alpha decode frame mismatch");
     }
+    
+    // case 1: rgb = 2 alpha = 3
+    // case 2: rgb = 3, alpha = 2
+    // anything else, drop both
+    
+    if (rgbFrameNum+1 == alphaFrameNum) {
+      // Hold alpha until next loop
+      self.heldAlphaFrame = alphaFrame;
+    } else if (alphaFrameNum+1 == rgbFrameNum) {
+      // Hold rgb until next loop
+      self.heldRGBFrame = rgbFrame;
+    }
+    
     rgbFrame = nil;
   } else {
     rgbFrame.alphaPixelBuffer = alphaFrame.yCbCrPixelBuffer;
@@ -258,27 +315,20 @@
     }
   };
   
-  // Set end of stream callbacks
+  // Implement seamless looping by restarting just after
+  // the final frame has been decoded and displayed.
   
-  self.rgbSource.finishedBlock = ^{
-    NSLog(@"self.rgbSource.finishedBlock");
-    weakSelf.rgbSourceEnded = TRUE;
-    if (weakSelf.rgbSourceEnded && weakSelf.alphaSourceEnded) {
-      weakSelf.rgbSourceEnded = FALSE;
-      weakSelf.alphaSourceEnded = FALSE;
-      [weakSelf restart];
-    }
+  self.rgbSource.playedToEndBlock = nil;
+  self.alphaSource.playedToEndBlock = nil;
+  
+  self.rgbSource.finalFrameBlock = ^{
+    NSLog(@"self.rgbSource.finalFrameBlock %.3f", CACurrentMediaTime());
+    [weakSelf restart];
   };
   
-  self.alphaSource.finishedBlock = ^{
-    NSLog(@"self.alphaSource.finishedBlock");
-    weakSelf.alphaSourceEnded = TRUE;
-    if (weakSelf.rgbSourceEnded && weakSelf.alphaSourceEnded) {
-      weakSelf.rgbSourceEnded = FALSE;
-      weakSelf.alphaSourceEnded = FALSE;
-      [weakSelf restart];
-    }
-  };
+  self.alphaSource.finalFrameBlock = nil;
+  
+  return;
 }
 
 // Invoked once both videos have been successfully loaded
@@ -332,6 +382,8 @@
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
   
+  self.playRate = rate;
+  
   // FIXME: Need a block that waits for a callback to be
   // invoked for each source, then the user supplied block
   // gets invoked once to kick off the play op.
@@ -375,6 +427,10 @@
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
   
+  if (self.playRate == 0.0f) {
+    self.playRate = 1.0f;
+  }
+
   if ((0)) {
     [self.rgbSource play];
     [self.alphaSource play];
@@ -418,8 +474,20 @@
 }
 
 - (void) restart {
-  [self.rgbSource restart];
-  [self.alphaSource restart];
+  //[self.rgbSource restart];
+  //[self.alphaSource restart];
+  
+  self.heldRGBFrame = nil;
+  self.heldAlphaFrame = nil;
+  
+  CFTimeInterval syncTime = self.syncTime;
+  float playRate = self.playRate;
+  
+  [self.rgbSource seekToTimeZero];
+  [self.alphaSource seekToTimeZero];
+  
+  [self.rgbSource setRate:playRate atHostTime:syncTime];
+  [self.alphaSource setRate:playRate atHostTime:syncTime];
 }
 
 @end

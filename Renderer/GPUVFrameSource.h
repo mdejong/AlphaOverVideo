@@ -22,7 +22,7 @@
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
 
-- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime;
+- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime presentationTime:(CFTimeInterval)presentationTime;
 
 // Return TRUE if more frames can be returned by this frame source,
 // returning FALSE means that all frames have been decoded.

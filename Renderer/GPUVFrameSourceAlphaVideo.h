@@ -21,6 +21,9 @@
 
 @interface GPUVFrameSourceAlphaVideo : NSObject <GPUVFrameSource>
 
+@property (nonatomic, assign) CFTimeInterval syncTime;
+@property (nonatomic, assign) float playRate;
+
 @property (nonatomic, assign) float FPS;
 @property (nonatomic, assign) float frameDuration;
 
