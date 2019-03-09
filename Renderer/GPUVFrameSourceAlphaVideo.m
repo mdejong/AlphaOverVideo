@@ -65,7 +65,7 @@
 
 - (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime presentationTime:(CFTimeInterval)presentationTime
 {
-  const int debugDumpForHostTimeValues = 0;
+  const int debugDumpForHostTimeValues = 1;
   
 #if defined(STORE_TIMES)
   if (self.times == nil) {
@@ -79,9 +79,9 @@
   // If a given time does not load a new frame for both sources then
   // the RGB and Alpha decoding is not in sync and the frame must be dropped.
   
-  if (debugDumpForHostTimeValues) {
-  NSLog(@"rgb and alpha frameForHostTime %.3f", hostTime);
-  }
+//  if (debugDumpForHostTimeValues) {
+//  NSLog(@"rgb and alpha frameForHostTime %.3f", hostTime);
+//  }
   
   self.syncTime = presentationTime;
   
@@ -108,11 +108,14 @@
 #endif // DEBUG
   
   BOOL isHeldOver = FALSE;
+  BOOL isRGBHeldOver = FALSE;
+  BOOL isAlphaHeldOver = FALSE;
   
   if (self.heldRGBFrame != nil) {
     rgbFrame = self.heldRGBFrame;
     self.heldRGBFrame = nil;
     isHeldOver = TRUE;
+    isRGBHeldOver = TRUE;
   } else {
     rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime];
   }
@@ -124,6 +127,7 @@
     alphaFrame = self.heldAlphaFrame;
     self.heldAlphaFrame = nil;
     isHeldOver = TRUE;
+    isAlphaHeldOver = TRUE;
   } else if (rgbFrame != nil) {
     alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime];
   }
@@ -140,16 +144,42 @@
   NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
   }
   
+  const BOOL isHeldOverLogging = TRUE;
+  
   if (isHeldOver) {
     if (rgbFrameNum == alphaFrameNum) {
-      NSLog(@"isHeldOver REPAIRED");
+      if (isHeldOverLogging) {
+        NSLog(@"isHeldOver REPAIRED");
+      }
     } else if (rgbFrameNum != alphaFrameNum) {
-      NSLog(@"isHeldOver mismatch with %d != %d", rgbFrameNum, alphaFrameNum);
-      NSLog(@"");
+      if (isHeldOverLogging) {
+        NSLog(@"isHeldOver mismatch with %d != %d", rgbFrameNum, alphaFrameNum);
+        NSLog(@"");
+      }
+
+      // If the held over frame is behind the frame that was just decoded, then
+      // decode from the hel over stream with the current item time to determine
+      // if this would repair the jitter.
       
-      // FIXME: if the held over frame value does not match the one just
-      // decoded for the item time, then decode for that item time to
-      // see if that would repair the mismatched frame pair.
+      if (rgbFrameNum != -1 && alphaFrameNum != -1) {
+        if (isRGBHeldOver) {
+          rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime];
+          rgbFrameNum = (rgbFrame == nil) ? -1 : rgbFrame.frameNum;
+        } else if (isAlphaHeldOver) {
+          alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime];
+          alphaFrameNum = (alphaFrame == nil) ? -1 : alphaFrame.frameNum;
+        }
+        
+        if (rgbFrameNum == alphaFrameNum) {
+          if (isHeldOverLogging) {
+            NSLog(@"isHeldOver REPAIRED stage2 : %d == %d", rgbFrameNum, alphaFrameNum);
+          }
+        } else {
+          if (isHeldOverLogging) {
+            NSLog(@"isHeldOver NOT REPAIRED stage2 : %d != %d", rgbFrameNum, alphaFrameNum);
+          }
+        }
+      }
     }
   }
   
@@ -166,17 +196,24 @@
   
   if (rgbFrame == nil && alphaFrame == nil) {
     // No frame avilable from either source
+    if (isHeldOverLogging) {
+      NSLog(@"no decoded RGB or Alpha frame");
+    }
     rgbFrame = nil;
   } else if (rgbFrame != nil && alphaFrame == nil) {
     // RGB returned a frame but alpha did not
-    NSLog(@"RGB returned a frame but alpha did not");
+    if (isHeldOverLogging) {
+      NSLog(@"RGB returned a frame but alpha did not");
+    }
     rgbFrame = nil;
   } else if (rgbFrame == nil && alphaFrame != nil) {
     // alpha returned a frame but RGB did not
-    NSLog(@"alpha returned a frame but RGB did not");
+    if (isHeldOverLogging) {
+      NSLog(@"alpha returned a frame but RGB did not");
+    }
     rgbFrame = nil;
   } else if (rgbFrameNum != alphaFrameNum) {
-    if ((1)) {
+    if (isHeldOverLogging) {
     NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
     NSLog(@"RGB vs Alpha decode frame mismatch");
     }
@@ -185,14 +222,26 @@
     // case 2: rgb = 3, alpha = 2
     // anything else, drop both
     
+    BOOL offByOne = FALSE;
+    
     if (rgbFrameNum+1 == alphaFrameNum) {
       // Hold alpha until next loop
       self.heldAlphaFrame = alphaFrame;
+      offByOne = TRUE;
     } else if (alphaFrameNum+1 == rgbFrameNum) {
       // Hold rgb until next loop
       self.heldRGBFrame = rgbFrame;
+      offByOne = TRUE;
     }
     
+//    if (offByOne) {
+//      if (isHeldOverLogging) {
+//        NSLog(@"setRate to repair frame off by 1 mismatch");
+//      }
+//
+//      [self setRate:self.playRate atHostTime:self.syncTime];
+//    }
+
     rgbFrame = nil;
   } else {
     rgbFrame.alphaPixelBuffer = alphaFrame.yCbCrPixelBuffer;

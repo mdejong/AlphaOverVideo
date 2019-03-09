@@ -87,17 +87,6 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   self.syncTime = presentationTime;
   
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
-
-#if defined(LOG_DISPLAY_LINK_TIMINGS)
-  if ((0))
-  {
-    CMTime currentTime = self.player.currentItem.currentTime;
-    
-    //NSLog(@"%p frameForHostTime %.3f :  %d / %d -> itemTime %0.3f", self, hostTime, (unsigned int)currentTime.value, (int)currentTime.timescale, CMTimeGetSeconds(currentTime));
-    
-    NSLog(@"%p frameForHostTime %.3f : itemTime %0.3f", self, hostTime, CMTimeGetSeconds(currentTime));
-  }
-#endif // LOG_DISPLAY_LINK_TIMINGS
   
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1)) {
