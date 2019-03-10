@@ -48,7 +48,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 - (void) dealloc
 {
   [self.playerItemVideoOutput setDelegate:nil queue:nil];
-  
+  self.playerQueue = nil;
   return;
 }
 
@@ -260,7 +260,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   NSLog(@"PlayerItem URL %@", URL);
   
-  __weak GPUVFrameSourceVideo *weakSelf = self;
+  __weak typeof(self) weakSelf = self;
   
   // Default setting for end of clip will stop playback
   
@@ -328,7 +328,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   self.playerQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
   
-  __weak GPUVFrameSourceVideo *weakSelf = self;
+  __weak typeof(self) weakSelf = self;
   
   [self.playerItemVideoOutput setDelegate:weakSelf queue:self.playerQueue];
   
@@ -444,7 +444,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   [self addDidPlayToEndTimeNotificationForPlayerItem:self.playerItem];
 
-  __weak GPUVFrameSourceVideo *weakSelf = self;
+  __weak typeof(self) weakSelf = self;
   [self.playerItem seekToTime:kCMTimeZero completionHandler:^void(BOOL finished){
     if (finished) {
       [weakSelf.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:weakSelf.frameDuration];
@@ -475,6 +475,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 - (void) stop
 {
   [self unregiserForItemNotificaitons];
+  [self unregisterForItemEndNotification];
   [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
   [self.player setRate:0.0];
 }
@@ -580,7 +581,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 {
   NSLog(@"outputMediaDataWillChange : sender %p", sender);
   
-  __weak GPUVFrameSourceVideo *weakSelf = self;
+  __weak typeof(self) weakSelf = self;
   
   dispatch_async(dispatch_get_main_queue(), ^{
     if (weakSelf.loadedBlock != nil) {
@@ -594,12 +595,14 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void) regiserForItemNotificaitons
 {
-  [self addObserver:self forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:AVPlayerItemStatusContext];
+  __weak typeof(self) weakSelf = self;
+  [self addObserver:weakSelf forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:AVPlayerItemStatusContext];
 }
 
 - (void) unregiserForItemNotificaitons
 {
-  [self removeObserver:self forKeyPath:@"player.currentItem.status" context:AVPlayerItemStatusContext];
+  __weak typeof(self) weakSelf = self;
+  [self removeObserver:weakSelf forKeyPath:@"player.currentItem.status" context:AVPlayerItemStatusContext];
 }
 
 - (void) addDidPlayToEndTimeNotificationForPlayerItem:(AVPlayerItem *)item
@@ -610,10 +613,12 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   // Setting actionAtItemEnd to None prevents the movie from getting paused at item end. A very simplistic, and not gapless, looped playback.
   
+  __weak typeof(self) weakSelf = self;
+  
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
   _notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:AVPlayerItemDidPlayToEndTimeNotification object:item queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
-    if (self.playedToEndBlock) {
-      self.playedToEndBlock();
+    if (weakSelf.playedToEndBlock) {
+      weakSelf.playedToEndBlock();
     }
   }];
 }

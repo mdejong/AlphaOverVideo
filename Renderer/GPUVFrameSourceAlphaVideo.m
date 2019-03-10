@@ -45,6 +45,8 @@
 
 - (void) dealloc
 {
+  //NSLog(@"%@", self);
+  
   return;
 }
 
@@ -318,7 +320,7 @@
 
 - (void) setBothLoadCallbacks
 {
-  __weak GPUVFrameSourceAlphaVideo *weakSelf = self;
+  __weak typeof(self) weakSelf = self;
   weakSelf.rgbSourceLoaded = FALSE;
   weakSelf.alphaSourceLoaded = FALSE;
   

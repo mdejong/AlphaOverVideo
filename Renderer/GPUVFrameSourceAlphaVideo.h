@@ -55,6 +55,10 @@
 
 - (void) playWithPreroll:(float)rate block:(void (^)(void))block;
 
+// Stop playback by setting player rate to 0.0
+
+- (void) stop;
+
 // Invoke player setRate to actually begin playing back a video
 // source once playWithPreroll invokes the block callback
 // with a specific host time to sync to.

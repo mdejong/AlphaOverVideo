@@ -472,7 +472,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   
   [mtkView mtkView:mtkView drawableSizeWillChange:mtkView.drawableSize];
   
-  __weak GPUVMTKView *weakSelf = self;
+  __weak typeof(self) weakSelf = self;
   mtkView.delegate = weakSelf;
   
   {
@@ -508,26 +508,19 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     if (self.frameSource == nil) {
       self.frameSource = [[GPUVFrameSourceAlphaVideo alloc] init];
     }
-    
-    GPUVFrameSourceAlphaVideo *frameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
 #else
     if (self.frameSource == nil) {
       self.frameSource = [[GPUVFrameSourceVideo alloc] init];
     }
-    
-    GPUVFrameSourceVideo *frameSourceVideo = (GPUVFrameSourceVideo *) self.frameSource;
 #endif // LOAD_ALPHA_VIDEO
-
-    __weak GPUVMTKView *weakSelf = self;
-    
     
 #if defined(LOAD_ALPHA_VIDEO)
-    __weak GPUVFrameSourceAlphaVideo *weakFrameSourceVideo = frameSourceVideo;
+    __weak GPUVFrameSourceAlphaVideo *weakFrameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
 #else
-    __weak GPUVFrameSourceVideo *weakFrameSourceVideo = frameSourceVideo;
+    __weak GPUVFrameSourceVideo *weakFrameSourceVideo = (GPUVFrameSourceVideo *) self.frameSource;
 #endif // LOAD_ALPHA_VIDEO
     
-    frameSourceVideo.loadedBlock = ^(BOOL success){
+    weakFrameSourceVideo.loadedBlock = ^(BOOL success){
       if (!success) {
         NSLog(@"loadedBlock FAILED");
         return;
@@ -548,12 +541,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       [weakSelf makeDisplayLink];
       
       [weakSelf startDisplayLink];
-      
-      // FIXME: generate sync time in preroll finished block.
-      // The "sync time" needs to come from the next vsync
-      
-      //CFTimeInterval syncTime = CACurrentMediaTime();
-      
+            
       const float rate = 1.0f;
       
       [weakFrameSourceVideo playWithPreroll:rate block:^{
@@ -1337,6 +1325,17 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     // Draw frame directly from this timer invocation
     [self draw];
   }
+  
+//  if (hostTime > 2.0 && self.frameSource) {
+//    GPUVFrameSourceAlphaVideo *frameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
+//    
+//    [self cancelDisplayLink];
+//    
+//    [frameSourceVideo stop];
+//    
+//    self.frameSource = nil;
+//    frameSourceVideo = nil;
+//  }
 }
 
 // This method is invoked when a video has been preloaded
