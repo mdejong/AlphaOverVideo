@@ -220,9 +220,9 @@
     NSLog(@"RGB vs Alpha decode frame mismatch");
     }
     
-    // case 1: rgb = 2 alpha = 3
-    // case 2: rgb = 3, alpha = 2
-    // anything else, drop both
+    // case A: rgb = 2 alpha = 3
+    // case B: rgb = 3, alpha = 2
+    // anything else, drop frame
     
     BOOL offByOne = FALSE;
     
@@ -236,13 +236,17 @@
       offByOne = TRUE;
     }
     
-//    if (offByOne) {
-//      if (isHeldOverLogging) {
-//        NSLog(@"setRate to repair frame off by 1 mismatch");
-//      }
-//
-//      [self setRate:self.playRate atHostTime:self.syncTime];
-//    }
+    if (offByOne) {
+      if (isHeldOverLogging) {
+        NSLog(@"setRate to repair frame off by 1 mismatch");
+      }
+
+      // Resync the current playback time to the time halfway
+      // through the interval, in many cases this will repair
+      // the issue where the two tracks are just slightly off
+
+      [self setRate:self.playRate atHostTime:hostTime];
+    }
 
     rgbFrame = nil;
   } else {
