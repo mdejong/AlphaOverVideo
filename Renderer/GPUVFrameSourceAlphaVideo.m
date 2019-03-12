@@ -8,8 +8,6 @@
 
 #import "GPUVFrameSourceAlphaVideo.h"
 
-//#import <QuartzCore/QuartzCore.h>
-
 //#define STORE_TIMES
 
 // Private API
@@ -65,7 +63,9 @@
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
 
-- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime presentationTime:(CFTimeInterval)presentationTime
+- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
+           hostPresentationTime:(CFTimeInterval)hostPresentationTime
+            presentationTimePtr:(float*)presentationTimePtr
 {
   const int debugDumpForHostTimeValues = 1;
   
@@ -85,7 +85,7 @@
 //  NSLog(@"rgb and alpha frameForHostTime %.3f", hostTime);
 //  }
   
-  self.syncTime = presentationTime;
+  self.syncTime = hostPresentationTime;
   
   GPUVFrameSourceVideo *rgbSource = self.rgbSource;
   GPUVFrameSourceVideo *alphaSource = self.alphaSource;
@@ -113,13 +113,16 @@
   BOOL isRGBHeldOver = FALSE;
   BOOL isAlphaHeldOver = FALSE;
   
+  float rgbPresentaitonTime = -1;
+  float alphaPresentaitonTime = -1;
+  
   if (self.heldRGBFrame != nil) {
     rgbFrame = self.heldRGBFrame;
     self.heldRGBFrame = nil;
     isHeldOver = TRUE;
     isRGBHeldOver = TRUE;
   } else {
-    rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime];
+    rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime hostPresentationTime:hostPresentationTime presentationTimePtr:&rgbPresentaitonTime];
   }
   
   // Note the case where RGB has already failed to load a frame, do not
@@ -131,7 +134,7 @@
     isHeldOver = TRUE;
     isAlphaHeldOver = TRUE;
   } else if (rgbFrame != nil) {
-    alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime];
+    alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime hostPresentationTime:hostPresentationTime presentationTimePtr:&alphaPresentaitonTime];
   }
   
 #if defined(DEBUG)
@@ -165,10 +168,10 @@
       
       if (rgbFrameNum != -1 && alphaFrameNum != -1) {
         if (isRGBHeldOver) {
-          rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime];
+          rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime hostPresentationTime:hostPresentationTime presentationTimePtr:&rgbPresentaitonTime];
           rgbFrameNum = (rgbFrame == nil) ? -1 : rgbFrame.frameNum;
         } else if (isAlphaHeldOver) {
-          alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime];
+          alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime hostPresentationTime:hostPresentationTime presentationTimePtr:&alphaPresentaitonTime];
           alphaFrameNum = (alphaFrame == nil) ? -1 : alphaFrame.frameNum;
         }
         
@@ -190,9 +193,11 @@
   // the hostTime value is determined in relation to vsync bounds.
   [timeArr addObject:@(CACurrentMediaTime())];  
   [timeArr addObject:@(hostTime)];
-  
   [timeArr addObject:@(CMTimeGetSeconds(itemTime))];
+  
+  [timeArr addObject:@(rgbPresentaitonTime)];
   [timeArr addObject:@(rgbFrameNum)];
+  [timeArr addObject:@(alphaPresentaitonTime)];
   [timeArr addObject:@(alphaFrameNum)];
 #endif // STORE_TIMES
   
@@ -257,6 +262,10 @@
 #if defined(STORE_TIMES)
   [self.times addObject:timeArr];
 #endif // STORE_TIMES
+  
+  if (presentationTimePtr != NULL) {
+    *presentationTimePtr = rgbPresentaitonTime;
+  }
 
   return rgbFrame;
 }
@@ -531,6 +540,12 @@
 - (void) restart {
   //[self.rgbSource restart];
   //[self.alphaSource restart];
+  
+  self.rgbSource.numRestarts += 1;
+  
+//  if (self.rgbSource.numRestarts > 2) {
+//    ;
+//  }
   
   self.heldRGBFrame = nil;
   self.heldAlphaFrame = nil;

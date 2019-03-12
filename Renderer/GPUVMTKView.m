@@ -20,7 +20,7 @@
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
 
-//#define LOAD_ALPHA_VIDEO
+#define LOAD_ALPHA_VIDEO
 
 //#define LOG_DISPLAY_LINK_TIMINGS
 
@@ -1314,7 +1314,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   }
   
   id<GPUVFrameSource> frameSource = self.frameSource;
-  GPUVFrame *nextFrame = [frameSource frameForHostTime:hostTime presentationTime:vSyncTime];
+  GPUVFrame *nextFrame = [frameSource frameForHostTime:hostTime hostPresentationTime:vSyncTime presentationTimePtr:NULL];
   
   if (nextFrame == nil) {
     // No frame loaded for this time

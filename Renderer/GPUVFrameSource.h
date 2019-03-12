@@ -21,8 +21,15 @@
 // Given a host time offset, return a GPUVFrame that corresponds
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
+// The hostPresentationTime indicates the host time when the
+// decoded frame would be displayed.
+// The presentationTimePtr pointer provides a way to query the
+// DTS (display time stamp) of the decoded frame in the H.264 stream.
+// Note that presentationTimePtr can be NULL.
 
-- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime presentationTime:(CFTimeInterval)presentationTime;
+- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
+           hostPresentationTime:(CFTimeInterval)hostPresentationTime
+            presentationTimePtr:(float*)presentationTimePtr;
 
 // Return TRUE if more frames can be returned by this frame source,
 // returning FALSE means that all frames have been decoded.

@@ -76,15 +76,22 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 // Given a host time offset, return a GPUVFrame that corresponds
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
+// The hostPresentationTime indicates the host time when the
+// decoded frame would be displayed.
+// The presentationTimePtr pointer provides a way to query the
+// DTS (display time stamp) of the decoded frame in the H.264 stream.
+// Note that presentationTimePtr can be NULL.
 
-- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime presentationTime:(CFTimeInterval)presentationTime
+- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
+           hostPresentationTime:(CFTimeInterval)hostPresentationTime
+            presentationTimePtr:(float*)presentationTimePtr
 {
   if (self.player.currentItem == nil) {
     NSLog(@"player not playing yet in frameForHostTime");
     return nil;
   }
   
-  self.syncTime = presentationTime;
+  self.syncTime = hostPresentationTime;
   
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
   
@@ -111,7 +118,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(currentItemTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
-  return [self frameForItemTime:currentItemTime hostTime:hostTime];
+  return [self frameForItemTime:currentItemTime
+                       hostTime:hostTime
+           hostPresentationTime:hostPresentationTime
+            presentationTimePtr:presentationTimePtr];
 }
 
 // Get frame that corresponds to item time. The item time range is
@@ -120,6 +130,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (GPUVFrame*) frameForItemTime:(CMTime)itemTime
                        hostTime:(CFTimeInterval)hostTime
+           hostPresentationTime:(CFTimeInterval)hostPresentationTime
+            presentationTimePtr:(float*)presentationTimePtr
 {
   AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
   
@@ -158,6 +170,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   [timeArr addObject:@(CMTimeGetSeconds(itemTime))];
 #endif // STORE_TIMES
 
+  float presentationTimeSeconds = -1;
+  
   if ([playerItemVideoOutput hasNewPixelBufferForItemTime:itemTime]) {
     // Grab the pixel bufer for the current time
     
@@ -165,7 +179,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     
     CVPixelBufferRef rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:itemTime itemTimeForDisplay:&presentationTime];
 
-    float presentationTimeSeconds = CMTimeGetSeconds(presentationTime);
+    presentationTimeSeconds = CMTimeGetSeconds(presentationTime);
     
     if (rgbPixelBuffer != NULL) {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
@@ -223,6 +237,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
       
       self.finalFrameBlock();
     }
+  }
+  
+  if (presentationTimePtr) {
+    *presentationTimePtr = presentationTimeSeconds;
   }
   
   return nextFrame;
