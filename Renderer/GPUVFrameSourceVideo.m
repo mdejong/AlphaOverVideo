@@ -443,7 +443,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   float nominalFrameRate = videoTrack.nominalFrameRate;
   NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
   
-  [self regiserForItemNotificaitons];
+  [self registerForItemNotificaitons];
   
   return TRUE;
 }
@@ -486,7 +486,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void) stop
 {
-  [self unregiserForItemNotificaitons];
+  [self unregisterForItemNotificaitons];
   [self unregisterForItemEndNotification];
   [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
   [self.player setRate:0.0];
@@ -611,13 +611,13 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   return;
 }
 
-- (void) regiserForItemNotificaitons
+- (void) registerForItemNotificaitons
 {
   __weak typeof(self) weakSelf = self;
   [self addObserver:weakSelf forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:AVPlayerItemStatusContext];
 }
 
-- (void) unregiserForItemNotificaitons
+- (void) unregisterForItemNotificaitons
 {
   __weak typeof(self) weakSelf = self;
   [self removeObserver:weakSelf forKeyPath:@"player.currentItem.status" context:AVPlayerItemStatusContext];
