@@ -79,17 +79,12 @@
           self.frameNum];
 }
 
-// Given an item time calculate the corresponding integer frame number in the range (0, N-1)
-//
-// For example:
-// 0.10 with frameDuration = 0.33 -> 0
-// 0.33 with frameDuration = 0.33 -> 1
-// 0.60 with frameDuration = 0.33 -> 2
+// Given a presentation time calculate the corresponding integer frame number in the range (0, N-1)
 
-+ (int) calcFrameNum:(float)itemTime frameDuration:(float)frameDuration
++ (int) calcFrameNum:(float)presentationTime fps:(float)fps
 {
-  // FIXME: replace float divide by MULT (1.0 / frameDuration)
-  float frameNumF = (itemTime / frameDuration);
+  // Instead of (presentationTime / frameDuration)
+  float frameNumF = presentationTime * fps;
   unsigned int frameNum = (unsigned int) frameNumF;
   return frameNum;
 }

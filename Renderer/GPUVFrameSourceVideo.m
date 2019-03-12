@@ -164,19 +164,22 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     CMTime presentationTime = kCMTimeZero;
     
     CVPixelBufferRef rgbPixelBuffer = [playerItemVideoOutput copyPixelBufferForItemTime:itemTime itemTimeForDisplay:&presentationTime];
+
+    float presentationTimeSeconds = CMTimeGetSeconds(presentationTime);
     
     if (rgbPixelBuffer != NULL) {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
       NSLog(@"LOADED %5@  frame for item time %0.3f", self.uid, CMTimeGetSeconds(itemTime));
-      NSLog(@"                     display time %0.3f", CMTimeGetSeconds(presentationTime));
+      NSLog(@"                     display time %0.3f", presentationTimeSeconds);
 #endif // LOG_DISPLAY_LINK_TIMINGS
       
       nextFrame = [[GPUVFrame alloc] init];
       nextFrame.yCbCrPixelBuffer = rgbPixelBuffer;
-      nextFrame.frameNum = [GPUVFrame calcFrameNum:CMTimeGetSeconds(presentationTime) frameDuration:self.frameDuration];
+      nextFrame.frameNum = [GPUVFrame calcFrameNum:presentationTimeSeconds fps:self.FPS];
       CVPixelBufferRelease(rgbPixelBuffer);
       
 #if defined(STORE_TIMES)
+      [timeArr addObject:@(presentationTimeSeconds)];
       [timeArr addObject:@(nextFrame.frameNum)];
 #endif // STORE_TIMES
     } else {
@@ -186,6 +189,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
       
 #if defined(STORE_TIMES)
       [timeArr addObject:@(-1)];
+      [timeArr addObject:@(-1)];
 #endif // STORE_TIMES
     }
   } else {
@@ -194,6 +198,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 #endif // LOG_DISPLAY_LINK_TIMINGS
     
 #if defined(STORE_TIMES)
+    [timeArr addObject:@(-1)];
     [timeArr addObject:@(-1)];
 #endif // STORE_TIMES
   }
@@ -283,7 +288,14 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     
     // FIXME: Save @"duration" when available here
     
-    // FIXME: if @"playable" is FALSE then need to return error and not attempt to play
+    // Check "playable"
+    
+    if ([asset statusOfValueForKey:@"playable" error:nil] == AVKeyValueStatusLoaded) {
+      if ([asset isPlayable] == FALSE) {
+        NSLog(@"asset is NOT playable");
+        assert(0);
+      }
+    }
     
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
       dispatch_sync(dispatch_get_main_queue(), ^{
@@ -559,6 +571,12 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 //  } else {
 //    // Not playing
 //    [self play];
+//  }
+  
+  self.numRestarts += 1;
+  
+//  if (self.numRestarts > 2) {
+//    ;
 //  }
   
   CFTimeInterval syncTime = self.syncTime;
