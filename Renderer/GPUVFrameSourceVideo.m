@@ -12,7 +12,12 @@
 
 #import "BGRAToBT709Converter.h"
 
-static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
+static void* const AVLoopPlayerQueuePlayerStatusObservationContext =
+  (void*)&AVLoopPlayerQueuePlayerStatusObservationContext;
+static void* const AVLoopPlayerCurrentItemObservationContext =
+  (void*)&AVLoopPlayerCurrentItemObservationContext;
+static void* const AVLoopPlayerCurrentItemStatusObservationContext =
+  (void*)&AVLoopPlayerCurrentItemStatusObservationContext;
 
 //#define LOG_DISPLAY_LINK_TIMINGS
 //#define STORE_TIMES
@@ -23,9 +28,12 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 // Player instance objects to decode CoreVideo buffers from an asset item
 
-@property (nonatomic, retain) AVPlayer *player;
-@property (nonatomic, retain) AVPlayerItem *playerItem;
+@property (nonatomic, retain) AVQueuePlayer *player;
+
 @property (nonatomic, retain) AVPlayerItemVideoOutput *playerItemVideoOutput;
+// The player item associated with the playerItemVideoOutput
+@property (nonatomic, retain) AVPlayerItem *videoOutputPlayerItem;
+
 @property (nonatomic, retain) dispatch_queue_t playerQueue;
 
 @property (nonatomic, assign) int frameNum;
@@ -43,6 +51,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 @implementation GPUVFrameSourceVideo
 {
     id _notificationToken;
+    BOOL _addedObservers;
 }
 
 - (void) dealloc
@@ -277,9 +286,14 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (BOOL) decodeFromRGBResourceVideo:(NSURL*)URL
 {
-  self.playerItem = [AVPlayerItem playerItemWithURL:URL];
+  NSArray<AVPlayerItem *> *queueItems = @[
+                                          [AVPlayerItem playerItemWithURL:URL],
+                                          [AVPlayerItem playerItemWithURL:URL]
+                                          ];
   
-  self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
+  AVQueuePlayer *player = [AVQueuePlayer queuePlayerWithItems:queueItems];
+  
+  self.player = player;
   
   NSLog(@"PlayerItem URL %@", URL);
   
@@ -293,10 +307,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   };
   
   // Async logic to parse M4V headers to get tracks and other metadata
-  
-  NSAssert(self.playerItem, @"curent item is nil");
-  
-  AVAsset *asset = [self.playerItem asset];
+
+  AVAsset *asset = [self.player.currentItem asset];
 
   NSAssert(asset, @"curent item asset is nil");
   
@@ -308,12 +320,12 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     
     // Check "playable"
     
-    if ([asset statusOfValueForKey:@"playable" error:nil] == AVKeyValueStatusLoaded) {
-      if ([asset isPlayable] == FALSE) {
-        NSLog(@"asset is NOT playable");
-        assert(0);
-      }
-    }
+//    if ([asset statusOfValueForKey:@"playable" error:nil] == AVKeyValueStatusLoaded) {
+//      if ([asset isPlayable] == FALSE) {
+//        NSLog(@"asset is NOT playable");
+//        assert(0);
+//      }
+//    }
     
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
       dispatch_sync(dispatch_get_main_queue(), ^{
@@ -337,6 +349,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 // Util method that creates AVPlayerItemVideoOutput instance
 
 - (void) makeVideoOutput {
+#if defined(DEBUG)
+  NSAssert(self.playerItemVideoOutput == nil, @"self.playerItemVideoOutput must be nil");
+#endif // DEBUG
+  
   NSDictionary *pixelBufferAttributes = [BGRAToBT709Converter getPixelBufferAttributes];
   
   NSMutableDictionary *mDict = [NSMutableDictionary dictionaryWithDictionary:pixelBufferAttributes];
@@ -461,25 +477,45 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   float nominalFrameRate = videoTrack.nominalFrameRate;
   NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
   
-  [self registerForItemNotificaitons];
+  [self startObservingPlayerAndItem];
   
   return TRUE;
 }
 
 - (void) assetReadyToPlay
 {
-  [self makeVideoOutput];
+  if (self.playerItemVideoOutput == nil) {
+    // First invocation
+    
+    [self makeVideoOutput];
+    
+    [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
+  }
   
-  [self.playerItem addOutput:self.playerItemVideoOutput];
-  
-  [self addDidPlayToEndTimeNotificationForPlayerItem:self.playerItem];
+  AVPlayerItem *playerItem = self.player.currentItem;
 
-  __weak typeof(self) weakSelf = self;
-  [self.playerItem seekToTime:kCMTimeZero completionHandler:^void(BOOL finished){
-    if (finished) {
-      [weakSelf.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:weakSelf.frameDuration];
-    }
-  }];
+  // In some cases, this method can be invoked when only a
+  // single item is in the queue, since the one that was just
+  // display has not been appened to the back of the item
+  // queue again.
+  
+  if (self.videoOutputPlayerItem == nil) {
+    // Init case, add output and set
+    [playerItem addOutput:self.playerItemVideoOutput];
+    self.videoOutputPlayerItem = playerItem;
+  } else if (self.videoOutputPlayerItem == playerItem) {
+    // Activate the item that is currently active
+    [playerItem removeOutput:self.playerItemVideoOutput];
+    [playerItem addOutput:self.playerItemVideoOutput];
+  } else {
+    // Changing the item connected to the video output
+#if defined(DEBUG)
+    NSAssert(playerItem != self.videoOutputPlayerItem, @"playerItem == self.videoOutputPlayerItem");
+#endif // DEBUG
+    [self.videoOutputPlayerItem removeOutput:self.playerItemVideoOutput];
+    [playerItem addOutput:self.playerItemVideoOutput];
+    self.videoOutputPlayerItem = playerItem;
+  }
 }
 
 // Kick of play operation
@@ -504,8 +540,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void) stop
 {
-  [self unregisterForItemNotificaitons];
-  [self unregisterForItemEndNotification];
+  [self stopObservingPlayerAndItem];
+  
   [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
   [self.player setRate:0.0];
 }
@@ -526,6 +562,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   AVPlayer *player = self.player;
   
   NSLog(@"AVPlayer playWithPreroll : %.2f", rate);
+  
+  [self seekToTimeZero];
   
   player.automaticallyWaitsToMinimizeStalling = FALSE;
   
@@ -629,41 +667,30 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   return;
 }
 
-- (void) registerForItemNotificaitons
+- (void)startObservingPlayerAndItem
 {
-  __weak typeof(self) weakSelf = self;
-  [self addObserver:weakSelf forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:AVPlayerItemStatusContext];
-}
-
-- (void) unregisterForItemNotificaitons
-{
-  __weak typeof(self) weakSelf = self;
-  [self removeObserver:weakSelf forKeyPath:@"player.currentItem.status" context:AVPlayerItemStatusContext];
-}
-
-- (void) addDidPlayToEndTimeNotificationForPlayerItem:(AVPlayerItem *)item
-{
-  if (_notificationToken) {
-    _notificationToken = nil;
+  if (_addedObservers == NO)
+  {
+    AVQueuePlayer *player = self.player;
+    [player addObserver:self forKeyPath:@"status"
+                options:NSKeyValueObservingOptionNew context:AVLoopPlayerQueuePlayerStatusObservationContext];
+    [player addObserver:self forKeyPath:@"currentItem"
+                options:NSKeyValueObservingOptionOld context:AVLoopPlayerCurrentItemObservationContext];
+    [player addObserver:self forKeyPath:@"currentItem.status"
+                options:NSKeyValueObservingOptionNew context:AVLoopPlayerCurrentItemStatusObservationContext];
+    _addedObservers = YES;
   }
-  
-  // Setting actionAtItemEnd to None prevents the movie from getting paused at item end. A very simplistic, and not gapless, looped playback.
-  
-  __weak typeof(self) weakSelf = self;
-  
-  _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
-  _notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:AVPlayerItemDidPlayToEndTimeNotification object:item queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
-    if (weakSelf.playedToEndBlock) {
-      weakSelf.playedToEndBlock();
-    }
-  }];
 }
 
-- (void) unregisterForItemEndNotification
+- (void)stopObservingPlayerAndItem
 {
-  if (_notificationToken) {
-    [[NSNotificationCenter defaultCenter] removeObserver:_notificationToken name:AVPlayerItemDidPlayToEndTimeNotification object:_player.currentItem];
-    _notificationToken = nil;
+  if (_addedObservers)
+  {
+    AVQueuePlayer *player = self.player;
+    [player removeObserver:self forKeyPath:@"status" context:AVLoopPlayerQueuePlayerStatusObservationContext];
+    [player removeObserver:self forKeyPath:@"currentItem" context:AVLoopPlayerCurrentItemObservationContext];
+    [player removeObserver:self forKeyPath:@"currentItem.status" context:AVLoopPlayerCurrentItemStatusObservationContext];
+    _addedObservers = NO;
   }
 }
 
@@ -674,32 +701,73 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   return;
 }
 
-// Wait for video dimensions to be come available
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)changeDictionary context:(void *)context
 {
-  if (context == AVPlayerItemStatusContext) {
-    AVPlayerStatus status = [change[NSKeyValueChangeNewKey] integerValue];
-    switch (status) {
-      case AVPlayerItemStatusUnknown:
-        break;
-      case AVPlayerItemStatusReadyToPlay: {
-        NSLog(@"AVPlayerItemStatusReadyToPlay");
-        AVPlayer* player = self.player;
-        if (player.status == AVPlayerStatusReadyToPlay) {
-          [self assetReadyToPlay];
-        }
-        break;
-      }
-      case AVPlayerItemStatusFailed: {
-        //[self stopLoadingAnimationAndHandleError:[[_player currentItem] error]];
-        NSLog(@"AVPlayerItemStatusFailed : %@", [[self.player currentItem] error]);
-        break;
+  NSLog(@"observeValueForKeyPath \"%@\" : %@", keyPath, changeDictionary);
+  
+  NSLog(@"self.player.items count %d", (int)self.player.items.count);
+  
+  if (context == AVLoopPlayerQueuePlayerStatusObservationContext)
+  {
+    AVPlayerStatus newPlayerStatus = (AVPlayerStatus)[[changeDictionary objectForKey:NSKeyValueChangeNewKey] unsignedIntegerValue];
+    if (newPlayerStatus == AVPlayerStatusFailed) {
+      AVQueuePlayer *player = (AVQueuePlayer *)object;
+      NSLog(@"End looping since player has failed with error %@", player.error);
+      [self stop];
+    }
+  }
+  else if (context == AVLoopPlayerCurrentItemObservationContext)
+  {
+    AVQueuePlayer *player = (AVQueuePlayer *)object;
+    
+    if ([[player items] count] == 0)
+    {
+      NSLog(@"Play queue emptied out due to bad player item. End looping.");
+      [self stop];
+    }
+    else
+    {
+      // Append the previous current item to the player's queue.
+      AVPlayerItem *itemRemoved = changeDictionary[NSKeyValueChangeOldKey];
+      
+      /*
+       An initial change from a nil currentItem yields NSNull here. Check
+       to make sure the class is AVPlayerItem before appending it to the
+       end of the queue.
+       */
+      if ([itemRemoved isKindOfClass:[AVPlayerItem class]])
+      {
+        [itemRemoved seekToTime:kCMTimeZero completionHandler:nil];
+        [self stopObservingPlayerAndItem];
+        //[itemRemoved removeOutput:self.playerItemVideoOutput];
+        [player insertItem:itemRemoved afterItem:nil];
+        [self startObservingPlayerAndItem];
+        
+        NSLog(@"remove and append AVPlayerItem %@", itemRemoved);
       }
     }
   }
-  else {
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+  else if (context == AVLoopPlayerCurrentItemStatusObservationContext)
+  {
+    AVPlayerItemStatus newItemStatus = (AVPlayerItemStatus)[[changeDictionary objectForKey:NSKeyValueChangeNewKey] unsignedIntegerValue];
+    if (newItemStatus == AVPlayerItemStatusFailed) {
+      AVQueuePlayer *player = (AVQueuePlayer *)object;
+      NSLog(@"End looping since player item has failed with error %@", player.currentItem.error);
+      [self stop];
+    } else if (newItemStatus == AVPlayerItemStatusReadyToPlay) {
+      NSLog(@"AVPlayerItemStatusReadyToPlay %p : host time %.3f", self.player.currentItem, CACurrentMediaTime());
+      AVQueuePlayer* player = self.player;
+      
+      //NSLog(@"items %@", player.items);
+      //assert(self.player.items.count == 2);
+      
+      //if (player.status == AVPlayerStatusReadyToPlay) {
+        [self assetReadyToPlay];
+      //assert(self.player.items.count == 2);
+      //}
+    }
+  } else {
+    [super observeValueForKeyPath:keyPath ofObject:object change:changeDictionary context:context];
   }
 }
 

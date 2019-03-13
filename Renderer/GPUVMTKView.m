@@ -20,7 +20,7 @@
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
 
-#define LOAD_ALPHA_VIDEO
+//#define LOAD_ALPHA_VIDEO
 
 //#define LOG_DISPLAY_LINK_TIMINGS
 
@@ -592,15 +592,13 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     [weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
     //[weakFrameSourceVideo loadFromAssets:@"CountToTenA.m4v" alphaResFilename:@"CountToTenA_alpha.m4v"];    
 #else
-    [weakFrameSourceVideo loadFromAsset:@"CarSpin.m4v"];
-    //[frameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
-    //[frameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
-    //[frameSourceVideo loadFromAsset:@"CountToTen.m4v"];
+    //[weakFrameSourceVideo loadFromAsset:@"CarSpin.m4v"];
+    //[weakFrameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
+    //[weakFrameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
+    [weakFrameSourceVideo loadFromAsset:@"CountToTen.m4v"];
     
-    weakFrameSourceVideo.finalFrameBlock = ^{
-      NSLog(@"GPUVFrameSourceVideo.finalFrameBlock %.3f", CACurrentMediaTime());
-      [weakFrameSourceVideo restart];
-    };
+    weakFrameSourceVideo.playedToEndBlock = nil;
+    weakFrameSourceVideo.finalFrameBlock = nil;
 #endif // LOAD_ALPHA_VIDEO
     
     //self.metalBT709Decoder.useComputeRenderer = TRUE;
