@@ -541,7 +541,7 @@
   //[self.rgbSource restart];
   //[self.alphaSource restart];
   
-  self.rgbSource.numRestarts += 1;
+  //self.rgbSource.loopCount += 1;
   
 //  if (self.rgbSource.numRestarts > 2) {
 //    ;

@@ -25,8 +25,11 @@
 @property (nonatomic, assign) CFTimeInterval syncTime;
 @property (nonatomic, assign) float playRate;
 
-// The count of the number of times the video has been looped
-@property (nonatomic, assign) int numRestarts;
+// The integer count of the number of times the video has looped.
+// This value starts out as zero, it then increases each time
+// the active item changes.
+
+@property (nonatomic, readonly) int loopCount;
 
 @property (nonatomic, assign) float FPS;
 @property (nonatomic, assign) float frameDuration;
@@ -103,6 +106,14 @@
 // with a specific host time to sync to.
 
 - (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime;
+
+// Sync start will seek to the given time and then invoke
+// a sync sync method to play at the given rate after
+// aligning the given host time to the indicated time.
+
+- (void) syncStart:(float)rate
+          itemTime:(CFTimeInterval)itemTime
+        atHostTime:(CFTimeInterval)atHostTime;
 
 // The next 3 APIs map time to a specific video frame. The
 // frameForHostTime API is the higher level interface where

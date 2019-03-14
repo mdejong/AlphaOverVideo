@@ -22,7 +22,7 @@
 
 //#define LOAD_ALPHA_VIDEO
 
-//#define LOG_DISPLAY_LINK_TIMINGS
+#define LOG_DISPLAY_LINK_TIMINGS
 
 #if defined(LOAD_ALPHA_VIDEO)
 #import "GPUVFrameSourceAlphaVideo.h"
@@ -96,12 +96,14 @@ void validate_storage_mode(id<MTLTexture> texture)
 @property (nonatomic, retain) NSTimer *syncStartTimer;
 @property (nonatomic, assign) float syncStartRate;
 
+// When a frame is decoded, the time that this frame should be displayed
+// is defined in terms of the vsync frame time.
+
+@property (nonatomic, assign) CFTimeInterval presentationTime;
+
 #if TARGET_OS_IOS
 // nop
 #else // TARGET_OS_IOS
-
-// As each frame is decoded, the time to present the frame must be defined.
-@property (nonatomic, assign) CFTimeInterval presentationTime;
 
 - (void)displayLinkCallback:(CFTimeInterval)frameTime displayAt:(CFTimeInterval)displayTime;
 #endif // TARGET_OS_IOS
@@ -802,14 +804,17 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
                          waitUntilCompleted:FALSE];
     
     if (worked) {
-#if TARGET_OS_IOS
-      CFTimeInterval minFramerate = self.frameDuration;
-      [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
-#else
+//#if TARGET_OS_IOS
+//      CFTimeInterval minFramerate = self.frameDuration;
+//      [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
+//#else
       //[commandBuffer presentDrawable:self.currentDrawable];
       CFTimeInterval presentationTime = self.presentationTime;
       [self.currentDrawable presentAtTime:presentationTime];
-#endif // TARGET_OS_IOS
+#if defined(DEBUG)
+      NSLog(@"PRESENT FRAME at host time %.3f", presentationTime);
+#endif // DEBUG
+//#endif // TARGET_OS_IOS
     }
   } else {
     // Viewport dimensions do not exactly match the input texture
@@ -855,14 +860,17 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       // a 60 FPS display link could present a drawable faster
       // than 30 FPS (assuming the movie is 30 FPS).
       
-#if TARGET_OS_IOS
-      CFTimeInterval minFramerate = self.frameDuration;
-      [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
-#else
+//#if TARGET_OS_IOS
+//      CFTimeInterval minFramerate = self.frameDuration;
+//      [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
+//#else
       //[commandBuffer presentDrawable:self.currentDrawable];
       CFTimeInterval presentationTime = self.presentationTime;
       [self.currentDrawable presentAtTime:presentationTime];
-#endif // TARGET_OS_IOS
+#if defined(DEBUG)
+      NSLog(@"PRESENT FRAME at host time %.3f", presentationTime);
+#endif // DEBUG
+//#endif // TARGET_OS_IOS
     }
   }
   
@@ -1231,7 +1239,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
-  CFTimeInterval vSyncTime, hostTime;
+  CFTimeInterval framePresentationTime, hostTime;
   
   // hostTime is the previous vsync time plus the amount of time
   // between the vsync and the invocation of this callback. It is
@@ -1257,7 +1265,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   //CFTimeInterval hostTime = displayLink.timestamp + displayLink.duration;
   hostTime = (displayLink.timestamp + displayLink.targetTimestamp) * 0.5f;
   // Save next vsync time
-  vSyncTime = displayLink.targetTimestamp;
+  framePresentationTime = displayLink.targetTimestamp;
 
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   NSLog(@"host half time %0.3f : offset from timestamp %0.3f", hostTime, hostTime-displayLink.timestamp);
@@ -1280,7 +1288,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 
   hostTime = frameTime;
   // Save next vsync time
-  vSyncTime = displayTime;
+  framePresentationTime = displayTime;
 #endif // TARGET_OS_IOS
   
   // Record timing info until the next vsync can be predicted
@@ -1293,8 +1301,8 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   }
   
   {
-    NSNumber *prevVsync = [NSNumber numberWithDouble:vSyncTime];
-    [displayLinkVsyncTimes addObject:prevVsync];
+    NSNumber *framePresentationTimeNum = [NSNumber numberWithDouble:framePresentationTime];
+    [displayLinkVsyncTimes addObject:framePresentationTimeNum];
     
     if (displayLinkVsyncTimes.count > 3) {
       [displayLinkVsyncTimes removeObjectAtIndex:0];
@@ -1311,17 +1319,30 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     return;
   }
   
+  // Mapping from host time to item time will always run 1 frame behind so that
+  // when the end of a clip is reached the time will wrap around to the next clip.
+  
+  hostTime -= self.frameDuration;
+  
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
+  NSLog(@"prev frame host time %0.3f", hostTime);
+#endif // LOG_DISPLAY_LINK_TIMINGS
+  
+  // FIXME: how to deal with the first interval, hostTime < 0.0 ?
+  
+  // The host time used is one frame back from the current time, this is s
+  
   id<GPUVFrameSource> frameSource = self.frameSource;
-  GPUVFrame *nextFrame = [frameSource frameForHostTime:hostTime hostPresentationTime:vSyncTime presentationTimePtr:NULL];
+  GPUVFrame *nextFrame = [frameSource frameForHostTime:hostTime hostPresentationTime:framePresentationTime presentationTimePtr:NULL];
   
   if (nextFrame == nil) {
     // No frame loaded for this time
   } else {
-#if TARGET_OS_IOS
-    // nop
-#else
-    self.presentationTime = vSyncTime;
-#endif // TARGET_OS_IOS
+//#if TARGET_OS_IOS
+//    // nop
+//#else
+    self.presentationTime = framePresentationTime;
+//#endif // TARGET_OS_IOS
     
     [self nextFrameReady:nextFrame];
     nextFrame = nil;
@@ -1347,11 +1368,12 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 - (void) syncStart:(float)rate atHostTime:(CFTimeInterval)atHostTime
 {
 #if defined(LOAD_ALPHA_VIDEO)
-  __weak GPUVFrameSourceAlphaVideo *weakFrameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
+  GPUVFrameSourceAlphaVideo *frameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
 #else
-  __weak GPUVFrameSourceVideo *weakFrameSourceVideo = (GPUVFrameSourceVideo *) self.frameSource;
+  GPUVFrameSourceVideo *frameSourceVideo = (GPUVFrameSourceVideo *) self.frameSource;
 #endif // LOAD_ALPHA_VIDEO
-  [weakFrameSourceVideo setRate:rate atHostTime:atHostTime];
+  
+  [frameSourceVideo syncStart:rate itemTime:self.frameDuration atHostTime:atHostTime];
 }
 
 - (void) syncStartCheck
