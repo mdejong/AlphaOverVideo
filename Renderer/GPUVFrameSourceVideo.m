@@ -19,8 +19,8 @@ static void* const AVLoopPlayerCurrentItemObservationContext =
 static void* const AVLoopPlayerCurrentItemStatusObservationContext =
   (void*)&AVLoopPlayerCurrentItemStatusObservationContext;
 
-//#define LOG_DISPLAY_LINK_TIMINGS
-//#define STORE_TIMES
+#define LOG_DISPLAY_LINK_TIMINGS
+#define STORE_TIMES
 
 // Private API
 
@@ -508,18 +508,26 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
     [playerItem addOutput:self.playerItemVideoOutput];
     self.videoOutputPlayerItem = playerItem;
     self.loopCount = 0;
+    
+    NSLog(@"OUTPUT init %p", playerItem);
   } else if (self.videoOutputPlayerItem == playerItem) {
     // Activate the item that is currently active
-    [playerItem removeOutput:self.playerItemVideoOutput];
-    [playerItem addOutput:self.playerItemVideoOutput];
+    //[playerItem removeOutput:self.playerItemVideoOutput];
+    //[playerItem addOutput:self.playerItemVideoOutput];
+    
+    //NSLog(@"OUTPUT remove/add %p -> %p", playerItem, playerItem);
+    
+    NSLog(@"OUTPUT NOP same item %p", playerItem);
   } else {
     // Changing the item connected to the video output
 #if defined(DEBUG)
-    NSAssert(playerItem != self.videoOutputPlayerItem, @"playerItem == self.videoOutputPlayerItem");
+    NSAssert(playerItem != self.videoOutputPlayerItem, @"playerItem != self.videoOutputPlayerItem");
 #endif // DEBUG
     [self.videoOutputPlayerItem removeOutput:self.playerItemVideoOutput];
     [playerItem addOutput:self.playerItemVideoOutput];
+    NSLog(@"OUTPUT changed remove/add %p -> %p", self.videoOutputPlayerItem, playerItem);
     self.videoOutputPlayerItem = playerItem;
+    
     // Resync current item time to next frame sync time
 
     CMTime oneFrameTime = CMTimeMake(self.frameDuration * 1000.0f, 1000);
@@ -527,7 +535,7 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
     [self setRate:self.playRate atHostTime:self.syncTime];
     NSLog(@"Asset setRate with current time %.3f", CMTimeGetSeconds(self.player.currentItem.currentTime));
     
-    NSLog(@"incr loopCount from %d to %d", self.loopCount, self.loopCount+1);
+    //NSLog(@"incr loopCount from %d to %d", self.loopCount, self.loopCount+1);
     self.loopCount = self.loopCount + 1;
   }
 }
@@ -793,9 +801,14 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
       NSLog(@"End looping since player item has failed with error %@", player.currentItem.error);
       [self stop];
     } else if (newItemStatus == AVPlayerItemStatusReadyToPlay) {
-      NSLog(@"AVPlayerItemStatusReadyToPlay %p : host time %.3f", self.player.currentItem, CACurrentMediaTime());
+      
+      if (logAllObserved) {
+        NSLog(@"AVPlayerItemStatusReadyToPlay : AVPlayerItem %p : host time %.3f", self.player.currentItem, CACurrentMediaTime());
+        NSLog(@"AVPlayerStatusReadyToPlay: Asset current time %.3f", CMTimeGetSeconds(self.player.currentItem.currentTime));
+        NSLog(@"player.items %@", self.player.items);
+      }
+
       NSAssert(self.player.status == AVPlayerStatusReadyToPlay, @"player.status != AVPlayerStatusReadyToPlay : %d", (int)self.player.status);
-      NSLog(@"AVPlayerStatusReadyToPlay: Asset current time %.3f", CMTimeGetSeconds(self.player.currentItem.currentTime));
       
       //if (player.status == AVPlayerStatusReadyToPlay) {
         [self assetReadyToPlay];
