@@ -524,16 +524,20 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
     NSAssert(playerItem != self.videoOutputPlayerItem, @"playerItem != self.videoOutputPlayerItem");
 #endif // DEBUG
     [self.videoOutputPlayerItem removeOutput:self.playerItemVideoOutput];
+    if (1) {
+      // FIXME: Destroy the old output and create a new one ??
+    }
     [playerItem addOutput:self.playerItemVideoOutput];
     NSLog(@"OUTPUT changed remove/add %p -> %p", self.videoOutputPlayerItem, playerItem);
     self.videoOutputPlayerItem = playerItem;
     
     // Resync current item time to next frame sync time
-
-    CMTime oneFrameTime = CMTimeMake(self.frameDuration * 1000.0f, 1000);
-    [self.player.currentItem seekToTime:oneFrameTime completionHandler:nil];
-    [self setRate:self.playRate atHostTime:self.syncTime];
-    NSLog(@"Asset setRate with current time %.3f", CMTimeGetSeconds(self.player.currentItem.currentTime));
+    
+    //[self seekToTimeZero];
+    //[self setRate:self.playRate atHostTime:self.syncTime];
+    //NSLog(@"Player setRate with current time %.3f", CMTimeGetSeconds(self.player.currentTime));
+    
+    [self syncStart:self.playRate itemTime:0.0 atHostTime:self.syncTime];
     
     //NSLog(@"incr loopCount from %d to %d", self.loopCount, self.loopCount+1);
     self.loopCount = self.loopCount + 1;
@@ -611,10 +615,12 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
         atHostTime:(CFTimeInterval)atHostTime
 {
   CMTime syncTimeCM = CMTimeMake(itemTime * 1000.0f, 1000);
-  [self.player.currentItem seekToTime:syncTimeCM completionHandler:nil];
-  
-  CMTime hostTimeCM = CMTimeMake(atHostTime * 1000.0f, 1000);
-  [self.player setRate:rate time:kCMTimeInvalid atHostTime:hostTimeCM];
+  [self.player seekToTime:syncTimeCM completionHandler:^(BOOL finished){
+    if (finished) {
+    CMTime hostTimeCM = CMTimeMake(atHostTime * 1000.0f, 1000);
+    [self.player setRate:rate time:kCMTimeInvalid atHostTime:hostTimeCM];
+    }
+  }];
 }
 
 // Invoke player setRate to actually begin playing back a video
@@ -675,11 +681,25 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
 //    ;
 //  }
   
-  CFTimeInterval syncTime = self.syncTime;
-  float playRate = self.playRate;
+  // Advance to next item
   
-  [self seekToTimeZero];
-  [self setRate:playRate atHostTime:syncTime];
+  AVPlayerItem *currentItemBefore = self.player.currentItem;
+  
+  [self.player advanceToNextItem];
+  
+  AVPlayerItem *currentItemAfter = self.player.currentItem;
+  
+  NSAssert(currentItemBefore != currentItemAfter, @"did not switch");
+  
+  // Swap output
+  
+  [self assetReadyToPlay];
+  
+//  CFTimeInterval syncTime = self.syncTime;
+//  float playRate = self.playRate;
+//
+//  [self seekToTimeZero];
+//  [self setRate:playRate atHostTime:syncTime];
 }
 
 #pragma mark - AVPlayerItemOutputPullDelegate
@@ -781,8 +801,6 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
       if ([itemRemoved isKindOfClass:[AVPlayerItem class]])
       {
         [self stopObservingPlayerAndItem];
-        //CMTime oneFrameTime = CMTimeMake(self.frameDuration * 1000.0f, 1000);
-        //[itemRemoved seekToTime:oneFrameTime completionHandler:nil];
         [player insertItem:itemRemoved afterItem:nil];
         [self startObservingPlayerAndItem];
         
@@ -810,9 +828,15 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
 
       NSAssert(self.player.status == AVPlayerStatusReadyToPlay, @"player.status != AVPlayerStatusReadyToPlay : %d", (int)self.player.status);
       
+      // Invoke assetReadyToPlay only in the init case, for the very first item that becomes ready
+      
+      if (self.videoOutputPlayerItem == nil) {
+      
       //if (player.status == AVPlayerStatusReadyToPlay) {
         [self assetReadyToPlay];
       //}
+        
+      }
     }
   } else {
     [super observeValueForKeyPath:keyPath ofObject:object change:changeDictionary context:context];
@@ -831,7 +855,9 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
 
 - (void) seekToTimeZero
 {
-  [self.player.currentItem seekToTime:kCMTimeZero completionHandler:nil];
+  [self.player seekToTime:kCMTimeZero completionHandler:^(BOOL finished){
+    // nop
+  }];
 }
 
 @end

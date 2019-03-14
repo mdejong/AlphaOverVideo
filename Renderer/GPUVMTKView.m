@@ -594,13 +594,18 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     [weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
     //[weakFrameSourceVideo loadFromAssets:@"CountToTenA.m4v" alphaResFilename:@"CountToTenA_alpha.m4v"];    
 #else
-    [weakFrameSourceVideo loadFromAsset:@"CarSpin.m4v"];
+    //[weakFrameSourceVideo loadFromAsset:@"CarSpin.m4v"];
     //[weakFrameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
     //[weakFrameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
-    //[weakFrameSourceVideo loadFromAsset:@"CountToTen.m4v"];
+    [weakFrameSourceVideo loadFromAsset:@"CountToTen.m4v"];
     
     weakFrameSourceVideo.playedToEndBlock = nil;
     weakFrameSourceVideo.finalFrameBlock = nil;
+    
+    weakFrameSourceVideo.finalFrameBlock = ^{
+      NSLog(@"GPUVFrameSourceVideo.finalFrameBlock %.3f", CACurrentMediaTime());
+      [weakFrameSourceVideo restart];
+    };
 #endif // LOAD_ALPHA_VIDEO
     
     //self.metalBT709Decoder.useComputeRenderer = TRUE;
@@ -1318,19 +1323,6 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     
     return;
   }
-  
-  // Mapping from host time to item time will always run 1 frame behind so that
-  // when the end of a clip is reached the time will wrap around to the next clip.
-  
-  hostTime -= self.frameDuration;
-  
-#if defined(LOG_DISPLAY_LINK_TIMINGS)
-  NSLog(@"prev frame host time %0.3f", hostTime);
-#endif // LOG_DISPLAY_LINK_TIMINGS
-  
-  // FIXME: how to deal with the first interval, hostTime < 0.0 ?
-  
-  // The host time used is one frame back from the current time, this is s
   
   id<GPUVFrameSource> frameSource = self.frameSource;
   GPUVFrame *nextFrame = [frameSource frameForHostTime:hostTime hostPresentationTime:framePresentationTime presentationTimePtr:NULL];
