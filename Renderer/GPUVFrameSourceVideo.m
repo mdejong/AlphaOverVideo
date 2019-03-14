@@ -675,9 +675,9 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
 //    [self play];
 //  }
   
-  //self.loopCount += 1;
-  
-//  if (self.numRestarts > 2) {
+//  self.loopCount += 1;
+//  
+//  if (self.loopCount >= 5) {
 //    ;
 //  }
   
@@ -756,7 +756,7 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
 
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput*)output
 {
-  NSLog(@"%p outputSequenceWasFlushed AVPlayerItem %p", self, self.player.currentItem);
+  NSLog(@"%p outputSequenceWasFlushed : current AVPlayerItem %p", self, self.videoOutputPlayerItem);
   
   return;
 }

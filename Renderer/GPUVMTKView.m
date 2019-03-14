@@ -809,17 +809,17 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
                          waitUntilCompleted:FALSE];
     
     if (worked) {
-//#if TARGET_OS_IOS
-//      CFTimeInterval minFramerate = self.frameDuration;
-//      [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
-//#else
+#if TARGET_OS_IOS
+      CFTimeInterval minFramerate = self.frameDuration;
+      [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
+#else
       //[commandBuffer presentDrawable:self.currentDrawable];
       CFTimeInterval presentationTime = self.presentationTime;
       [self.currentDrawable presentAtTime:presentationTime];
 #if defined(DEBUG)
       NSLog(@"PRESENT FRAME at host time %.3f", presentationTime);
 #endif // DEBUG
-//#endif // TARGET_OS_IOS
+#endif // TARGET_OS_IOS
     }
   } else {
     // Viewport dimensions do not exactly match the input texture
@@ -865,17 +865,17 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       // a 60 FPS display link could present a drawable faster
       // than 30 FPS (assuming the movie is 30 FPS).
       
-//#if TARGET_OS_IOS
-//      CFTimeInterval minFramerate = self.frameDuration;
-//      [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
-//#else
+#if TARGET_OS_IOS
+      CFTimeInterval minFramerate = self.frameDuration;
+      [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
+#else
       //[commandBuffer presentDrawable:self.currentDrawable];
       CFTimeInterval presentationTime = self.presentationTime;
       [self.currentDrawable presentAtTime:presentationTime];
 #if defined(DEBUG)
       NSLog(@"PRESENT FRAME at host time %.3f", presentationTime);
 #endif // DEBUG
-//#endif // TARGET_OS_IOS
+#endif // TARGET_OS_IOS
     }
   }
   
