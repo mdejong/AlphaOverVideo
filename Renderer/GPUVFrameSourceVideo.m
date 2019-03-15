@@ -101,8 +101,8 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
            hostPresentationTime:(CFTimeInterval)hostPresentationTime
             presentationTimePtr:(float*)presentationTimePtr
 {
-  if (self.player.currentItem == nil) {
-    NSLog(@"player not playing yet in frameForHostTime");
+  if (self.videoOutputPlayerItem == nil) {
+    NSLog(@"player not ready yet in frameForHostTime");
     return nil;
   }
   
@@ -831,11 +831,7 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
       // Invoke assetReadyToPlay only in the init case, for the very first item that becomes ready
       
       if (self.videoOutputPlayerItem == nil) {
-      
-      //if (player.status == AVPlayerStatusReadyToPlay) {
         [self assetReadyToPlay];
-      //}
-        
       }
     }
   } else {
