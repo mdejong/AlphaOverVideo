@@ -538,12 +538,13 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       weakSelf.FPS = weakFrameSourceVideo.FPS;
       weakSelf.frameDuration = weakFrameSourceVideo.frameDuration;
       
-      // Create display link once framerate is known
+      // Create display link once framerate is known, only init once!
       
-      [weakSelf makeDisplayLink];
-      
-      [weakSelf startDisplayLink];
-            
+      if ([weakSelf isDisplayLinkNotInitialized]) {
+        [weakSelf makeDisplayLink];
+        [weakSelf startDisplayLink];
+      }
+
       const float rate = 1.0f;
       
       [weakFrameSourceVideo playWithPreroll:rate block:^{
@@ -559,7 +560,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
         
 //#if defined(DEBUG)
         NSAssert(weakSelf.syncStartTimer == nil, @"syncStartTimer is already set");
-        NSAssert(weakSelf.isReadyToPlay == FALSE, @"isReadyToPlay is already TRUE");
+        //NSAssert(weakSelf.isReadyToPlay == FALSE, @"isReadyToPlay is already TRUE");
 //#endif // DEBUG
         
         NSArray *displayLinkVsyncTimes = [NSArray arrayWithArray:weakSelf.displayLinkVsyncTimes];
@@ -1026,6 +1027,19 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
   
+  if (_resizeTexture != nil) {
+    int updatedWidth = (int) _resizeTextureSize.width;
+    int updatedHeight = (int) _resizeTextureSize.height;
+
+    int currentWidth = (int) _resizeTexture.width;
+    int currentHeight = (int) _resizeTexture.height;
+    
+    if (updatedWidth == currentWidth && updatedHeight == currentHeight) {
+      // Same dimensions, nop
+      return TRUE;
+    }
+  }
+  
   // FIXME: this method is invoked after the video dimensions have
   // been loaded and the size of the internal texture is known.
   // In the case that the view dimensions are exactly the same
@@ -1226,6 +1240,21 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   CVDisplayLinkRelease(_displayLink);
   _displayLink = NULL;
 #endif // TARGET_OS_IOS
+}
+
+- (BOOL) isDisplayLinkNotInitialized
+{
+#if TARGET_OS_IOS
+  if (self.displayLink == nil) {
+    return TRUE;
+  }
+#else
+  if (_displayLink == NULL) {
+    return TRUE;
+  }
+#endif // TARGET_OS_IOS
+
+  return FALSE;
 }
 
 #if TARGET_OS_IOS

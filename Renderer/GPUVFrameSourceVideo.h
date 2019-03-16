@@ -18,7 +18,7 @@
 
 #import "GPUVFrameSource.h"
 
-@interface GPUVFrameSourceVideo : NSObject <GPUVFrameSource, AVPlayerItemOutputPullDelegate>
+@interface GPUVFrameSourceVideo : NSObject <GPUVFrameSource>
 
 @property (nonatomic, copy) NSString *uid;
 

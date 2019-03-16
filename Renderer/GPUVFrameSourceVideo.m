@@ -12,12 +12,7 @@
 
 #import "BGRAToBT709Converter.h"
 
-static void* const AVLoopPlayerQueuePlayerStatusObservationContext =
-  (void*)&AVLoopPlayerQueuePlayerStatusObservationContext;
-static void* const AVLoopPlayerCurrentItemObservationContext =
-  (void*)&AVLoopPlayerCurrentItemObservationContext;
-static void* const AVLoopPlayerCurrentItemStatusObservationContext =
-  (void*)&AVLoopPlayerCurrentItemStatusObservationContext;
+#import "GPUVPlayerVideoOutput.h"
 
 #define LOG_DISPLAY_LINK_TIMINGS
 #define STORE_TIMES
@@ -26,27 +21,13 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
 
 @interface GPUVFrameSourceVideo ()
 
-// Player instance objects to decode CoreVideo buffers from an asset item
+@property (nonatomic, retain) NSMutableArray<AVPlayerItem *> *queueItems;
 
-@property (nonatomic, retain) AVQueuePlayer *player;
-
-@property (nonatomic, retain) AVPlayerItemVideoOutput *playerItemVideoOutput;
-// The player item associated with the playerItemVideoOutput
-@property (nonatomic, retain) AVPlayerItem *videoOutputPlayerItem;
-
-@property (nonatomic, retain) dispatch_queue_t playerQueue;
+@property (nonatomic, assign) BOOL isPlayer2Active;
+@property (nonatomic, retain) GPUVPlayerVideoOutput *playerVideoOutput1;
+@property (nonatomic, retain) GPUVPlayerVideoOutput *playerVideoOutput2;
 
 @property (nonatomic, assign) int frameNum;
-
-// The integer count of the number of times the video has looped.
-// This value starts out as zero, it then increases each time
-// the active item changes.
-
-@property (nonatomic, assign) int loopCount;
-
-// If a reported time is larger than this time, then on the final frame
-
-@property (nonatomic, assign) CFTimeInterval finalFrameTime;
 
 #if defined(STORE_TIMES)
 @property (nonatomic, retain) NSMutableArray *times;
@@ -56,14 +37,20 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
 
 @implementation GPUVFrameSourceVideo
 {
-    id _notificationToken;
-    BOOL _addedObservers;
+}
+
+- (nullable instancetype) init
+{
+  if (self = [super init]) {
+    self.playerVideoOutput1 = [[GPUVPlayerVideoOutput alloc] init];
+    self.playerVideoOutput2 = [[GPUVPlayerVideoOutput alloc] init];
+  }
+  
+  return self;
 }
 
 - (void) dealloc
 {
-  [self.playerItemVideoOutput setDelegate:nil queue:nil];
-  self.playerQueue = nil;
   return;
 }
 
@@ -79,11 +66,30 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
           height];
 }
 
+- (GPUVPlayerVideoOutput*) getCurrentPlayerVideoOutput
+{
+  if (self.isPlayer2Active) {
+    return self.playerVideoOutput2;
+  } else {
+    return self.playerVideoOutput1;
+  }
+}
+
+- (GPUVPlayerVideoOutput*) getNextPlayerVideoOutput
+{
+  if (self.isPlayer2Active) {
+    return self.playerVideoOutput1;
+  } else {
+    return self.playerVideoOutput2;
+  }
+}
+
 // Map host time to item time for the current item.
 
 - (CMTime) itemTimeForHostTime:(CFTimeInterval)hostTime
 {
-  AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AVPlayerItemVideoOutput *playerItemVideoOutput = pvo.playerItemVideoOutput;
   CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
   return currentItemTime;
 }
@@ -101,8 +107,10 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
            hostPresentationTime:(CFTimeInterval)hostPresentationTime
             presentationTimePtr:(float*)presentationTimePtr
 {
-  if (self.videoOutputPlayerItem == nil) {
-    NSLog(@"player not ready yet in frameForHostTime");
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  
+  if (pvo.isPlaying == FALSE) {
+    NSLog(@"player not playing yet in frameForHostTime");
     return nil;
   }
   
@@ -146,7 +154,8 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
            hostPresentationTime:(CFTimeInterval)hostPresentationTime
             presentationTimePtr:(float*)presentationTimePtr
 {
-  AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AVPlayerItemVideoOutput *playerItemVideoOutput = pvo.playerItemVideoOutput;
   
   GPUVFrame *nextFrame = nil;
   
@@ -243,10 +252,10 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
   if (self.finalFrameBlock != nil) {
     float itemSeconds = CMTimeGetSeconds(itemTime);
     
-    //NSLog(@"itemSeconds >= finalFrameTime : %.3f >= %.3f", itemSeconds, self.finalFrameTime);
+    //NSLog(@"itemSeconds >= finalFrameTime : %.3f >= %.3f", itemSeconds, pvo.finalFrameTime);
     
-    if (itemSeconds >= self.finalFrameTime) {
-      NSLog(@"past finalFrameTime %.3f >= %.3f", itemSeconds, self.finalFrameTime);
+    if (itemSeconds >= pvo.finalFrameTime) {
+      NSLog(@"past finalFrameTime %.3f >= %.3f", itemSeconds, pvo.finalFrameTime);
       
       self.finalFrameBlock();
     }
@@ -286,6 +295,19 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
   return [self decodeFromRGBResourceVideo:URL];
 }
 
+- (void) setLoadedBlockCallbacks
+{
+  __weak typeof(self) weakSelf = self;
+  
+  self.playerVideoOutput1.loadedBlock = ^(BOOL success){
+    [weakSelf loadedCallback:success];
+  };
+  
+  self.playerVideoOutput2.loadedBlock = ^(BOOL success){
+    [weakSelf loadedCallback:success];
+  };
+}
+
 // Init video frame from the indicated URL
 
 - (BOOL) decodeFromRGBResourceVideo:(NSURL*)URL
@@ -295,9 +317,7 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
                                           [AVPlayerItem playerItemWithURL:URL]
                                           ];
   
-  AVQueuePlayer *player = [AVQueuePlayer queuePlayerWithItems:queueItems];
-  
-  self.player = player;
+  self.queueItems = [NSMutableArray arrayWithArray:queueItems];
   
   NSLog(@"PlayerItem URL %@", URL);
   
@@ -309,14 +329,47 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
     NSLog(@"GPUVFrameSourceVideo.playedToEndBlock %.3f", CACurrentMediaTime());
     [weakSelf stop];
   };
+
+  [self setLoadedBlockCallbacks];
   
-  // Async logic to parse M4V headers to get tracks and other metadata
+  // Async logic to parse M4V headers to get tracks and other metadata.
+  // Note that this logic returns player1 in the init case.
 
-  AVAsset *asset = [self.player.currentItem asset];
+  self.isPlayer2Active = TRUE;
+  GPUVPlayerVideoOutput *pvo = [self preloadNextItem];
+  self.isPlayer2Active = FALSE;
 
+  NSAssert(pvo.player, @"player");
+
+  AVAsset *asset = [pvo.player.currentItem asset];
   NSAssert(asset, @"curent item asset is nil");
   
+  [self startAsyncTracksLoad:asset pvo:pvo];
+
+  return TRUE;
+}
+
+- (void) startAsyncTracksLoad:(AVAsset*)asset
+                      pvo:(GPUVPlayerVideoOutput*)pvo
+{
+  __weak typeof(self) weakSelf = self;
+  __weak typeof(pvo) weakPvo = pvo;
+  
+  // FIXME: get asset ref from item as opposed to item in player ??
+  //AVAsset *asset = [pvo.player.currentItem asset];
+  //NSAssert(asset, @"curent item asset is nil");
+  
   NSArray *assetKeys = @[@"duration", @"playable", @"tracks"];
+  
+  if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded)
+  {
+    BOOL worked = [self asyncTracksReady:asset pvo:pvo];
+    
+    // Need to preroll start once we know the async tracke loading
+    // was successful
+    
+    return;
+  }
   
   [asset loadValuesAsynchronouslyForKeys:assetKeys completionHandler:^{
     
@@ -324,73 +377,39 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
     
     // Check "playable"
     
-//    if ([asset statusOfValueForKey:@"playable" error:nil] == AVKeyValueStatusLoaded) {
-//      if ([asset isPlayable] == FALSE) {
-//        NSLog(@"asset is NOT playable");
-//        assert(0);
-//      }
-//    }
+    //    if ([asset statusOfValueForKey:@"playable" error:nil] == AVKeyValueStatusLoaded) {
+    //      if ([asset isPlayable] == FALSE) {
+    //        NSLog(@"asset is NOT playable");
+    //        assert(0);
+    //      }
+    //    }
     
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-      dispatch_sync(dispatch_get_main_queue(), ^{
-        BOOL worked = [weakSelf asyncTracksReady:asset];
-
+      dispatch_async(dispatch_get_main_queue(), ^{
+        BOOL worked = [weakSelf asyncTracksReady:asset pvo:weakPvo];
+        
         if (worked == FALSE) {
           // In the failed to load case, invoke callback
           if (weakSelf.loadedBlock != nil) {
             weakSelf.loadedBlock(FALSE);
-            weakSelf.loadedBlock = nil;
+            //weakSelf.loadedBlock = nil;
           }
         }
       });
     }
     
   }];
-  
-  return TRUE;
 }
 
-// Util method that creates AVPlayerItemVideoOutput instance
 
-- (void) makeVideoOutput {
-#if defined(DEBUG)
-  NSAssert(self.playerItemVideoOutput == nil, @"self.playerItemVideoOutput must be nil");
-#endif // DEBUG
-  
-  NSDictionary *pixelBufferAttributes = [BGRAToBT709Converter getPixelBufferAttributes];
-  
-  NSMutableDictionary *mDict = [NSMutableDictionary dictionaryWithDictionary:pixelBufferAttributes];
-  
-  // Add kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
-  
-  mDict[(id)kCVPixelBufferPixelFormatTypeKey] = @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
-  
-  pixelBufferAttributes = [NSDictionary dictionaryWithDictionary:mDict];
-  
-  // FIXME: Create AVPlayerItemVideoOutput after AVPlayerItem status is ready to play
-  // https://forums.developer.apple.com/thread/27589
-  // https://github.com/seriouscyrus/AVPlayerTest
-  
-  self.playerItemVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixelBufferAttributes];;
-  
-  // FIXME: does this help ?
-  self.playerItemVideoOutput.suppressesPlayerRendering = TRUE;
-  
-  self.playerQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
-  
-  __weak typeof(self) weakSelf = self;
-  
-  [self.playerItemVideoOutput setDelegate:weakSelf queue:self.playerQueue];
-  
-#if defined(DEBUG)
-  assert(self.playerItemVideoOutput.delegateQueue == self.playerQueue);
-#endif // DEBUG
-}
+// FIXME: is it possible that async callback could be too late, pass
+// original ref so that a race condition cannot happen.
 
 // Async callback that is invoked when the "tracks" property has been
 // loaded and is ready to be inspected.
 
 - (BOOL) asyncTracksReady:(AVAsset*)asset
+                      pvo:(GPUVPlayerVideoOutput*)pvo
 {
   NSLog(@"asyncTracksReady");
   
@@ -398,150 +417,65 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
   
 #if defined(DEBUG)
   // Callback must be processed on main thread
-  
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
-  
-  AVKeyValueStatus status = [asset statusOfValueForKey:@"tracks" error:nil];
-  NSAssert(status == AVKeyValueStatusLoaded, @"status != AVKeyValueStatusLoaded : %d", (int)status);
 #endif // DEBUG
   
-  NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-  int numTracks = (int) [videoTracks count];
-  
-  if (numTracks == 0) {
-    return FALSE;
-  }
-  
-  // Choose the first video track. Ignore other tracks if found
-  const int videoTrackOffset = 0;
-  AVAssetTrack *videoTrack = [videoTracks objectAtIndex:videoTrackOffset];
-  
-  // Must be self contained
-  
-  if (videoTrack.isSelfContained != TRUE) {
-    if ([self isKindOfClass:AVURLAsset.class]) {
-      AVURLAsset *urlAsset = (AVURLAsset*) asset;
-      NSString *path = [urlAsset.URL path];
-      NSLog(@"videoTrack.isSelfContained must be TRUE for \"%@\"", path);
-    }
-    return FALSE;
-  }
-  
-  CGSize itemSize = videoTrack.naturalSize;
-  NSLog(@"video track naturalSize w x h : %d x %d", (int)itemSize.width, (int)itemSize.height);
-  
-  // Allocate render buffer once asset dimensions are known
-  
-  // Writing to this property must be done on main thread
-  //strongSelf.resizeTextureSize = itemSize;
-  self.width = (int) itemSize.width;
-  self.height = (int) itemSize.height;
-  
-  //[weakSelf makeInternalMetalTexture];
-  
-  CMTimeRange timeRange = videoTrack.timeRange;
-  float trackDuration = (float)CMTimeGetSeconds(timeRange.duration);
-  NSLog(@"video track time duration %0.3f", trackDuration);
-  
-  CMTime frameDurationTime = videoTrack.minFrameDuration;
-  float frameDurationSeconds = (float)CMTimeGetSeconds(frameDurationTime);
-  NSLog(@"video track frame duration %0.3f", frameDurationSeconds);
-  
-  // Once display frame interval has been parsed, create display
-  // frame timer but be sure it is created on the main thread
-  // and that this method invocation completes before the
-  // next call to dispatch_async() to start playback.
-  
-  {
-    // Note that writing to FPS members must be executed on the
-    // main thread.
-    
-    float FPS = 1.0f / frameDurationSeconds;
-    if (FPS <= 30.001 && FPS >= 29.999) {
-      FPS = 30;
-      frameDurationSeconds = 1.0f / 30.0f;
-    }
-    self.FPS = FPS;
-    self.frameDuration = frameDurationSeconds;
-    
-    //[self makeDisplayLink];
-  }
-  
-  {
-    // Calculate the frame number of the final frame
-
-    self.finalFrameTime = trackDuration - frameDurationSeconds - (frameDurationSeconds * 0.10);
-    
-    NSLog(@"video finalFrameTime %.3f", self.finalFrameTime);
-  }
-
-  // Init player with current item, seek to time = 0.0
-  // but do not start playback automatically
-  
-  float nominalFrameRate = videoTrack.nominalFrameRate;
-  NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
-  
-  [self startObservingPlayerAndItem];
-  
+  [pvo asyncTracksReady:asset];
   return TRUE;
 }
 
-- (void) assetReadyToPlay
+- (AVPlayerItem*) grabFirstQueueItemAndRotate
 {
-  if (self.playerItemVideoOutput == nil) {
-    // First invocation
-    
-    [self makeVideoOutput];
-    
-    [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
-  }
-  
-  AVPlayerItem *playerItem = self.player.currentItem;
-
-  // In some cases, this method can be invoked when only a
-  // single item is in the queue, since the one that was just
-  // display has not been appened to the back of the item
-  // queue again.
-  
-  if (self.videoOutputPlayerItem == nil) {
-    // Init case, add output and set
-    [playerItem addOutput:self.playerItemVideoOutput];
-    self.videoOutputPlayerItem = playerItem;
-    self.loopCount = 0;
-    
-    NSLog(@"OUTPUT init %p", playerItem);
-  } else if (self.videoOutputPlayerItem == playerItem) {
-    // Activate the item that is currently active
-    //[playerItem removeOutput:self.playerItemVideoOutput];
-    //[playerItem addOutput:self.playerItemVideoOutput];
-    
-    //NSLog(@"OUTPUT remove/add %p -> %p", playerItem, playerItem);
-    
-    NSLog(@"OUTPUT NOP same item %p", playerItem);
-  } else {
-    // Changing the item connected to the video output
+  // Rotate queueItems[0] to the end of the queue
+  AVPlayerItem *firstItem = self.queueItems[0];
+  [self.queueItems addObject:firstItem];
+  [self.queueItems removeObjectAtIndex:0];
 #if defined(DEBUG)
-    NSAssert(playerItem != self.videoOutputPlayerItem, @"playerItem != self.videoOutputPlayerItem");
+  NSAssert(firstItem, @"firstItem");
+  NSAssert(firstItem != self.queueItems[0], @"firstItem");
 #endif // DEBUG
-    [self.videoOutputPlayerItem removeOutput:self.playerItemVideoOutput];
-    if (1) {
-      // FIXME: Destroy the old output and create a new one ??
-    }
-    [playerItem addOutput:self.playerItemVideoOutput];
-    NSLog(@"OUTPUT changed remove/add %p -> %p", self.videoOutputPlayerItem, playerItem);
-    self.videoOutputPlayerItem = playerItem;
-    
-    // Resync current item time to next frame sync time
-    
-    //[self seekToTimeZero];
-    //[self setRate:self.playRate atHostTime:self.syncTime];
-    //NSLog(@"Player setRate with current time %.3f", CMTimeGetSeconds(self.player.currentTime));
-    
-    [self syncStart:self.playRate itemTime:0.0 atHostTime:self.syncTime];
-    
-    //NSLog(@"incr loopCount from %d to %d", self.loopCount, self.loopCount+1);
-    self.loopCount = self.loopCount + 1;
+  return firstItem;
+}
+
+// Begin loading the next item by configuring AVPlayerItem
+// and associating it with AVPlayer. Note that this method
+// does not switch the next item to the active item
+
+- (GPUVPlayerVideoOutput*) preloadNextItem
+{
+  AVPlayerItem *firstItem = [self grabFirstQueueItemAndRotate];
+  
+  GPUVPlayerVideoOutput *pvo = [self getNextPlayerVideoOutput];
+  NSAssert(pvo, @"pvo");
+  
+  if (pvo.player == nil) {
+    // Init player
+    pvo.player = [AVPlayer playerWithPlayerItem:firstItem];
+  } else {
+    [pvo.player replaceCurrentItemWithPlayerItem:firstItem];
   }
+  
+  return pvo;
+}
+
+- (GPUVPlayerVideoOutput*) advanceToNextItem
+{
+  // Switch to other player
+  self.isPlayer2Active = ! self.isPlayer2Active;
+  
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  
+  // Rotate queueItems[0] to the end of the queue
+  AVPlayerItem *firstItem = [self grabFirstQueueItemAndRotate];
+  
+  if (pvo.player == nil) {
+    // Init player
+    pvo.player = [AVPlayer playerWithPlayerItem:firstItem];
+  } else {
+    [pvo.player replaceCurrentItemWithPlayerItem:firstItem];
+  }
+  
+  return pvo;
 }
 
 // Kick of play operation
@@ -556,287 +490,35 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
     self.playRate = 1.0f;
   }
 
-  if ((0)) {
-    [self.player play];
-  } else {
-    CFTimeInterval syncTime = CACurrentMediaTime();
-    [self play:syncTime];
-  }
+  CFTimeInterval syncTime = CACurrentMediaTime();
+  [self play:syncTime];
 }
 
 - (void) stop
 {
-  [self stopObservingPlayerAndItem];
-  
-  [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
-  
-  self.playerItemVideoOutput = nil;
-  
-  [self.player setRate:0.0];
-}
-
-// Initiate playback by preloading for a specific rate (typically 1.0)
-// and invoke block callback.
-
-- (void) playWithPreroll:(float)rate block:(void (^)(void))block
-{
 #if defined(DEBUG)
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
   
-  self.playRate = rate;
-  
-  // Sync item time 0.0 to supplied host time (system clock)
-  
-  AVPlayer *player = self.player;
-  
-  NSLog(@"AVPlayer playWithPreroll : %.2f", rate);
-  
-  self.loopCount = 0;
-  
-  player.automaticallyWaitsToMinimizeStalling = FALSE;
-  
-  [player prerollAtRate:rate completionHandler:^(BOOL finished){
-    // FIXME: Should finished be passed to block to cancel?
-    // FIXME: Should pass rate to block
-    
-    if (finished) {
-      block();
-    }
-  }];
-}
-
-// Sync start will seek to the given time and then invoke
-// a sync sync method to play at the given rate after
-// aligning the given host time to the indicated time.
-
-- (void) syncStart:(float)rate
-        itemTime:(CFTimeInterval)itemTime
-        atHostTime:(CFTimeInterval)atHostTime
-{
-  CMTime syncTimeCM = CMTimeMake(itemTime * 1000.0f, 1000);
-  [self.player seekToTime:syncTimeCM completionHandler:^(BOOL finished){
-    if (finished) {
-    CMTime hostTimeCM = CMTimeMake(atHostTime * 1000.0f, 1000);
-    [self.player setRate:rate time:kCMTimeInvalid atHostTime:hostTimeCM];
-    }
-  }];
-}
-
-// Invoke player setRate to actually begin playing back a video
-// source once playWithPreroll invokes the block callback
-// with a specific host time to sync to. Note that this API
-// always uses the current time as the sync point.
-
-- (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime
-{
-  CMTime hostTimeCM = CMTimeMake(atHostTime * 1000.0f, 1000);
-  [self.player setRate:rate time:kCMTimeInvalid atHostTime:hostTimeCM];
-}
-
-// Kick of play operation where the zero time implicitly
-// gets synced to the indicated host time. This means
-// that 2 different calls to play on two different
-// players will start in sync.
-
-- (void) play:(CFTimeInterval)syncTime
-{
-#if defined(DEBUG)
-  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
-#endif // DEBUG
-  
-  // Sync item time 0.0 to supplied host time (system clock)
-  
-  AVPlayerItem *item = self.player.currentItem;
-  
-  NSLog(@"AVPlayer play sync itemTime 0.0 to %.3f", syncTime);
-  
-  self.player.automaticallyWaitsToMinimizeStalling = FALSE;
-  CMTime hostTimeCM = CMTimeMake(syncTime * 1000.0f, 1000);
-  //[self.player setRate:1.0 time:kCMTimeZero atHostTime:hostTimeCM];
-  [self.player setRate:1.0 time:kCMTimeInvalid atHostTime:hostTimeCM];
-  
-  NSLog(@"play AVPlayer.item %d / %d : %0.3f", (int)item.currentTime.value, (int)item.currentTime.timescale, CMTimeGetSeconds(item.currentTime));
+  // Configure player layer now that asset tracks is loaded
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  [pvo stop];
 }
 
 // restart will rewind and then play, in the case where the video is already
 // playing then a call to restart will just rewind.
 
 - (void) restart {
-//  [self seekToTimeZero];
-//
-//  AVPlayerTimeControlStatus timeControlStatus = self.player.timeControlStatus;
-//
-//  if (timeControlStatus == AVPlayerTimeControlStatusPlaying ||
-//      timeControlStatus == AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate) {
-//    // Currently playing
-//  } else {
-//    // Not playing
-//    [self play];
-//  }
-  
-//  self.loopCount += 1;
-//  
-//  if (self.loopCount >= 5) {
-//    ;
-//  }
+  NSLog(@"restart");
   
   // Advance to next item
   
-  AVPlayerItem *currentItemBefore = self.player.currentItem;
+  GPUVPlayerVideoOutput *pvo = [self advanceToNextItem];
   
-  [self.player advanceToNextItem];
+  AVAsset *asset = [pvo.player.currentItem asset];
+  NSAssert(asset, @"curent item asset is nil");
   
-  AVPlayerItem *currentItemAfter = self.player.currentItem;
-  
-  NSAssert(currentItemBefore != currentItemAfter, @"did not switch");
-  
-  // Swap output
-  
-  [self assetReadyToPlay];
-  
-//  CFTimeInterval syncTime = self.syncTime;
-//  float playRate = self.playRate;
-//
-//  [self seekToTimeZero];
-//  [self setRate:playRate atHostTime:syncTime];
-}
-
-#pragma mark - AVPlayerItemOutputPullDelegate
-
-// FIXME: Need to mark state to indicate that media has been
-// parsed and is now ready to play. But, cannot directly
-// operate on a displayLink here since there is not a 1 to 1
-// mapping between a display link and an output. A callback
-// into the view or some other type of notification will
-// be needed to signal that the media is ready to play.
-
-- (void)outputMediaDataWillChange:(AVPlayerItemOutput*)sender
-{
-  NSLog(@"outputMediaDataWillChange : sender %p", sender);
-  
-  __weak typeof(self) weakSelf = self;
-  
-  dispatch_async(dispatch_get_main_queue(), ^{
-    if (weakSelf.loadedBlock != nil) {
-      weakSelf.loadedBlock(TRUE);
-      weakSelf.loadedBlock = nil;
-    }
-  });
-  
-  return;
-}
-
-- (void)startObservingPlayerAndItem
-{
-  if (_addedObservers == NO)
-  {
-    AVQueuePlayer *player = self.player;
-    [player addObserver:self forKeyPath:@"status"
-                options:NSKeyValueObservingOptionNew context:AVLoopPlayerQueuePlayerStatusObservationContext];
-    [player addObserver:self forKeyPath:@"currentItem"
-                options:NSKeyValueObservingOptionOld context:AVLoopPlayerCurrentItemObservationContext];
-    [player addObserver:self forKeyPath:@"currentItem.status"
-                options:NSKeyValueObservingOptionNew context:AVLoopPlayerCurrentItemStatusObservationContext];
-    _addedObservers = YES;
-  }
-}
-
-- (void)stopObservingPlayerAndItem
-{
-  if (_addedObservers)
-  {
-    AVQueuePlayer *player = self.player;
-    [player removeObserver:self forKeyPath:@"status" context:AVLoopPlayerQueuePlayerStatusObservationContext];
-    [player removeObserver:self forKeyPath:@"currentItem" context:AVLoopPlayerCurrentItemObservationContext];
-    [player removeObserver:self forKeyPath:@"currentItem.status" context:AVLoopPlayerCurrentItemStatusObservationContext];
-    _addedObservers = NO;
-  }
-}
-
-- (void)outputSequenceWasFlushed:(AVPlayerItemOutput*)output
-{
-  NSLog(@"%p outputSequenceWasFlushed : current AVPlayerItem %p", self, self.videoOutputPlayerItem);
-  
-  return;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)changeDictionary context:(void *)context
-{
-  const BOOL logAllObserved = TRUE;
-  
-  if (logAllObserved) {
-  NSLog(@"observeValueForKeyPath \"%@\" : %@", keyPath, changeDictionary);
-  NSLog(@"self.player.items count %d", (int)self.player.items.count);
-  }
-  
-  if (context == AVLoopPlayerQueuePlayerStatusObservationContext)
-  {
-    AVPlayerStatus newPlayerStatus = (AVPlayerStatus)[[changeDictionary objectForKey:NSKeyValueChangeNewKey] unsignedIntegerValue];
-    if (newPlayerStatus == AVPlayerStatusFailed) {
-      AVQueuePlayer *player = (AVQueuePlayer *)object;
-      NSLog(@"End looping since player has failed with error %@", player.error);
-      [self stop];
-    }
-  }
-  else if (context == AVLoopPlayerCurrentItemObservationContext)
-  {
-    AVQueuePlayer *player = (AVQueuePlayer *)object;
-    
-    if ([[player items] count] == 0)
-    {
-      NSLog(@"Play queue emptied out due to bad player item. End looping.");
-      [self stop];
-    }
-    else
-    {
-      // Append the previous current item to the player's queue.
-      AVPlayerItem *itemRemoved = changeDictionary[NSKeyValueChangeOldKey];
-      
-      /*
-       An initial change from a nil currentItem yields NSNull here. Check
-       to make sure the class is AVPlayerItem before appending it to the
-       end of the queue.
-       */
-      if ([itemRemoved isKindOfClass:[AVPlayerItem class]])
-      {
-        [self stopObservingPlayerAndItem];
-        [player insertItem:itemRemoved afterItem:nil];
-        [self startObservingPlayerAndItem];
-        
-        if (logAllObserved) {
-        NSLog(@"remove and append AVPlayerItem %@", itemRemoved);
-        NSLog(@"player.items %@", player.items);
-        }
-      }
-    }
-  }
-  else if (context == AVLoopPlayerCurrentItemStatusObservationContext)
-  {
-    AVPlayerItemStatus newItemStatus = (AVPlayerItemStatus)[[changeDictionary objectForKey:NSKeyValueChangeNewKey] unsignedIntegerValue];
-    if (newItemStatus == AVPlayerItemStatusFailed) {
-      AVQueuePlayer *player = (AVQueuePlayer *)object;
-      NSLog(@"End looping since player item has failed with error %@", player.currentItem.error);
-      [self stop];
-    } else if (newItemStatus == AVPlayerItemStatusReadyToPlay) {
-      
-      if (logAllObserved) {
-        NSLog(@"AVPlayerItemStatusReadyToPlay : AVPlayerItem %p : host time %.3f", self.player.currentItem, CACurrentMediaTime());
-        NSLog(@"AVPlayerStatusReadyToPlay: Asset current time %.3f", CMTimeGetSeconds(self.player.currentItem.currentTime));
-        NSLog(@"player.items %@", self.player.items);
-      }
-
-      NSAssert(self.player.status == AVPlayerStatusReadyToPlay, @"player.status != AVPlayerStatusReadyToPlay : %d", (int)self.player.status);
-      
-      // Invoke assetReadyToPlay only in the init case, for the very first item that becomes ready
-      
-      if (self.videoOutputPlayerItem == nil) {
-        [self assetReadyToPlay];
-      }
-    }
-  } else {
-    [super observeValueForKeyPath:keyPath ofObject:object change:changeDictionary context:context];
-  }
+  [self startAsyncTracksLoad:asset pvo:pvo];
 }
 
 // Define a CMTimescale that will be used by the player, this
@@ -846,14 +528,51 @@ static void* const AVLoopPlayerCurrentItemStatusObservationContext =
 
 - (void) useMasterClock:(CMClockRef)masterClock
 {
-  self.player.masterClock = masterClock;
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  [pvo useMasterClock:masterClock];
 }
 
 - (void) seekToTimeZero
 {
-  [self.player seekToTime:kCMTimeZero completionHandler:^(BOOL finished){
-    // nop
-  }];
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  [pvo seekToTimeZero];
+}
+
+// Initiate playback by preloading for a specific rate (typically 1.0)
+// and invoke block callback.
+
+- (void) playWithPreroll:(float)rate block:(void (^)(void))block
+{
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  [pvo playWithPreroll:rate block:block];
+}
+
+// Sync start will seek to the given time and then invoke
+// a sync sync method to play at the given rate after
+// aligning the given host time to the indicated time.
+
+- (void) syncStart:(float)rate
+          itemTime:(CFTimeInterval)itemTime
+        atHostTime:(CFTimeInterval)atHostTime
+{
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  [pvo syncStart:rate itemTime:itemTime atHostTime:atHostTime];
+}
+
+// Invoked after a player has loaded an asset and is ready to play
+
+- (void) loadedCallback:(BOOL)success
+{
+  self.width = self.playerVideoOutput1.width;
+  self.height = self.playerVideoOutput1.height;
+  
+  self.FPS = self.playerVideoOutput1.FPS;
+  self.frameDuration = self.playerVideoOutput1.frameDuration;
+  
+  if (self.loadedBlock != nil) {
+    self.loadedBlock(success);
+    //self.loadedBlock = nil;
+  }
 }
 
 @end
