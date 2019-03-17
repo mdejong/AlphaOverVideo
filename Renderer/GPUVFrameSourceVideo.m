@@ -245,6 +245,22 @@
   [self.times addObject:timeArr];
 #endif // STORE_TIMES
   
+  // When one clip will transition into the next clip, a preloading stage
+  // has to be initiated before the end of each clip.
+  
+  if (self.lastSecondFrameBlock != nil) {
+    float itemSeconds = CMTimeGetSeconds(itemTime);
+    
+    NSLog(@"itemSeconds >= lastSecondFrameTime : %.3f >= %.3f", itemSeconds, pvo.lastSecondFrameTime);
+    
+    if (itemSeconds >= pvo.lastSecondFrameTime) {
+      NSLog(@"past lastSecondFrameTime %.3f >= %.3f", itemSeconds, pvo.lastSecondFrameTime);
+      
+      self.lastSecondFrameBlock();
+      self.lastSecondFrameBlock = nil;
+    }
+  }
+  
   // The logic above attempts to load a specific video frame, but it is possible
   // that the clock time is now at or past the final frame of video. Check for
   // this "final frame" condition even is loading a video frame was not
@@ -541,14 +557,27 @@
   
   // Halt playback of current item
   
-  {
-    GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
-    [pvo endOfLoop];
-  }
+  GPUVPlayerVideoOutput *pvoPrev = [self getCurrentPlayerVideoOutput];
+  [pvoPrev endOfLoop];
+
+  // Switch to next frame
+  
+  self.isPlayer2Active = ! self.isPlayer2Active;
+  
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  
+  NSAssert(pvo != pvoPrev, @"pvo != pvoPrev");
+}
+
+// Invoked a second before the end of the clip
+
+- (void) lastSecond {
+  NSLog(@"lastSecond");
   
   // Advance to next item
   
-  GPUVPlayerVideoOutput *pvo = [self advanceToNextItem];
+  GPUVPlayerVideoOutput *pvo = [self preloadNextItem];
+  NSAssert(pvo.player, @"player");
   
   AVAsset *asset = pvo.playerItem.asset;
   NSAssert(asset, @"curent item asset is nil");
@@ -603,6 +632,16 @@
   
   self.FPS = self.playerVideoOutput1.FPS;
   self.frameDuration = self.playerVideoOutput1.frameDuration;
+  
+  // Define 1 second before end of clip callback
+  
+  __weak typeof(self) weakSelf = self;
+  
+  self.lastSecondFrameBlock = ^{
+    [weakSelf lastSecond];
+  };
+  
+  // Invoke callback
   
   if (self.loadedBlock != nil) {
     self.loadedBlock(success);

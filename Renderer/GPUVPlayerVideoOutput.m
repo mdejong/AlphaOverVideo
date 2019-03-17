@@ -196,6 +196,14 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     NSLog(@"video finalFrameTime %.3f", self.finalFrameTime);
   }
   
+  {
+    // Calculate load time, this is one second before the end of the clip
+
+    self.lastSecondFrameTime = trackDuration - 1.0;
+    
+    NSLog(@"video lastSecondFrameTime %.3f", self.lastSecondFrameTime);
+  }
+  
   // Init player with current item, seek to time = 0.0
   // but do not start playback automatically
   
@@ -209,13 +217,13 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   if (self.player.currentItem == self.playerItem) {
     if (1) {
-      NSLog(@"ASSOC ALREADY ITEM %p -> player : %p", self.playerItem, self.player);
+      NSLog(@"ASSOC ALREADY ITEM %p -> player %p", self.playerItem, self.player);
     }
 
     [self assetReadyToPlay];
   } else {
     if (1) {
-      NSLog(@"ASSOC ITEM %p -> player : %p", self.playerItem, self.player);
+      NSLog(@"ASSOC ITEM %p -> player %p", self.playerItem, self.player);
     }
     
     [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
@@ -245,7 +253,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   }
   
   if (newOutputCreated) {
-    // Always deliver event that kics off load block
+    // Always deliver event that kics off load block as async method
     [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
   }
   

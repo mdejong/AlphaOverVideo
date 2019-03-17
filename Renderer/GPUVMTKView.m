@@ -523,6 +523,8 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 #endif // LOAD_ALPHA_VIDEO
     
     weakFrameSourceVideo.loadedBlock = ^(BOOL success){
+      NSLog(@"frameSourceVideo loadedBlock");
+      
       if (!success) {
         NSLog(@"loadedBlock FAILED");
         return;
@@ -607,6 +609,11 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       NSLog(@"GPUVFrameSourceVideo.finalFrameBlock %.3f", CACurrentMediaTime());
       [weakFrameSourceVideo restart];
     };
+
+//    weakFrameSourceVideo.lastSecondFrameBlock = ^{
+//      NSLog(@"GPUVFrameSourceVideo.lastSecondFrameBlock %.3f", CACurrentMediaTime());
+//      [weakFrameSourceVideo lastSecond];
+//    };
 #endif // LOAD_ALPHA_VIDEO
     
     //self.metalBT709Decoder.useComputeRenderer = TRUE;

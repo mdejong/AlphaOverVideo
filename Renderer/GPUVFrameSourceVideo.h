@@ -57,6 +57,10 @@
 
 @property (nonatomic, copy, nullable) void (^finalFrameBlock)(void);
 
+// This block is invoked one second before the end of the clip.
+
+@property (nonatomic, copy, nullable) void (^lastSecondFrameBlock)(void);
+
 // Init from asset name
 
 - (BOOL) loadFromAsset:(NSString*)resFilename;
@@ -86,6 +90,10 @@
 // Stop playback by setting player rate to 0.0
 
 - (void) stop;
+
+// Invoked a second before the end of the clip
+
+- (void) lastSecond;
 
 // Define a CMTimescale that will be used by the player, this
 // implicitly assumes that the timeline has a rate of 0.0
