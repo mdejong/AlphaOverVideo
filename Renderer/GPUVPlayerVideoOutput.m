@@ -86,7 +86,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   NSAssert([NSThread isMainThread] == FALSE, @"!isMainThread");
 #endif // DEBUG
   
-  NSLog(@"outputMediaDataWillChange : sender %p", sender);
+  NSLog(@"outputMediaDataWillChange : GPUVPlayerVideoOutput %p", self);
   
   __weak typeof(self) weakSelf = self;
   
@@ -106,7 +106,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput*)output
 {
-  NSLog(@"%p outputSequenceWasFlushed %p", self, output);
+  NSLog(@"%p outputSequenceWasFlushed %p : output %p", self, self.playerItem, output);
   
   return;
 }
@@ -118,7 +118,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (BOOL) asyncTracksReady:(AVAsset*)asset
 {
-  NSLog(@"asyncTracksReady");
+  NSLog(@"asyncTracksReady with AVAsset %p", asset);
   
   // Verify that the status for this specific key is ready to be read
   
@@ -204,6 +204,23 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   [self registerForItemNotificaitons];
   
+  // Do not associate the player item with the player until the
+  // async asset loading has completed.
+  
+  if (self.player.currentItem == self.playerItem) {
+    if (1) {
+      NSLog(@"ASSOC ALREADY ITEM %p -> player : %p", self.playerItem, self.player);
+    }
+
+    [self assetReadyToPlay];
+  } else {
+    if (1) {
+      NSLog(@"ASSOC ITEM %p -> player : %p", self.playerItem, self.player);
+    }
+    
+    [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
+  }
+  
   return TRUE;
 }
 
@@ -212,16 +229,27 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void) assetReadyToPlay
 {
+  BOOL newOutputCreated = FALSE;
+  
   if (self.playerItemVideoOutput == nil) {
     // First invocation
     
     [self makeVideoOutput];
     
+    newOutputCreated = TRUE;
+    
     // FIXME: should this drive loading callabck with delay when not the first time
     // it is invoked?
     
+    //[self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
+  }
+  
+  if (newOutputCreated) {
+    // Always deliver event that kics off load block
     [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
   }
+  
+  self.isReadyToPlay = TRUE;
   
   AVPlayerItem *playerItem = self.player.currentItem;
   
@@ -230,10 +258,12 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   // display has not been appened to the back of the item
   // queue again.
   
-  if (self.playerItem == nil) {
+  // if (self.playerItem == nil) {
+  
+  if (newOutputCreated) {
     // Init case, add output and set
     [playerItem addOutput:self.playerItemVideoOutput];
-    self.playerItem = playerItem;
+    //self.playerItem = playerItem;
     
     NSLog(@"OUTPUT init %p", playerItem);
   } else if (self.playerItem == playerItem) {
@@ -245,6 +275,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     
     NSLog(@"OUTPUT NOP same item %p", playerItem);
   } else {
+    assert(0);
+    
     // Changing the item connected to the video output
 #if defined(DEBUG)
     NSAssert(playerItem != self.playerItem, @"playerItem != self.playerItem");
@@ -286,19 +318,26 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+  if ((1)) {
+    NSLog(@"observeValueForKeyPath \"%@\" %@", keyPath, change);
+  }
+  
   if (context == AVPlayerItemStatusContext) {
-    AVPlayerStatus status = [change[NSKeyValueChangeNewKey] integerValue];
+    AVPlayerStatus status = (AVPlayerStatus) AVPlayerItemStatusUnknown;
+    NSNumber *statusNumber = change[NSKeyValueChangeNewKey];
+    if ([statusNumber isKindOfClass:[NSNumber class]]) {
+      status = statusNumber.integerValue;
+    }
     switch (status) {
-      case AVPlayerItemStatusUnknown:
+      case AVPlayerItemStatusUnknown: {
         break;
+      }
       case AVPlayerItemStatusReadyToPlay: {
-        NSLog(@"AVPlayerItemStatusReadyToPlay");
-        self.isReadyToPlay = TRUE;
+        NSLog(@"AVPlayerItemStatusReadyToPlay %p", self);
         [self assetReadyToPlay];
         break;
       }
       case AVPlayerItemStatusFailed: {
-        //[self stopLoadingAnimationAndHandleError:[[_player currentItem] error]];
         NSLog(@"AVPlayerItemStatusFailed : %@", [self.playerItem error]);
         // FIXME: stop playback on error, need to pass up to enclosing scope
         break;
@@ -310,8 +349,26 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   }
 }
 
+- (void) endOfLoop
+{
+  self.isPlaying = FALSE;
+  self.isReadyToPlay = FALSE;
+  
+  [self unregisterForItemNotificaitons];
+  
+  //[self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
+ 
+  [self.playerItem removeOutput:self.playerItemVideoOutput];
+  self.playerItemVideoOutput = nil;
+  
+  [self.player setRate:0.0];
+}
+
 - (void) stop
 {
+  self.isPlaying = FALSE;
+  self.isReadyToPlay = FALSE;
+  
   [self unregisterForItemNotificaitons];
   
   [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
@@ -336,7 +393,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   AVPlayer *player = self.player;
   
-  NSLog(@"AVPlayer playWithPreroll : %.2f", rate);
+  [self seekToTimeZero];
+  
+  NSLog(@"AVPlayer playWithPreroll : %.2f : starting at time %.2f", rate, CMTimeGetSeconds(self.player.currentTime));
   
   //self.loopCount = 0;
   
@@ -400,8 +459,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   self.player.automaticallyWaitsToMinimizeStalling = FALSE;
   CMTime hostTimeCM = CMTimeMake(syncTime * 1000.0f, 1000);
-  //[self.player setRate:1.0 time:kCMTimeZero atHostTime:hostTimeCM];
-  [self.player setRate:1.0 time:kCMTimeInvalid atHostTime:hostTimeCM];
+  [self.player setRate:self.playRate time:kCMTimeInvalid atHostTime:hostTimeCM];
   
   NSLog(@"play AVPlayer.item %d / %d : %0.3f", (int)item.currentTime.value, (int)item.currentTime.timescale, CMTimeGetSeconds(item.currentTime));
 }

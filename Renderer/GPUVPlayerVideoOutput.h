@@ -50,13 +50,13 @@
 
 - (NSString*) description;
 
-- (void) makeVideoOutput;
-
 // This method is invoked when the "tracks" data has become ready
 
 - (BOOL) asyncTracksReady:(AVAsset*)asset;
 
 - (void) stop;
+
+- (void) endOfLoop;
 
 - (void) useMasterClock:(CMClockRef)masterClock;
 

@@ -69,8 +69,10 @@
 - (GPUVPlayerVideoOutput*) getCurrentPlayerVideoOutput
 {
   if (self.isPlayer2Active) {
+    NSLog(@"playerVideoOutput2 is active");
     return self.playerVideoOutput2;
   } else {
+    NSLog(@"playerVideoOutput1 is active");
     return self.playerVideoOutput1;
   }
 }
@@ -341,7 +343,7 @@
 
   NSAssert(pvo.player, @"player");
 
-  AVAsset *asset = [pvo.player.currentItem asset];
+  AVAsset *asset = pvo.playerItem.asset;
   NSAssert(asset, @"curent item asset is nil");
   
   [self startAsyncTracksLoad:asset pvo:pvo];
@@ -355,10 +357,6 @@
   __weak typeof(self) weakSelf = self;
   __weak typeof(pvo) weakPvo = pvo;
   
-  // FIXME: get asset ref from item as opposed to item in player ??
-  //AVAsset *asset = [pvo.player.currentItem asset];
-  //NSAssert(asset, @"curent item asset is nil");
-  
   NSArray *assetKeys = @[@"duration", @"playable", @"tracks"];
   
   if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded)
@@ -367,6 +365,14 @@
     
     // Need to preroll start once we know the async tracke loading
     // was successful
+    
+    if (worked == FALSE) {
+      // In the failed to load case, invoke callback
+      if (weakSelf.loadedBlock != nil) {
+        weakSelf.loadedBlock(FALSE);
+        //weakSelf.loadedBlock = nil;
+      }
+    }
     
     return;
   }
@@ -448,12 +454,19 @@
   GPUVPlayerVideoOutput *pvo = [self getNextPlayerVideoOutput];
   NSAssert(pvo, @"pvo");
   
-  if (pvo.player == nil) {
-    // Init player
-    pvo.player = [AVPlayer playerWithPlayerItem:firstItem];
-  } else {
-    [pvo.player replaceCurrentItemWithPlayerItem:firstItem];
+//  if (pvo.player == nil) {
+//    // Init player
+//    pvo.player = [[AVPlayer alloc] init];
+//  } else {
+//  }
+  
+  AVPlayer *player = pvo.player;
+  
+  if (player == nil) {
+    pvo.player = [[AVPlayer alloc] init];
   }
+  
+  pvo.playerItem = firstItem;
   
   return pvo;
 }
@@ -468,13 +481,28 @@
   // Rotate queueItems[0] to the end of the queue
   AVPlayerItem *firstItem = [self grabFirstQueueItemAndRotate];
   
-  if (pvo.player == nil) {
-    // Init player
-    pvo.player = [AVPlayer playerWithPlayerItem:firstItem];
-  } else {
-    [pvo.player replaceCurrentItemWithPlayerItem:firstItem];
+//  if (pvo.player == nil) {
+//    // Init player
+//    pvo.player = [[AVPlayer alloc] init];
+//  } else {
+//  }
+  
+  // Nil out ref inside old player if it is defined
+  
+  AVPlayer *player = pvo.player;
+  
+  if (player == nil) {
+    pvo.player = [[AVPlayer alloc] init];
   }
   
+//  if (player) {
+//    [player replaceCurrentItemWithPlayerItem:nil];
+//  }
+  
+  //pvo.player = [[AVPlayer alloc] init];
+  
+  pvo.playerItem = firstItem;
+
   return pvo;
 }
 
@@ -511,11 +539,18 @@
 - (void) restart {
   NSLog(@"restart");
   
+  // Halt playback of current item
+  
+  {
+    GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+    [pvo endOfLoop];
+  }
+  
   // Advance to next item
   
   GPUVPlayerVideoOutput *pvo = [self advanceToNextItem];
   
-  AVAsset *asset = [pvo.player.currentItem asset];
+  AVAsset *asset = pvo.playerItem.asset;
   NSAssert(asset, @"curent item asset is nil");
   
   [self startAsyncTracksLoad:asset pvo:pvo];
