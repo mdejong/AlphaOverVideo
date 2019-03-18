@@ -21,7 +21,8 @@
 
 @interface GPUVFrameSourceVideo ()
 
-@property (nonatomic, retain) NSMutableArray<AVPlayerItem *> *queueItems;
+@property (nonatomic, retain) NSMutableArray<AVURLAsset *> *assets;
+@property (nonatomic, assign) int assetOffset;
 
 @property (nonatomic, assign) BOOL isPlayer2Active;
 @property (nonatomic, retain) GPUVPlayerVideoOutput *playerVideoOutput1;
@@ -44,6 +45,7 @@
   if (self = [super init]) {
     self.playerVideoOutput1 = [[GPUVPlayerVideoOutput alloc] init];
     self.playerVideoOutput2 = [[GPUVPlayerVideoOutput alloc] init];
+    self.playRate = 1.0;
   }
   
   return self;
@@ -330,12 +332,12 @@
 
 - (BOOL) decodeFromRGBResourceVideo:(NSURL*)URL
 {
-  NSArray<AVPlayerItem *> *queueItems = @[
-                                          [AVPlayerItem playerItemWithURL:URL],
-                                          [AVPlayerItem playerItemWithURL:URL]
-                                          ];
+  AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:URL options:nil];
   
-  self.queueItems = [NSMutableArray arrayWithArray:queueItems];
+  NSArray<AVURLAsset *> *assets = @[ urlAsset, urlAsset ];
+  
+  self.assets = [NSMutableArray arrayWithArray:assets];
+  self.assetOffset = 0;
   
   NSLog(@"PlayerItem URL %@", URL);
   
@@ -362,7 +364,11 @@
   AVAsset *asset = pvo.playerItem.asset;
   NSAssert(asset, @"curent item asset is nil");
   
-  [self startAsyncTracksLoad:asset pvo:pvo];
+  // Define 1 second before end of clip callback
+  
+  self.lastSecondFrameBlock = ^{
+    [weakSelf lastSecond];
+  };
 
   return TRUE;
 }
@@ -446,17 +452,47 @@
   return TRUE;
 }
 
-- (AVPlayerItem*) grabFirstQueueItemAndRotate
+- (AVURLAsset*) grabFirstQueueAssetAndRotate
 {
-  // Rotate queueItems[0] to the end of the queue
-  AVPlayerItem *firstItem = self.queueItems[0];
-  [self.queueItems addObject:firstItem];
-  [self.queueItems removeObjectAtIndex:0];
+  // Grab next asset from circular queue
+  AVURLAsset *firstAsset = self.assets[self.assetOffset];
+  self.assetOffset += 1;
+  if (self.assetOffset >= self.assets.count) {
+    self.assetOffset = 0;
+  }
 #if defined(DEBUG)
-  NSAssert(firstItem, @"firstItem");
-  NSAssert(firstItem != self.queueItems[0], @"firstItem");
+  NSAssert(firstAsset, @"firstItem");
 #endif // DEBUG
-  return firstItem;
+  return firstAsset;
+}
+
+// Associate AVPlayer inside GPUVPlayerVideoOutput object with next asset
+
+- (void) assocPlayerItem:(GPUVPlayerVideoOutput*)pvo
+{
+  NSAssert(pvo, @"pvo");
+  
+  NSArray<NSString *> *keysToLoad = @[@"duration", @"playable", @"tracks"];
+  
+  AVURLAsset *asset = [self grabFirstQueueAssetAndRotate];
+  
+  AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset automaticallyLoadedAssetKeys:keysToLoad];
+  
+  AVPlayer *player = pvo.player;
+  
+  if (player == nil) {
+    pvo.player = [[AVPlayer alloc] init];
+  }
+  
+  pvo.playerItem = item;
+  
+  [pvo registerForItemNotificaitons];
+  
+  // Associate player item with player
+  
+  [pvo.player replaceCurrentItemWithPlayerItem:item];
+  
+  return;
 }
 
 // Begin loading the next item by configuring AVPlayerItem
@@ -465,25 +501,9 @@
 
 - (GPUVPlayerVideoOutput*) preloadNextItem
 {
-  AVPlayerItem *firstItem = [self grabFirstQueueItemAndRotate];
-  
   GPUVPlayerVideoOutput *pvo = [self getNextPlayerVideoOutput];
-  NSAssert(pvo, @"pvo");
-  
-//  if (pvo.player == nil) {
-//    // Init player
-//    pvo.player = [[AVPlayer alloc] init];
-//  } else {
-//  }
-  
-  AVPlayer *player = pvo.player;
-  
-  if (player == nil) {
-    pvo.player = [[AVPlayer alloc] init];
-  }
-  
-  pvo.playerItem = firstItem;
-  
+  [self assocPlayerItem:pvo];
+
   return pvo;
 }
 
@@ -494,30 +514,7 @@
   
   GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   
-  // Rotate queueItems[0] to the end of the queue
-  AVPlayerItem *firstItem = [self grabFirstQueueItemAndRotate];
-  
-//  if (pvo.player == nil) {
-//    // Init player
-//    pvo.player = [[AVPlayer alloc] init];
-//  } else {
-//  }
-  
-  // Nil out ref inside old player if it is defined
-  
-  AVPlayer *player = pvo.player;
-  
-  if (player == nil) {
-    pvo.player = [[AVPlayer alloc] init];
-  }
-  
-//  if (player) {
-//    [player replaceCurrentItemWithPlayerItem:nil];
-//  }
-  
-  //pvo.player = [[AVPlayer alloc] init];
-  
-  pvo.playerItem = firstItem;
+  [self assocPlayerItem:pvo];
 
   return pvo;
 }
@@ -530,10 +527,6 @@
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
   
-  if (self.playRate == 0.0f) {
-    self.playRate = 1.0f;
-  }
-
   CFTimeInterval syncTime = CACurrentMediaTime();
   [self play:syncTime];
 }
@@ -552,6 +545,12 @@
 // restart will rewind and then play, in the case where the video is already
 // playing then a call to restart will just rewind.
 
+// FIXME: in the case where time jumps way ahead, last second can be
+// executed and then the final frame can be executed right away.
+// Could at least put the restart into an async main so that it goes
+// into the event loop, not clear how start when preroll would be
+// implemented in this case as opposed to assert.
+
 - (void) restart {
   NSLog(@"restart");
   
@@ -559,7 +558,7 @@
   
   GPUVPlayerVideoOutput *pvoPrev = [self getCurrentPlayerVideoOutput];
   [pvoPrev endOfLoop];
-
+  
   // Switch to next frame
   
   self.isPlayer2Active = ! self.isPlayer2Active;
@@ -567,6 +566,24 @@
   GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   
   NSAssert(pvo != pvoPrev, @"pvo != pvoPrev");
+  
+  NSAssert(pvo.isReadyToPlay == TRUE, @"preloaded 2nd player must be ready to play");
+  
+  CFTimeInterval atHostTime = self.syncTime;
+  
+  float playRate = self.playRate;
+  
+  [pvo setRate:playRate atHostTime:atHostTime];
+  
+  // Define 1 second before end of clip callback
+  
+  __weak typeof(self) weakSelf = self;
+  
+  self.lastSecondFrameBlock = ^{
+    [weakSelf lastSecond];
+  };
+  
+  return;
 }
 
 // Invoked a second before the end of the clip
@@ -574,15 +591,17 @@
 - (void) lastSecond {
   NSLog(@"lastSecond");
   
-  // Advance to next item
+  // Advance to next item, this preloading logic will
+  // kick off an async asset ready to play notification.
   
   GPUVPlayerVideoOutput *pvo = [self preloadNextItem];
   NSAssert(pvo.player, @"player");
   
+  pvo.secondaryLoopAsset = TRUE;
+  pvo.playRate = self.playRate;
+  
   AVAsset *asset = pvo.playerItem.asset;
   NSAssert(asset, @"curent item asset is nil");
-  
-  [self startAsyncTracksLoad:asset pvo:pvo];
 }
 
 // Define a CMTimescale that will be used by the player, this
@@ -607,6 +626,7 @@
 
 - (void) playWithPreroll:(float)rate block:(void (^)(void))block
 {
+  self.playRate = rate;
   GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   [pvo playWithPreroll:rate block:block];
 }
@@ -632,15 +652,7 @@
   
   self.FPS = self.playerVideoOutput1.FPS;
   self.frameDuration = self.playerVideoOutput1.frameDuration;
-  
-  // Define 1 second before end of clip callback
-  
-  __weak typeof(self) weakSelf = self;
-  
-  self.lastSecondFrameBlock = ^{
-    [weakSelf lastSecond];
-  };
-  
+    
   // Invoke callback
   
   if (self.loadedBlock != nil) {

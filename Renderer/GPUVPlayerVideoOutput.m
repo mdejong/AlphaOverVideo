@@ -92,13 +92,37 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   // FIXME: should this send back up to parent once swapped over
   // to the active player ?
-  
-  dispatch_async(dispatch_get_main_queue(), ^{
-    if (weakSelf.loadedBlock != nil) {
-      weakSelf.loadedBlock(TRUE);
-      //weakSelf.loadedBlock = nil;
-    }
-  });
+
+  if (self.secondaryLoopAsset) {
+    // Looping over N assets and this is not the first asset.
+    // Preload the player with asset metadata but do not
+    // initiate playback.
+    
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//      float rate = weakSelf.playRate;
+//      assert(rate != 0.0f);
+//
+//      [weakSelf playWithPreroll:rate block:^{
+//        NSLog(@"secondaryLoopAsset playWithPreroll finished at time %.2f", CACurrentMediaTime());
+//
+//        weakSelf.isReadyToPlay = TRUE;
+//        CFTimeInterval syncTime = weakSelf.syncTime;
+//        float playRate = weakSelf.playRate;
+//
+//        //[weakSelf syncStart:playRate itemTime:0.0 atHostTime:syncTime];
+//      }];
+//    });
+    
+  } else {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      self.isReadyToPlay = TRUE;
+      
+      if (weakSelf.loadedBlock != nil) {
+        weakSelf.loadedBlock(TRUE);
+        //weakSelf.loadedBlock = nil;
+      }
+    });
+  }
   
   return;
 }
@@ -199,7 +223,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   {
     // Calculate load time, this is one second before the end of the clip
 
-    self.lastSecondFrameTime = trackDuration - 1.0;
+    self.lastSecondFrameTime = trackDuration - 1.5;
     
     NSLog(@"video lastSecondFrameTime %.3f", self.lastSecondFrameTime);
   }
@@ -209,26 +233,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   float nominalFrameRate = videoTrack.nominalFrameRate;
   NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
-  
-  [self registerForItemNotificaitons];
-  
-  // Do not associate the player item with the player until the
-  // async asset loading has completed.
-  
-  if (self.player.currentItem == self.playerItem) {
-    if (1) {
-      NSLog(@"ASSOC ALREADY ITEM %p -> player %p", self.playerItem, self.player);
-    }
-
-    [self assetReadyToPlay];
-  } else {
-    if (1) {
-      NSLog(@"ASSOC ITEM %p -> player %p", self.playerItem, self.player);
-    }
     
-    [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
-  }
-  
   return TRUE;
 }
 
@@ -237,6 +242,11 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void) assetReadyToPlay
 {
+#if defined(DEBUG)
+  // Callback must be processed on main thread
+    NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+  
   BOOL newOutputCreated = FALSE;
   
   if (self.playerItemVideoOutput == nil) {
@@ -252,12 +262,15 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     //[self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
   }
   
-  if (newOutputCreated) {
-    // Always deliver event that kics off load block as async method
-    [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
-  }
+  if (self.secondaryLoopAsset) {
+  } else {
+    // Deliver flush operation to secondary thread after one frame
   
-  self.isReadyToPlay = TRUE;
+    if (newOutputCreated) {
+      // Always deliver event that kics off load block as async method
+      [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
+    }
+  }
   
   AVPlayerItem *playerItem = self.player.currentItem;
   
@@ -308,6 +321,31 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     //NSLog(@"incr loopCount from %d to %d", self.loopCount, self.loopCount+1);
     //self.loopCount = self.loopCount + 1;
   }
+  
+  // Kick off preroll from main thread but do not actually start playback at this point.
+  // When there is sufficient time between the preroll and the time when playback actually begins
+  // then async loading from asset will happen and the video should be ready to play at t = 0.0
+  
+  if (self.secondaryLoopAsset) {
+    float playRate = self.playRate;
+    assert(playRate != 0.0f);
+    
+    __weak typeof(self) weakSelf = self;
+    
+    [self playWithPreroll:playRate block:^{
+      NSLog(@"secondaryLoopAsset playWithPreroll finished at time %.3f", CACurrentMediaTime());
+      
+      weakSelf.isReadyToPlay = TRUE;
+      CFTimeInterval syncTime = weakSelf.syncTime;
+      
+      //[weakSelf syncStart:playRate itemTime:0.0 atHostTime:syncTime];
+    }];
+    
+  } else {
+  }
+
+  //self.isReadyToPlay = TRUE;
+  return;
 }
 
 - (void) registerForItemNotificaitons
@@ -342,6 +380,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
       }
       case AVPlayerItemStatusReadyToPlay: {
         NSLog(@"AVPlayerItemStatusReadyToPlay %p", self);
+        [self asyncTracksReady:self.player.currentItem.asset];
         [self assetReadyToPlay];
         break;
       }
@@ -403,7 +442,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   [self seekToTimeZero];
   
-  NSLog(@"AVPlayer playWithPreroll : %.2f : starting at time %.2f", rate, CMTimeGetSeconds(self.player.currentTime));
+  NSLog(@"AVPlayer playWithPreroll : %.2f : starting at time %.3f", rate, CACurrentMediaTime());
   
   //self.loopCount = 0;
   
@@ -412,6 +451,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   [player prerollAtRate:rate completionHandler:^(BOOL finished){
     // FIXME: Should finished be passed to block to cancel?
     // FIXME: Should pass rate to block
+    
+    NSLog(@"AVPlayer playWithPreroll finished at time %.3f", CACurrentMediaTime());
     
     if (finished) {
       block();
@@ -446,6 +487,13 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 {
   CMTime hostTimeCM = CMTimeMake(atHostTime * 1000.0f, 1000);
   [self.player setRate:rate time:kCMTimeInvalid atHostTime:hostTimeCM];
+  if (rate == 0) {
+    // setRate(0) will stop playback
+    self.isPlaying = FALSE;
+  } else {
+    self.isPlaying = TRUE;
+    self.playRate = rate;
+  }
 }
 
 // Kick of play operation where the zero time implicitly

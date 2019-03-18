@@ -46,6 +46,10 @@
 @property (nonatomic, assign) BOOL isReadyToPlay;
 @property (nonatomic, assign) BOOL isPlaying;
 
+// TRUE is looping N assets and this element is not the initial asset
+
+@property (nonatomic, assign) BOOL secondaryLoopAsset;
+
 // This block is invoked on the main thread once source video data
 // has been loaded. This callback is invoked just once for a video
 // source object and the block is set to nil once completed.
@@ -53,6 +57,8 @@
 @property (nonatomic, copy, nullable) void (^loadedBlock)(BOOL success);
 
 - (NSString*) description;
+
+- (void) registerForItemNotificaitons;
 
 // This method is invoked when the "tracks" data has become ready
 
@@ -78,5 +84,9 @@
 - (void) syncStart:(float)rate
           itemTime:(CFTimeInterval)itemTime
         atHostTime:(CFTimeInterval)atHostTime;
+
+// Directly set the play rate along with the self.isPlaying property
+
+- (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime;
 
 @end
