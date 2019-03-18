@@ -56,6 +56,12 @@
 
 @property (nonatomic, copy, nullable) void (^loadedBlock)(BOOL success);
 
+// In the tricky race condition case where a video is prerolled but it does
+// not start before the end of the loop condition then defer starting
+// the video until the asset is actually ready to play.
+
+@property (nonatomic, copy, nullable) void (^asyncReadyToPlayBlock)(void);
+
 - (NSString*) description;
 
 - (void) registerForItemNotificaitons;

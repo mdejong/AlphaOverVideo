@@ -336,9 +336,13 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
       NSLog(@"secondaryLoopAsset playWithPreroll finished at time %.3f", CACurrentMediaTime());
       
       weakSelf.isReadyToPlay = TRUE;
-      CFTimeInterval syncTime = weakSelf.syncTime;
-      
+      //CFTimeInterval syncTime = weakSelf.syncTime;
       //[weakSelf syncStart:playRate itemTime:0.0 atHostTime:syncTime];
+      
+      if (self.asyncReadyToPlayBlock != nil) {
+        self.asyncReadyToPlayBlock();
+        self.asyncReadyToPlayBlock = nil;
+      }
     }];
     
   } else {
@@ -485,6 +489,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime
 {
+  if ((0)) {
+    NSLog(@"GPUVPlayerVideoOutput:setRate : at %.3f : with item time %.3f", atHostTime, CMTimeGetSeconds(self.player.currentTime));
+  }
+  
   CMTime hostTimeCM = CMTimeMake(atHostTime * 1000.0f, 1000);
   [self.player setRate:rate time:kCMTimeInvalid atHostTime:hostTimeCM];
   if (rate == 0) {

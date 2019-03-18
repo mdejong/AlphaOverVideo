@@ -352,6 +352,9 @@
 
   [self setLoadedBlockCallbacks];
   
+  self.playerVideoOutput1.asyncReadyToPlayBlock = nil;
+  self.playerVideoOutput2.asyncReadyToPlayBlock = nil;
+  
   // Async logic to parse M4V headers to get tracks and other metadata.
   // Note that this logic returns player1 in the init case.
 
@@ -567,7 +570,46 @@
   
   NSAssert(pvo != pvoPrev, @"pvo != pvoPrev");
   
-  NSAssert(pvo.isReadyToPlay == TRUE, @"preloaded 2nd player must be ready to play");
+  __weak typeof(self) weakSelf = self;
+  
+  if (pvo.isReadyToPlay == FALSE) {
+    //NSAssert(pvo.isReadyToPlay == TRUE, @"preloaded 2nd player must be ready to play");
+    
+    pvo.asyncReadyToPlayBlock = ^{
+      [weakSelf asyncStartWhenReadyToPlay];
+    };
+    
+  } else {
+    // Asset is ready to play
+    
+    pvo.asyncReadyToPlayBlock = nil;
+    
+    CFTimeInterval atHostTime = self.syncTime;
+    
+    float playRate = self.playRate;
+    
+    [pvo setRate:playRate atHostTime:atHostTime];
+    
+    // Define 1 second before end of clip callback
+    
+    self.lastSecondFrameBlock = ^{
+      [weakSelf lastSecond];
+    };
+  }
+  
+  return;
+}
+
+// In the case where the background async asset loading has not completed by the time
+// the restart method is invoked then starting the next
+
+- (void) asyncStartWhenReadyToPlay
+{
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+
+  // FIXME: Should this method just return if stopped or isReadyToPlay is FALSE for some reason?
+  
+  NSAssert(pvo.isReadyToPlay == TRUE, @"preloaded secondary player must be ready to play");
   
   CFTimeInterval atHostTime = self.syncTime;
   
@@ -582,8 +624,6 @@
   self.lastSecondFrameBlock = ^{
     [weakSelf lastSecond];
   };
-  
-  return;
 }
 
 // Invoked a second before the end of the clip

@@ -597,10 +597,10 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     [weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
     //[weakFrameSourceVideo loadFromAssets:@"CountToTenA.m4v" alphaResFilename:@"CountToTenA_alpha.m4v"];    
 #else
-    //[weakFrameSourceVideo loadFromAsset:@"CarSpin.m4v"];
+    [weakFrameSourceVideo loadFromAsset:@"CarSpin.m4v"];
     //[weakFrameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
     //[weakFrameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
-    [weakFrameSourceVideo loadFromAsset:@"CountToTen.m4v"];
+    //[weakFrameSourceVideo loadFromAsset:@"CountToTen.m4v"];
     
     weakFrameSourceVideo.playedToEndBlock = nil;
     weakFrameSourceVideo.finalFrameBlock = nil;
