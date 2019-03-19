@@ -142,7 +142,11 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (BOOL) asyncTracksReady:(AVAsset*)asset
 {
+  const BOOL assetLogOutput = FALSE;
+  
+  if (assetLogOutput) {
   NSLog(@"asyncTracksReady with AVAsset %p", asset);
+  }
   
   // Verify that the status for this specific key is ready to be read
   
@@ -178,7 +182,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   }
   
   CGSize itemSize = videoTrack.naturalSize;
+  if (assetLogOutput) {
   NSLog(@"video track naturalSize w x h : %d x %d", (int)itemSize.width, (int)itemSize.height);
+  }
   
   // Allocate render buffer once asset dimensions are known
   
@@ -188,11 +194,15 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   CMTimeRange timeRange = videoTrack.timeRange;
   float trackDuration = (float)CMTimeGetSeconds(timeRange.duration);
+  if (assetLogOutput) {
   NSLog(@"video track time duration %0.3f", trackDuration);
+  }
   
   CMTime frameDurationTime = videoTrack.minFrameDuration;
   float frameDurationSeconds = (float)CMTimeGetSeconds(frameDurationTime);
+  if (assetLogOutput) {
   NSLog(@"video track frame duration %0.3f", frameDurationSeconds);
+  }
   
   // Once display frame interval has been parsed, create display
   // frame timer but be sure it is created on the main thread
@@ -217,7 +227,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     
     self.finalFrameTime = trackDuration - frameDurationSeconds - (frameDurationSeconds * 0.05);
     
+    if (assetLogOutput) {
     NSLog(@"video finalFrameTime %.3f", self.finalFrameTime);
+    }
   }
   
   {
@@ -226,14 +238,18 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     //self.lastSecondFrameTime = trackDuration - 1.5;
     self.lastSecondFrameTime = trackDuration - 3.0;
     
+    if (assetLogOutput) {
     NSLog(@"video lastSecondFrameTime %.3f", self.lastSecondFrameTime);
+    }
   }
   
   // Init player with current item, seek to time = 0.0
   // but do not start playback automatically
   
   float nominalFrameRate = videoTrack.nominalFrameRate;
+  if (assetLogOutput) {
   NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
+  }
     
   return TRUE;
 }
@@ -369,7 +385,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-  if ((1)) {
+  if ((0)) {
     NSLog(@"observeValueForKeyPath \"%@\" %@", keyPath, change);
   }
   
@@ -410,8 +426,13 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   //[self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
  
-  [self.playerItem removeOutput:self.playerItemVideoOutput];
+  // Invoking removeOutput seems to make looping miss 2 frames
+  //[self.playerItem removeOutput:self.playerItemVideoOutput];
+  
   self.playerItemVideoOutput = nil;
+  
+  // FIXME: Instead of invoking setRate or pause here, could the player AVPlayerActionAtItemEnd
+  // value for player.actionAtItemEnd be set to AVPlayerActionAtItemEndPause ?
   
   [self.player setRate:0.0];
 }

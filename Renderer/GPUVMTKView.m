@@ -605,8 +605,10 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     weakFrameSourceVideo.playedToEndBlock = nil;
     weakFrameSourceVideo.finalFrameBlock = nil;
     
+    weakFrameSourceVideo.uid = @"rgb";
+    
     weakFrameSourceVideo.finalFrameBlock = ^{
-      NSLog(@"GPUVFrameSourceVideo.finalFrameBlock %.3f", CACurrentMediaTime());
+      //NSLog(@"GPUVFrameSourceVideo.finalFrameBlock %.3f", CACurrentMediaTime());
       [weakFrameSourceVideo restart];
     };
 

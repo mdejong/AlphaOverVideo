@@ -217,6 +217,10 @@
       nextFrame.yCbCrPixelBuffer = rgbPixelBuffer;
       nextFrame.frameNum = [GPUVFrame calcFrameNum:presentationTimeSeconds fps:self.FPS];
       CVPixelBufferRelease(rgbPixelBuffer);
+
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
+      NSLog(@"                     display F -> %d", nextFrame.frameNum);
+#endif // LOG_DISPLAY_LINK_TIMINGS
       
 #if defined(STORE_TIMES)
       [timeArr addObject:@(presentationTimeSeconds)];
@@ -234,7 +238,7 @@
     }
   } else {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-    NSLog(@"hasNewPixelBufferForItemTime is FALSE at vsync time %0.3f", CMTimeGetSeconds(itemTime));
+    NSLog(@"hasNewPixelBufferForItemTime is FALSE at item time %0.3f", CMTimeGetSeconds(itemTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
     
 #if defined(STORE_TIMES)
@@ -577,7 +581,7 @@
   // Halt playback of current item
   
   GPUVPlayerVideoOutput *pvoPrev = [self getCurrentPlayerVideoOutput];
-  [pvoPrev endOfLoop];
+  //[pvoPrev endOfLoop];
   
   // Switch to next frame
   
@@ -613,6 +617,10 @@
       [weakSelf lastSecond];
     };
   }
+  
+  // Mark previous player as finished and stop playback
+  
+  [pvoPrev endOfLoop];
   
   return;
 }
