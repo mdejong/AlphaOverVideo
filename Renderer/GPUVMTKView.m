@@ -338,12 +338,20 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 #endif // TARGET_OS_IOS
 }
 
+// FIXME: if view is deallocated while rendering then the render operation
+// will need to finish before the view can be deallocated. Need to hold
+// an active ref for long enough for a pending render operaiton to finish
+// and then the view can be deallocated!
+
 - (void) dealloc
 {
   [self cancelDisplayLink];
 #if TARGET_OS_IOS
 #else
-    self.displayLinkHoldref = nil;
+  // Unlink DisplayLinkPrivateInterface weak ref back to view
+  DisplayLinkPrivateInterface *displayLinkPrivateInterface = (DisplayLinkPrivateInterface *) self.displayLinkHoldref;
+  displayLinkPrivateInterface.gpuvMtkView = nil;
+  self.displayLinkHoldref = nil;
 #endif // TARGET_OS_IOS
   
   MetalBT709Decoder *metalBT709Decoder = self.metalBT709Decoder;
