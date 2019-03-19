@@ -30,6 +30,8 @@
 
 @property (nonatomic, assign) int frameNum;
 
+@property (nonatomic, assign) int loopCount;
+
 #if defined(STORE_TIMES)
 @property (nonatomic, retain) NSMutableArray *times;
 #endif // STORE_TIMES
@@ -577,6 +579,8 @@
 #if defined(DEBUG)
   NSLog(@"restart");
 #endif // DEBUG
+  
+  self.loopCount += 1;
   
   // Halt playback of current item
   

@@ -30,7 +30,7 @@
 
 @implementation MetalBT709Decoder
 
-- (void) deallocate
+- (void) dealloc
 {
   self.inputYTexture = nil;
   self.inputCbCrTexture = nil;
@@ -38,6 +38,7 @@
   if (_textureCache != NULL) {
     [self flushTextureCache];
     CFRelease(_textureCache);
+    _textureCache = NULL;
   }
   
   return;

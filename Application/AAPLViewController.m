@@ -96,6 +96,9 @@ Implementation of our cross-platform view controller
       NSLog(@"configure failed for GPUVMTKView");
       return;
     }
+  
+    // Drop active ref to mtkView, parent window still hold a ref
+    self->mtkView = nil;
 }
 
 @end

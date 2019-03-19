@@ -354,6 +354,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 
   if (metalBT709Decoder) {
     [metalBT709Decoder flushTextureCache];
+    metalBT709Decoder = nil;
   }
 
   self.metalBT709Decoder = nil;
@@ -1379,17 +1380,22 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     // Draw frame directly from this timer invocation
     [self draw];
   }
-  
-//  if (hostTime > 2.0 && self.frameSource) {
-//    GPUVFrameSourceAlphaVideo *frameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
-//    
-//    [self cancelDisplayLink];
-//    
-//    [frameSourceVideo stop];
-//    
-//    self.frameSource = nil;
-//    frameSourceVideo = nil;
-//  }
+
+  if ((1)) {
+    GPUVFrameSourceVideo *frameSourceVideo = (GPUVFrameSourceVideo *) self.frameSource;
+    //GPUVFrameSourceAlphaVideo *frameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
+    
+    if (frameSourceVideo.loopCount > 5 && self.frameSource) {
+      [self cancelDisplayLink];
+      
+      [frameSourceVideo stop];
+      
+      self.frameSource = nil;
+      frameSourceVideo = nil;
+      
+      [self removeFromSuperview];
+    }
+  }
 }
 
 // This method is invoked when a video has been preloaded
