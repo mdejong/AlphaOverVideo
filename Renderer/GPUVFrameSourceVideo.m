@@ -71,10 +71,10 @@
 - (GPUVPlayerVideoOutput*) getCurrentPlayerVideoOutput
 {
   if (self.isPlayer2Active) {
-    NSLog(@"playerVideoOutput2 is active");
+    //NSLog(@"playerVideoOutput2 is active");
     return self.playerVideoOutput2;
   } else {
-    NSLog(@"playerVideoOutput1 is active");
+    //NSLog(@"playerVideoOutput1 is active");
     return self.playerVideoOutput1;
   }
 }
@@ -253,7 +253,7 @@
   if (self.lastSecondFrameBlock != nil) {
     float itemSeconds = CMTimeGetSeconds(itemTime);
     
-    NSLog(@"itemSeconds >= lastSecondFrameTime : %.3f >= %.3f", itemSeconds, pvo.lastSecondFrameTime);
+    //NSLog(@"itemSeconds >= lastSecondFrameTime : %.3f >= %.3f", itemSeconds, pvo.lastSecondFrameTime);
     
     if (itemSeconds >= pvo.lastSecondFrameTime) {
       NSLog(@"past lastSecondFrameTime %.3f >= %.3f", itemSeconds, pvo.lastSecondFrameTime);
@@ -534,6 +534,21 @@
   [self play:syncTime];
 }
 
+// Kick of play operation where the zero time implicitly
+// gets synced to the indicated host time. This means
+// that 2 different calls to play on two different
+// players will start in sync.
+
+- (void) play:(CFTimeInterval)syncTime;
+{
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+  
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  [pvo play:syncTime];
+}
+
 - (void) stop
 {
 #if defined(DEBUG)
@@ -555,7 +570,9 @@
 // implemented in this case as opposed to assert.
 
 - (void) restart {
+#if defined(DEBUG)
   NSLog(@"restart");
+#endif // DEBUG
   
   // Halt playback of current item
   
@@ -629,7 +646,9 @@
 // Invoked a second before the end of the clip
 
 - (void) lastSecond {
+#if defined(DEBUG)
   NSLog(@"lastSecond");
+#endif // DEBUG
   
   // Advance to next item, this preloading logic will
   // kick off an async asset ready to play notification.

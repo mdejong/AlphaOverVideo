@@ -78,6 +78,13 @@
 
 - (void) seekToTimeZero;
 
+// Kick of play operation where the zero time implicitly
+// gets synced to the indicated host time. This means
+// that 2 different calls to play on two different
+// players will start in sync.
+
+- (void) play:(CFTimeInterval)syncTime;
+
 // Initiate playback by preloading for a specific rate (typically 1.0)
 // and invoke block callback.
 

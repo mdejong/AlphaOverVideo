@@ -215,7 +215,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   {
     // Calculate the frame number of the final frame
     
-    self.finalFrameTime = trackDuration - frameDurationSeconds - (frameDurationSeconds * 0.10);
+    self.finalFrameTime = trackDuration - frameDurationSeconds - (frameDurationSeconds * 0.05);
     
     NSLog(@"video finalFrameTime %.3f", self.finalFrameTime);
   }
@@ -223,7 +223,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   {
     // Calculate load time, this is one second before the end of the clip
 
-    self.lastSecondFrameTime = trackDuration - 1.5;
+    //self.lastSecondFrameTime = trackDuration - 1.5;
+    self.lastSecondFrameTime = trackDuration - 3.0;
     
     NSLog(@"video lastSecondFrameTime %.3f", self.lastSecondFrameTime);
   }
