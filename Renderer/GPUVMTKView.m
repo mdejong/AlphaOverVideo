@@ -22,7 +22,7 @@
 
 //#define LOAD_ALPHA_VIDEO
 
-#define LOG_DISPLAY_LINK_TIMINGS
+//#define LOG_DISPLAY_LINK_TIMINGS
 
 #if defined(LOAD_ALPHA_VIDEO)
 #import "GPUVFrameSourceAlphaVideo.h"

@@ -14,8 +14,8 @@
 
 #import "GPUVPlayerVideoOutput.h"
 
-#define LOG_DISPLAY_LINK_TIMINGS
-#define STORE_TIMES
+//#define LOG_DISPLAY_LINK_TIMINGS
+//#define STORE_TIMES
 
 // Private API
 

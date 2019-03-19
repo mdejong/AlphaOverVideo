@@ -40,4 +40,7 @@
 
 - (NSString*) description;
 
+// FIXME: provide a way to set preventsDisplaySleepDuringVideoPlayback
+// property on player objects unsed to implement playback.
+
 @end
