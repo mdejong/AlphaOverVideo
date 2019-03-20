@@ -157,6 +157,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   AVKeyValueStatus status = [asset statusOfValueForKey:@"tracks" error:nil];
   NSAssert(status == AVKeyValueStatusLoaded, @"status != AVKeyValueStatusLoaded : %d", (int)status);
+  
+  NSAssert(self.isAssetAsyncLoaded == FALSE, @"isAssetAsyncLoaded");
 #endif // DEBUG
   
   NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
@@ -250,7 +252,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   if (assetLogOutput) {
   NSLog(@"video track nominal frame duration %0.3f", nominalFrameRate);
   }
-    
+  
+  self.isAssetAsyncLoaded = TRUE;
+  
   return TRUE;
 }
 
@@ -262,6 +266,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 #if defined(DEBUG)
   // Callback must be processed on main thread
     NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+    NSAssert(self.isAssetAsyncLoaded == TRUE, @"isAssetAsyncLoaded");
 #endif // DEBUG
   
   BOOL newOutputCreated = FALSE;
@@ -371,14 +376,22 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void) registerForItemNotificaitons
 {
+  NSAssert(self.addedObservers == FALSE, @"already added observer");
   __weak typeof(self) weakSelf = self;
   [self addObserver:weakSelf forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:AVPlayerItemStatusContext];
+  self.addedObservers = TRUE;
+  self.isAssetAsyncLoaded = FALSE;
 }
 
 - (void) unregisterForItemNotificaitons
 {
-  __weak typeof(self) weakSelf = self;
-  [self removeObserver:weakSelf forKeyPath:@"player.currentItem.status" context:AVPlayerItemStatusContext];
+  NSAssert(self.addedObservers == TRUE, @"observer must have been added");
+  
+  //if (self.addedObservers == FALSE) {
+    __weak typeof(self) weakSelf = self;
+    [self removeObserver:weakSelf forKeyPath:@"player.currentItem.status" context:AVPlayerItemStatusContext];
+  //}
+  self.addedObservers = FALSE;
 }
 
 // Wait for video dimensions to be come available

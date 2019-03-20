@@ -113,20 +113,22 @@
            hostPresentationTime:(CFTimeInterval)hostPresentationTime
             presentationTimePtr:(float*)presentationTimePtr
 {
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
-  
-  if (pvo.isPlaying == FALSE) {
-    NSLog(@"player not playing yet in frameForHostTime");
-    return nil;
-  }
-  
-  self.syncTime = hostPresentationTime;
-  
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
   if ((1)) {
     NSLog(@"%@ : frameForHostTime at host time %.3f : CACurrentMediaTime() %.3f", self, hostTime, CACurrentMediaTime());
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
+
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  
+  // Update sync time even if not actually playing yet
+  
+  self.syncTime = hostPresentationTime;
+  
+  if (pvo.isPlaying == FALSE) {
+    NSLog(@"player not playing yet in frameForHostTime");
+    return nil;
+  }
   
   // FIXME: Seems that a lot of CPU time in itemTimeForHostTime is being
   // spent getting the master clock for the host. It is better performance
@@ -161,6 +163,16 @@
             presentationTimePtr:(float*)presentationTimePtr
 {
   GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  
+  if (pvo.isPlaying == FALSE) {
+    NSLog(@"player not playing yet in frameForItemTime");
+    return nil;
+  }
+  
+#if defined(DEBUG)
+  NSAssert(pvo.isAssetAsyncLoaded == TRUE, @"isAssetAsyncLoaded");
+#endif // DEBUG
+  
   AVPlayerItemVideoOutput *playerItemVideoOutput = pvo.playerItemVideoOutput;
   
   GPUVFrame *nextFrame = nil;
@@ -256,6 +268,8 @@
   // When one clip will transition into the next clip, a preloading stage
   // has to be initiated before the end of each clip.
   
+  BOOL lastSecondJustDelivered = FALSE;
+  
   if (self.lastSecondFrameBlock != nil) {
     float itemSeconds = CMTimeGetSeconds(itemTime);
     
@@ -266,6 +280,7 @@
       
       self.lastSecondFrameBlock();
       self.lastSecondFrameBlock = nil;
+      lastSecondJustDelivered = TRUE;
     }
   }
   
@@ -282,6 +297,10 @@
     
     if (itemSeconds >= pvo.finalFrameTime) {
       NSLog(@"past finalFrameTime %.3f >= %.3f", itemSeconds, pvo.finalFrameTime);
+      
+      if (lastSecondJustDelivered) {
+        NSLog(@"finalFrameBlock will be invoked after lastSecondJustDelivered, running behind");
+      }
       
       self.finalFrameBlock();
     }
@@ -577,7 +596,7 @@
 
 - (void) restart {
 #if defined(DEBUG)
-  NSLog(@"restart");
+  NSLog(@"restart %@", self.uid);
 #endif // DEBUG
   
   self.loopCount += 1;
@@ -587,13 +606,20 @@
   GPUVPlayerVideoOutput *pvoPrev = [self getCurrentPlayerVideoOutput];
   //[pvoPrev endOfLoop];
   
+  // FIXME: should actually swapping the active player wait until
+  // the next vsync host time? While the asset may be loaded and
+  // technically playing, it may not actually be ready to process
+  // a frame until after t = 0 at the next vsync.
+  
   // Switch to next frame
   
   self.isPlayer2Active = ! self.isPlayer2Active;
   
   GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   
+#if defined(DEBUG)
   NSAssert(pvo != pvoPrev, @"pvo != pvoPrev");
+#endif // DEBUG
   
   __weak typeof(self) weakSelf = self;
   
@@ -659,7 +685,7 @@
 
 - (void) lastSecond {
 #if defined(DEBUG)
-  NSLog(@"lastSecond");
+  NSLog(@"lastSecond %@", self.uid);
 #endif // DEBUG
   
   // Advance to next item, this preloading logic will
@@ -712,6 +738,18 @@
 {
   GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   [pvo syncStart:rate itemTime:itemTime atHostTime:atHostTime];
+}
+
+// Invoke player setRate to actually begin playing back a video
+// source once playWithPreroll invokes the block callback
+// with a specific host time to sync to. Note that this API
+// always uses the current time as the sync point.
+
+- (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime
+
+{
+  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  [pvo setRate:rate atHostTime:atHostTime];
 }
 
 // Invoked after a player has loaded an asset and is ready to play

@@ -59,6 +59,14 @@
 
 - (void) stop;
 
+// Sync start will seek to the given time and then invoke
+// a sync sync method to play at the given rate after
+// aligning the given host time to the indicated time.
+
+- (void) syncStart:(float)rate
+          itemTime:(CFTimeInterval)itemTime
+        atHostTime:(CFTimeInterval)atHostTime;
+
 // Invoke player setRate to actually begin playing back a video
 // source once playWithPreroll invokes the block callback
 // with a specific host time to sync to.

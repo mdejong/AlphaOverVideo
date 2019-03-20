@@ -69,6 +69,11 @@
 {
   const int debugDumpForHostTimeValues = 1;
   
+#if defined(DEBUG)
+  // Callback must be processed on main thread
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+  
 #if defined(STORE_TIMES)
   if (self.times == nil) {
     self.times = [NSMutableArray array];
@@ -519,6 +524,18 @@
   }
 }
 
+// Sync start will seek to the given time and then invoke
+// a sync sync method to play at the given rate after
+// aligning the given host time to the indicated time.
+
+- (void) syncStart:(float)rate
+          itemTime:(CFTimeInterval)itemTime
+        atHostTime:(CFTimeInterval)atHostTime
+{
+  [self.rgbSource syncStart:rate itemTime:itemTime atHostTime:atHostTime];
+  [self.alphaSource syncStart:rate itemTime:itemTime atHostTime:atHostTime];
+}
+
 - (void) useMasterClock:(CMClockRef)masterClock
 {
   [self.rgbSource useMasterClock:masterClock];
@@ -550,14 +567,16 @@
   self.heldRGBFrame = nil;
   self.heldAlphaFrame = nil;
   
-  CFTimeInterval syncTime = self.syncTime;
-  float playRate = self.playRate;
+  //CFTimeInterval syncTime = self.syncTime;
+  //float playRate = self.playRate;
   
-  [self.rgbSource seekToTimeZero];
-  [self.alphaSource seekToTimeZero];
+  //[self.rgbSource seekToTimeZero];
+  //[self.alphaSource seekToTimeZero];
+  //[self.rgbSource setRate:playRate atHostTime:syncTime];
+  //[self.alphaSource setRate:playRate atHostTime:syncTime];
   
-  [self.rgbSource setRate:playRate atHostTime:syncTime];
-  [self.alphaSource setRate:playRate atHostTime:syncTime];
+  [self.rgbSource restart];
+  [self.alphaSource restart];
 }
 
 @end

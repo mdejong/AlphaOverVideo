@@ -46,6 +46,8 @@
 @property (nonatomic, assign) BOOL isReadyToPlay;
 @property (nonatomic, assign) BOOL isPlaying;
 
+@property (nonatomic, assign) BOOL isAssetAsyncLoaded;
+
 // TRUE is looping N assets and this element is not the initial asset
 
 @property (nonatomic, assign) BOOL secondaryLoopAsset;

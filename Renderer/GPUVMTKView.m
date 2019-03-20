@@ -20,7 +20,7 @@
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
 
-//#define LOAD_ALPHA_VIDEO
+#define LOAD_ALPHA_VIDEO
 
 //#define LOG_DISPLAY_LINK_TIMINGS
 
