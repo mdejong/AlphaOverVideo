@@ -832,12 +832,11 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       CFTimeInterval minFramerate = self.frameDuration;
       [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
 #else
-      //[commandBuffer presentDrawable:self.currentDrawable];
       CFTimeInterval presentationTime = self.presentationTime;
-      [self.currentDrawable presentAtTime:presentationTime];
-#if defined(DEBUG)
-      NSLog(@"PRESENT FRAME at host time %.3f", presentationTime);
-#endif // DEBUG
+      [commandBuffer presentDrawable:self.currentDrawable atTime:presentationTime];
+//#if defined(DEBUG)
+//      NSLog(@"PRESENT FRAME at host time %.3f : %.3f", presentationTime, CACurrentMediaTime());
+//#endif // DEBUG
 #endif // TARGET_OS_IOS
     }
   } else {
@@ -888,12 +887,11 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       CFTimeInterval minFramerate = self.frameDuration;
       [commandBuffer presentDrawable:self.currentDrawable afterMinimumDuration:minFramerate];
 #else
-      //[commandBuffer presentDrawable:self.currentDrawable];
       CFTimeInterval presentationTime = self.presentationTime;
-      [self.currentDrawable presentAtTime:presentationTime];
-#if defined(DEBUG)
-      NSLog(@"PRESENT FRAME at host time %.3f", presentationTime);
-#endif // DEBUG
+      [commandBuffer presentDrawable:self.currentDrawable atTime:presentationTime];
+//#if defined(DEBUG)
+//      NSLog(@"PRESENT FRAME at host time %.3f : %.3f", presentationTime, CACurrentMediaTime());
+//#endif // DEBUG
 #endif // TARGET_OS_IOS
     }
   }
@@ -1389,7 +1387,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     [self draw];
   }
 
-  if ((1)) {
+  if ((0)) {
     GPUVFrameSourceVideo *frameSourceVideo = (GPUVFrameSourceVideo *) self.frameSource;
     //GPUVFrameSourceAlphaVideo *frameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
     
