@@ -48,6 +48,7 @@
     self.playerVideoOutput1 = [[GPUVPlayerVideoOutput alloc] init];
     self.playerVideoOutput2 = [[GPUVPlayerVideoOutput alloc] init];
     self.playRate = 1.0;
+    self.lastSecondFrameDelta = 1.5;
   }
   
   return self;
@@ -202,6 +203,14 @@
   NSLog(@"host time %0.3f -> item time %0.3f", hostTime, CMTimeGetSeconds(itemTime));
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
+#if defined(DEBUG)
+  if ((0)) {
+  if (CMTimeGetSeconds(itemTime) >= 99.0) {
+    NSLog(@"large item time %0.3f", CMTimeGetSeconds(itemTime));
+  }
+  }
+#endif // DEBUG
+  
 #if defined(STORE_TIMES)
   // Media time when this frame data is being processed, ahead of hostTime since
   // the hostTime value is determined in relation to vsync bounds.
@@ -270,16 +279,16 @@
   
   BOOL lastSecondJustDelivered = FALSE;
   
-  if (self.lastSecondFrameBlock != nil) {
+  if (self.lastSecondFrameBlock != nil && self.lastSecondFrameBlockInvoked == FALSE) {
     float itemSeconds = CMTimeGetSeconds(itemTime);
     
     //NSLog(@"itemSeconds >= lastSecondFrameTime : %.3f >= %.3f", itemSeconds, pvo.lastSecondFrameTime);
     
     if (itemSeconds >= pvo.lastSecondFrameTime) {
       NSLog(@"past lastSecondFrameTime %.3f >= %.3f", itemSeconds, pvo.lastSecondFrameTime);
-      
+
+      self.lastSecondFrameBlockInvoked = TRUE;
       self.lastSecondFrameBlock();
-      self.lastSecondFrameBlock = nil;
       lastSecondJustDelivered = TRUE;
     }
   }
@@ -516,6 +525,8 @@
   
   [pvo registerForItemNotificaitons];
   
+  pvo.lastSecondFrameDelta = self.lastSecondFrameDelta;
+  
   // Associate player item with player
   
   [pvo.player replaceCurrentItemWithPlayerItem:item];
@@ -639,13 +650,14 @@
     
     float playRate = self.playRate;
     
+#if defined(DEBUG)
+    assert(atHostTime > 0.0);
+    assert(playRate > 0.0);
+#endif // DEBUG
+    
     [pvo setRate:playRate atHostTime:atHostTime];
     
-    // Define 1 second before end of clip callback
-    
-    self.lastSecondFrameBlock = ^{
-      [weakSelf lastSecond];
-    };
+    self.lastSecondFrameBlockInvoked = FALSE;
   }
   
   // Mark previous player as finished and stop playback
@@ -672,13 +684,7 @@
   
   [pvo setRate:playRate atHostTime:atHostTime];
   
-  // Define 1 second before end of clip callback
-  
-  __weak typeof(self) weakSelf = self;
-  
-  self.lastSecondFrameBlock = ^{
-    [weakSelf lastSecond];
-  };
+  self.lastSecondFrameBlockInvoked = FALSE;
 }
 
 // Invoked a second before the end of the clip

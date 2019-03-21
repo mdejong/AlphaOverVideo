@@ -90,10 +90,12 @@
 //  NSLog(@"rgb and alpha frameForHostTime %.3f", hostTime);
 //  }
   
-  self.syncTime = hostPresentationTime;
-  
   GPUVFrameSourceVideo *rgbSource = self.rgbSource;
   GPUVFrameSourceVideo *alphaSource = self.alphaSource;
+
+  self.syncTime = hostPresentationTime;
+  rgbSource.syncTime = hostPresentationTime;
+  alphaSource.syncTime = hostPresentationTime;
   
   CMTime itemTime = [rgbSource itemTimeForHostTime:hostTime];
 
@@ -121,25 +123,25 @@
   float rgbPresentaitonTime = -1;
   float alphaPresentaitonTime = -1;
   
-  if (self.heldRGBFrame != nil) {
-    rgbFrame = self.heldRGBFrame;
-    self.heldRGBFrame = nil;
-    isHeldOver = TRUE;
-    isRGBHeldOver = TRUE;
-  } else {
-    rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime hostPresentationTime:hostPresentationTime presentationTimePtr:&rgbPresentaitonTime];
-  }
-  
-  // Note the case where RGB has already failed to load a frame, do not
-  // the load alpha frame in this case.
-  
   if (self.heldAlphaFrame != nil) {
     alphaFrame = self.heldAlphaFrame;
     self.heldAlphaFrame = nil;
     isHeldOver = TRUE;
     isAlphaHeldOver = TRUE;
-  } else if (rgbFrame != nil) {
+  } else {
     alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime hostPresentationTime:hostPresentationTime presentationTimePtr:&alphaPresentaitonTime];
+  }
+  
+  // Note the case where alpha has already failed to load a frame, do not
+  // the load rgb frame in this case.
+  
+  if (self.heldRGBFrame != nil) {
+    rgbFrame = self.heldRGBFrame;
+    self.heldRGBFrame = nil;
+    isHeldOver = TRUE;
+    isRGBHeldOver = TRUE;
+  } else if (alphaFrame != nil) {
+    rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime hostPresentationTime:hostPresentationTime presentationTimePtr:&rgbPresentaitonTime];
   }
   
 #if defined(DEBUG)
@@ -292,6 +294,9 @@
   
   self.rgbSource.uid = @"rgb";
   self.alphaSource.uid = @"alpha";
+  
+  self.rgbSource.lastSecondFrameDelta = 3.0;
+  self.alphaSource.lastSecondFrameDelta = 2.5;
 }
 
 // Init from pair of asset names
@@ -391,11 +396,17 @@
   self.alphaSource.playedToEndBlock = nil;
   
   self.rgbSource.finalFrameBlock = ^{
-    NSLog(@"self.rgbSource.finalFrameBlock %.3f", CACurrentMediaTime());
+    //NSLog(@"self.rgbSource.finalFrameBlock %.3f", CACurrentMediaTime());
     [weakSelf restart];
   };
   
+  self.rgbSource.lastSecondFrameBlock = ^{
+    //NSLog(@"self.rgbSource.lastSecondFrameBlock %.3f", CACurrentMediaTime());
+    [weakSelf lastSecond];
+  };
+  
   self.alphaSource.finalFrameBlock = nil;
+  self.alphaSource.lastSecondFrameBlock = nil;
   
   return;
 }
@@ -577,6 +588,11 @@
   
   [self.rgbSource restart];
   [self.alphaSource restart];
+}
+
+- (void) lastSecond {
+  [self.rgbSource lastSecond];
+  [self.alphaSource lastSecond];
 }
 
 @end

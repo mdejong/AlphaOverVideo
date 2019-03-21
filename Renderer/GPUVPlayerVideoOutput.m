@@ -237,8 +237,11 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   {
     // Calculate load time, this is one second before the end of the clip
 
-    //self.lastSecondFrameTime = trackDuration - 1.5;
-    self.lastSecondFrameTime = trackDuration - 3.0;
+    float lastSecondFrameDelta = self.lastSecondFrameDelta;
+    if (lastSecondFrameDelta == 0) {
+      lastSecondFrameDelta = 1.5;
+    }
+    self.lastSecondFrameTime = trackDuration - lastSecondFrameDelta;
     
     if (assetLogOutput) {
     NSLog(@"video lastSecondFrameTime %.3f", self.lastSecondFrameTime);

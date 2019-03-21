@@ -60,6 +60,8 @@
 // This block is invoked one second before the end of the clip.
 
 @property (nonatomic, copy, nullable) void (^lastSecondFrameBlock)(void);
+@property (nonatomic, assign) BOOL lastSecondFrameBlockInvoked;
+@property (nonatomic, assign) float lastSecondFrameDelta;
 
 // Init from asset name
 

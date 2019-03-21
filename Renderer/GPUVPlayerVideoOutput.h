@@ -37,6 +37,7 @@
 // Load time is about a second before the end of the clip
 
 @property (nonatomic, assign) CFTimeInterval lastSecondFrameTime;
+@property (nonatomic, assign) float lastSecondFrameDelta;
 
 @property (nonatomic, retain) AVPlayer *player;
 @property (nonatomic, retain) AVPlayerItem *playerItem;
