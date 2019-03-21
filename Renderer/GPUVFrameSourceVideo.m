@@ -171,7 +171,9 @@
   }
   
 #if defined(DEBUG)
-  NSAssert(pvo.isAssetAsyncLoaded == TRUE, @"isAssetAsyncLoaded");
+  if (pvo.isAssetAsyncLoaded == FALSE) {
+    NSAssert(pvo.isAssetAsyncLoaded == TRUE, @"isAssetAsyncLoaded");
+  }
 #endif // DEBUG
   
   AVPlayerItemVideoOutput *playerItemVideoOutput = pvo.playerItemVideoOutput;

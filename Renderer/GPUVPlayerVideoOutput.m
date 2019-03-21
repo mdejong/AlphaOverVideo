@@ -388,12 +388,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void) unregisterForItemNotificaitons
 {
-  NSAssert(self.addedObservers == TRUE, @"observer must have been added");
-  
-  //if (self.addedObservers == FALSE) {
+  if (self.addedObservers == TRUE) {
     __weak typeof(self) weakSelf = self;
     [self removeObserver:weakSelf forKeyPath:@"player.currentItem.status" context:AVPlayerItemStatusContext];
-  //}
+  }
   self.addedObservers = FALSE;
 }
 
@@ -510,11 +508,19 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
           itemTime:(CFTimeInterval)itemTime
         atHostTime:(CFTimeInterval)atHostTime
 {
+#if defined(DEBUG)
+  NSAssert(self.isAssetAsyncLoaded == TRUE, @"isAssetAsyncLoaded must be TRUE when syncStart in invoked");
+#endif // DEBUG
+  
   CMTime syncTimeCM = CMTimeMake(itemTime * 1000.0f, 1000);
   [self.player seekToTime:syncTimeCM completionHandler:^(BOOL finished){
     if (finished) {
       CMTime hostTimeCM = CMTimeMake(atHostTime * 1000.0f, 1000);
       [self.player setRate:rate time:kCMTimeInvalid atHostTime:hostTimeCM];
+      
+#if defined(DEBUG)
+      NSAssert(self.isAssetAsyncLoaded == TRUE, @"isAssetAsyncLoaded must be TRUE when syncStart in invoked");
+#endif // DEBUG
       self.isPlaying = TRUE;
     }
   }];
@@ -537,6 +543,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     // setRate(0) will stop playback
     self.isPlaying = FALSE;
   } else {
+#if defined(DEBUG)
+    NSAssert(self.isAssetAsyncLoaded == TRUE, @"isAssetAsyncLoaded must be TRUE when setRate in invoked");
+#endif // DEBUG
     self.isPlaying = TRUE;
     self.playRate = rate;
   }
