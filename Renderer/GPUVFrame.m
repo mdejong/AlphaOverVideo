@@ -83,9 +83,16 @@
 
 + (int) calcFrameNum:(float)presentationTime fps:(float)fps
 {
-  // Instead of (presentationTime / frameDuration)
+  const BOOL debug = FALSE;
+  
+  // Instead of (presentationTime / frameDuration) since divide is not fast
   float frameNumF = presentationTime * fps;
-  unsigned int frameNum = (unsigned int) frameNumF;
+  unsigned int frameNum = (unsigned int) round(frameNumF);
+  
+  if (debug) {
+    NSLog(@"presentationTime %.3f : frameNumF %.3f : frameNum %d", presentationTime, frameNumF, frameNum);
+  }
+  
   return frameNum;
 }
 
