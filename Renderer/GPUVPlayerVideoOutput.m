@@ -358,15 +358,17 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     __weak typeof(self) weakSelf = self;
     
     [self playWithPreroll:playRate block:^{
+#if defined(DEBUG)
       NSLog(@"secondaryLoopAsset playWithPreroll finished at time %.3f", CACurrentMediaTime());
+#endif // DEBUG
       
       weakSelf.isReadyToPlay = TRUE;
       //CFTimeInterval syncTime = weakSelf.syncTime;
       //[weakSelf syncStart:playRate itemTime:0.0 atHostTime:syncTime];
       
-      if (self.asyncReadyToPlayBlock != nil) {
-        self.asyncReadyToPlayBlock();
-        self.asyncReadyToPlayBlock = nil;
+      if (weakSelf.asyncReadyToPlayBlock != nil) {
+        weakSelf.asyncReadyToPlayBlock();
+        weakSelf.asyncReadyToPlayBlock = nil;
       }
     }];
     
@@ -414,7 +416,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
         break;
       }
       case AVPlayerItemStatusReadyToPlay: {
+#if defined(DEBUG)
         NSLog(@"AVPlayerItemStatusReadyToPlay %p", self);
+#endif // DEBUG
         [self asyncTracksReady:self.player.currentItem.asset];
         [self assetReadyToPlay];
         break;
@@ -482,7 +486,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   [self seekToTimeZero];
   
+#if defined(DEBUG)
   NSLog(@"AVPlayer playWithPreroll : %.2f : starting at time %.3f", rate, CACurrentMediaTime());
+#endif // DEBUG
   
   //self.loopCount = 0;
   
@@ -492,7 +498,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     // FIXME: Should finished be passed to block to cancel?
     // FIXME: Should pass rate to block
     
+#if defined(DEBUG)
     NSLog(@"AVPlayer playWithPreroll finished at time %.3f", CACurrentMediaTime());
+#endif // DEBUG
     
     if (finished) {
       block();
