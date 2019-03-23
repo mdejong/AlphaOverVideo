@@ -170,7 +170,7 @@
       }
 
       // If the held over frame is behind the frame that was just decoded, then
-      // decode from the hel over stream with the current item time to determine
+      // decode from the held over stream with the current item time to determine
       // if this would repair the jitter.
       
       if (rgbFrameNum != -1 && alphaFrameNum != -1) {

@@ -130,7 +130,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput*)output
 {
-  NSLog(@"%p outputSequenceWasFlushed %p : output %p", self, self.playerItem, output);
+  //NSLog(@"%p outputSequenceWasFlushed %p : output %p", self, self.playerItem, output);
   
   return;
 }
@@ -311,7 +311,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     [playerItem addOutput:self.playerItemVideoOutput];
     //self.playerItem = playerItem;
     
+#if defined(DEBUG)
     NSLog(@"OUTPUT init %p", playerItem);
+#endif // DEBUG
   } else if (self.playerItem == playerItem) {
     // Activate the item that is currently active
     //[playerItem removeOutput:self.playerItemVideoOutput];
@@ -319,7 +321,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     
     //NSLog(@"OUTPUT remove/add %p -> %p", playerItem, playerItem);
     
+#if defined(DEBUG)
     NSLog(@"OUTPUT NOP same item %p", playerItem);
+#endif // DEBUG
   } else {
     assert(0);
     
@@ -353,7 +357,9 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   if (self.secondaryLoopAsset) {
     float playRate = self.playRate;
+#if defined(DEBUG)
     assert(playRate != 0.0f);
+#endif // DEBUG
     
     __weak typeof(self) weakSelf = self;
     

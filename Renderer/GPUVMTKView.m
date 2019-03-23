@@ -96,6 +96,11 @@ void validate_storage_mode(id<MTLTexture> texture)
 @property (nonatomic, retain) NSTimer *syncStartTimer;
 @property (nonatomic, assign) float syncStartRate;
 
+// The previous host time when decode callback is invoked on the main
+// thread.
+
+@property (nonatomic, assign) CFTimeInterval prevDecodeHostTime;
+
 // When a frame is decoded, the time that this frame should be displayed
 // is defined in terms of the vsync frame time.
 
@@ -1284,7 +1289,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
-  CFTimeInterval framePresentationTime, hostTime;
+  CFTimeInterval framePresentationTime, hostTime, decodeTime;
   
   // hostTime is the previous vsync time plus the amount of time
   // between the vsync and the invocation of this callback. It is
@@ -1316,6 +1321,10 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   NSLog(@"host half time %0.3f : offset from timestamp %0.3f", hostTime, hostTime-displayLink.timestamp);
 #endif // LOG_DISPLAY_LINK_TIMINGS
   
+  // Record host time when this decode method is invoked
+  
+  decodeTime = displayLink.timestamp + displayLink.duration;
+  
 #else // TARGET_OS_IOS
   // MacOSX
   
@@ -1334,7 +1343,23 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   hostTime = frameTime;
   // Save next vsync time
   framePresentationTime = displayTime;
+  
+  decodeTime = frameTime;
 #endif // TARGET_OS_IOS
+  
+  // Host time delta
+  
+  CFTimeInterval delta;
+  if (self.prevDecodeHostTime == 0) {
+    delta = 0;
+  } else {
+    delta = decodeTime - self.prevDecodeHostTime;
+  }
+  self.prevDecodeHostTime = decodeTime;
+  
+#if defined(LOG_DISPLAY_LINK_TIMINGS)
+  NSLog(@"host delta from prev time %0.3f", delta);
+#endif // LOG_DISPLAY_LINK_TIMINGS
   
   // Record timing info until the next vsync can be predicted
   
