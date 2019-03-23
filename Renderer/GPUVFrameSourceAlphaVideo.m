@@ -145,15 +145,16 @@
     alphaFrame = [alphaSource frameForItemTime:itemTime hostTime:hostTime hostPresentationTime:hostPresentationTime presentationTimePtr:&alphaPresentaitonTime];
   }
   
-  // Note the case where alpha has already failed to load a frame, do not
-  // the load rgb frame in this case.
+  // Note that in the case where alpha failed to load a frame, the rgb stream
+  // will still load a frame because it is possible that the preload block or
+  // the final frame block would need to be executed.
   
   if (self.heldRGBFrame != nil) {
     rgbFrame = self.heldRGBFrame;
     self.heldRGBFrame = nil;
     isHeldOver = TRUE;
     isRGBHeldOver = TRUE;
-  } else if (alphaFrame != nil) {
+  } else {
     rgbFrame = [rgbSource frameForItemTime:itemTime hostTime:hostTime hostPresentationTime:hostPresentationTime presentationTimePtr:&rgbPresentaitonTime];
   }
   
