@@ -213,15 +213,16 @@
   }
 #endif // DEBUG
   
+  float itemSeconds = CMTimeGetSeconds(itemTime);
+  float presentationTimeSeconds = -1;
+  
 #if defined(STORE_TIMES)
   // Media time when this frame data is being processed, ahead of hostTime since
   // the hostTime value is determined in relation to vsync bounds.
   [timeArr addObject:@(CACurrentMediaTime())];
   [timeArr addObject:@(hostTime)];
-  [timeArr addObject:@(CMTimeGetSeconds(itemTime))];
+  [timeArr addObject:@(itemSeconds)];
 #endif // STORE_TIMES
-
-  float presentationTimeSeconds = -1;
   
   if ([playerItemVideoOutput hasNewPixelBufferForItemTime:itemTime]) {
     // Grab the pixel bufer for the current time
@@ -234,7 +235,7 @@
     
     if (rgbPixelBuffer != NULL) {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-      NSLog(@"LOADED %5@  frame for item time %0.3f", self.uid, CMTimeGetSeconds(itemTime));
+      NSLog(@"LOADED %5@  frame for item time %0.3f", self.uid, itemSeconds);
       NSLog(@"                     display time %0.3f", presentationTimeSeconds);
 #endif // LOG_DISPLAY_LINK_TIMINGS
       
@@ -253,7 +254,7 @@
 #endif // STORE_TIMES
     } else {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-      NSLog(@"did not load RGB frame for item time %0.3f", CMTimeGetSeconds(itemTime));
+      NSLog(@"did not load RGB frame for item time %0.3f", itemSeconds);
 #endif // LOG_DISPLAY_LINK_TIMINGS
       
 #if defined(STORE_TIMES)
@@ -263,7 +264,7 @@
     }
   } else {
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
-    NSLog(@"hasNewPixelBufferForItemTime is FALSE at item time %0.3f", CMTimeGetSeconds(itemTime));
+    NSLog(@"hasNewPixelBufferForItemTime is FALSE at item time %0.3f", itemSeconds);
 #endif // LOG_DISPLAY_LINK_TIMINGS
     
 #if defined(STORE_TIMES)
@@ -282,8 +283,6 @@
   BOOL lastSecondJustDelivered = FALSE;
   
   if (self.lastSecondFrameBlock != nil && self.lastSecondFrameBlockInvoked == FALSE) {
-    float itemSeconds = CMTimeGetSeconds(itemTime);
-    
     //NSLog(@"itemSeconds >= lastSecondFrameTime : %.3f >= %.3f", itemSeconds, pvo.lastSecondFrameTime);
     
     if (itemSeconds >= pvo.lastSecondFrameTime) {
@@ -304,13 +303,12 @@
   // has a display duration longer than one frame.
   
   if (self.finalFrameBlock != nil) {
-    float itemSeconds = CMTimeGetSeconds(itemTime);
+    //NSLog(@"itemSeconds >? finalFrameTime : %.6f >? %.6f", itemSeconds, pvo.finalFrameTime);
     
-    //NSLog(@"itemSeconds >= finalFrameTime : %.3f >= %.3f", itemSeconds, pvo.finalFrameTime);
-    
-    if (itemSeconds >= pvo.finalFrameTime) {
+    if (itemSeconds > pvo.finalFrameTime) {
 #if defined(DEBUG)
-      NSLog(@"past finalFrameTime %.3f >= %.3f", itemSeconds, pvo.finalFrameTime);
+      NSLog(@"past finalFrameTime %.4f > %.4f", itemSeconds, pvo.finalFrameTime);
+      //NSLog(@"past finalFrameTime %.6f > %.6f", itemSeconds, pvo.finalFrameTime);
 #endif // DEBUG
       
       if (lastSecondJustDelivered) {

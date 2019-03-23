@@ -227,7 +227,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   {
     // Calculate the frame number of the final frame
     
-    self.finalFrameTime = trackDuration - frameDurationSeconds - (frameDurationSeconds * 0.05);
+    self.finalFrameTime = trackDuration - frameDurationSeconds;
     
     if (assetLogOutput) {
     NSLog(@"video finalFrameTime %.3f", self.finalFrameTime);
