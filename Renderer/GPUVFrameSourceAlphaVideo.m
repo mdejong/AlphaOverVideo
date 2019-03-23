@@ -33,6 +33,8 @@
 @property (nonatomic, retain) GPUVFrame *heldRGBFrame;
 @property (nonatomic, retain) GPUVFrame *heldAlphaFrame;
 
+@property (nonatomic, assign) int isLooping;
+
 #if defined(STORE_TIMES)
 @property (nonatomic, retain) NSMutableArray *times;
 #endif // STORE_TIMES
@@ -82,6 +84,13 @@
   NSMutableArray *timeArr = [NSMutableArray array];
 #endif // STORE_TIMES
   
+  // If entered frame logic with looping flag set to TRUE, then this
+  // decode should not attempt to resync output until a frame has
+  // been successfully decoded.
+  
+  BOOL isLoopingWhenInvoked = self.isLooping;
+  BOOL isLooping = isLoopingWhenInvoked;
+  
   // Dispatch a host time to both sources and decode a frame for each one.
   // If a given time does not load a new frame for both sources then
   // the RGB and Alpha decoding is not in sync and the frame must be dropped.
@@ -102,6 +111,10 @@
   if ((0)) {
     NSLog(@"%@ : frameForHostTime at host time %.3f : CACurrentMediaTime() %.3f", self, hostTime, CACurrentMediaTime());
     NSLog(@"item time %.3f", CMTimeGetSeconds(itemTime));
+  }
+  
+  if (debugDumpForHostTimeValues) {
+    NSLog(@"rgb+a : host time %.3f -> item time %.3f", hostTime, CMTimeGetSeconds(itemTime));
   }
   
   GPUVFrame *rgbFrame = nil;
@@ -156,9 +169,22 @@
   NSLog(@"rgbFrameNum %d : alphaFrameNum %d", rgbFrameNum, alphaFrameNum);
   }
   
+  // In the case where the video just looped, no value in attempting to reread
+  // frames or resync streams.
+  
+  if ((isLoopingWhenInvoked == FALSE) && self.isLooping) {
+    isLooping = TRUE;
+  }
+  
+  // Attempt to fixup held over frames
+  
   const BOOL isHeldOverLogging = TRUE;
   
   if (isHeldOver) {
+    // isHeldOver and isLooping do not mix since restart would switch to new stream,
+    // simply avoid attempts to fixup frame number mismatch when looping
+    NSAssert(isLooping == FALSE, @"isLooping");
+    
     if (rgbFrameNum == alphaFrameNum) {
       if (isHeldOverLogging) {
         NSLog(@"isHeldOver REPAIRED");
@@ -248,7 +274,7 @@
       offByOne = TRUE;
     }
     
-    if (offByOne) {
+    if (offByOne && (isLooping == FALSE)) {
       if (isHeldOverLogging) {
         NSLog(@"setRate to repair frame off by 1 mismatch");
       }
@@ -274,6 +300,10 @@
     *presentationTimePtr = rgbPresentaitonTime;
   }
 
+  if (isLoopingWhenInvoked) {
+    self.isLooping = FALSE;
+  }
+  
   return rgbFrame;
 }
 
@@ -574,6 +604,8 @@
 //  if (self.rgbSource.numRestarts > 2) {
 //    ;
 //  }
+  
+  self.isLooping = TRUE;
   
   self.heldRGBFrame = nil;
   self.heldAlphaFrame = nil;

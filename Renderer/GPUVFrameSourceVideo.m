@@ -287,7 +287,9 @@
     //NSLog(@"itemSeconds >= lastSecondFrameTime : %.3f >= %.3f", itemSeconds, pvo.lastSecondFrameTime);
     
     if (itemSeconds >= pvo.lastSecondFrameTime) {
+#if defined(DEBUG)
       NSLog(@"past lastSecondFrameTime %.3f >= %.3f", itemSeconds, pvo.lastSecondFrameTime);
+#endif // DEBUG
 
       self.lastSecondFrameBlockInvoked = TRUE;
       self.lastSecondFrameBlock();
@@ -307,7 +309,9 @@
     //NSLog(@"itemSeconds >= finalFrameTime : %.3f >= %.3f", itemSeconds, pvo.finalFrameTime);
     
     if (itemSeconds >= pvo.finalFrameTime) {
+#if defined(DEBUG)
       NSLog(@"past finalFrameTime %.3f >= %.3f", itemSeconds, pvo.finalFrameTime);
+#endif // DEBUG
       
       if (lastSecondJustDelivered) {
         NSLog(@"finalFrameBlock will be invoked after lastSecondJustDelivered, running behind");

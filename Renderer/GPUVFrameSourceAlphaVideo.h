@@ -30,6 +30,12 @@
 @property (nonatomic, assign) int width;
 @property (nonatomic, assign) int height;
 
+// This flag is true once the last frame of a video has been decoded,
+// the flag is cleared after the next frame after the loop has restarted
+// has been successfully decoded.
+
+@property (nonatomic, readonly) int isLooping;
+
 // This block is invoked on the main thread once source video data
 // has been loaded. This callback is invoked just once for a video
 // source object and the block is set to nil once completed.
