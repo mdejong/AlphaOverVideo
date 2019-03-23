@@ -24,14 +24,14 @@
 
 @interface GPUVFrameSourceAlphaVideo ()
 
-@property (nonatomic, retain) GPUVFrameSourceVideo *rgbSource;
 @property (nonatomic, retain) GPUVFrameSourceVideo *alphaSource;
+@property (nonatomic, retain) GPUVFrameSourceVideo *rgbSource;
 
-@property (nonatomic, assign) BOOL rgbSourceLoaded;
 @property (nonatomic, assign) BOOL alphaSourceLoaded;
+@property (nonatomic, assign) BOOL rgbSourceLoaded;
 
-@property (nonatomic, retain) GPUVFrame *heldRGBFrame;
 @property (nonatomic, retain) GPUVFrame *heldAlphaFrame;
+@property (nonatomic, retain) GPUVFrame *heldRGBFrame;
 
 @property (nonatomic, assign) int isLooping;
 
@@ -515,8 +515,8 @@
     }
   };
   
-  [self.rgbSource playWithPreroll:rate block:waitBlock1];
   [self.alphaSource playWithPreroll:rate block:waitBlock2];
+  [self.rgbSource playWithPreroll:rate block:waitBlock1];
 }
 
 // Invoke player setRate to actually begin playing back a video
@@ -525,8 +525,8 @@
 
 - (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime
 {
-  [self.rgbSource setRate:rate atHostTime:atHostTime];
   [self.alphaSource setRate:rate atHostTime:atHostTime];
+  [self.rgbSource setRate:rate atHostTime:atHostTime];
 }
 
 // Kick of play operation
@@ -542,16 +542,15 @@
   }
 
   if ((0)) {
-    [self.rgbSource play];
     [self.alphaSource play];
+    [self.rgbSource play];
   } else if ((1)) {
     CFTimeInterval hostTime = CACurrentMediaTime();
     
-    [self.rgbSource seekToTimeZero];
-    [self.alphaSource seekToTimeZero];
+    [self seekToTimeZero];
     
-    [self.rgbSource play:hostTime];
     [self.alphaSource play:hostTime];
+    [self.rgbSource play:hostTime];
   } else {
     // Assign same master clock to both players
     
@@ -560,8 +559,8 @@
     CMClockRef hostTimeMasterClock = CMClockGetHostTimeClock();
     [self useMasterClock:hostTimeMasterClock];
     
-    [self.rgbSource play:hostTime];
     [self.alphaSource play:hostTime];
+    [self.rgbSource play:hostTime];
   }
 }
 
@@ -573,58 +572,49 @@
           itemTime:(CFTimeInterval)itemTime
         atHostTime:(CFTimeInterval)atHostTime
 {
-  [self.rgbSource syncStart:rate itemTime:itemTime atHostTime:atHostTime];
   [self.alphaSource syncStart:rate itemTime:itemTime atHostTime:atHostTime];
+  [self.rgbSource syncStart:rate itemTime:itemTime atHostTime:atHostTime];
 }
 
 - (void) useMasterClock:(CMClockRef)masterClock
 {
-  [self.rgbSource useMasterClock:masterClock];
   [self.alphaSource useMasterClock:masterClock];
+  [self.rgbSource useMasterClock:masterClock];
 }
 
 - (void) stop
 {
-  [self.rgbSource stop];
   [self.alphaSource stop];
+  [self.rgbSource stop];
 }
 
 - (void) seekToTimeZero
 {
-  [self.rgbSource seekToTimeZero];
   [self.alphaSource seekToTimeZero];
+  [self.rgbSource seekToTimeZero];
 }
 
 - (void) restart {
-  //[self.rgbSource restart];
-  //[self.alphaSource restart];
-  
-  //self.rgbSource.loopCount += 1;
-  
-//  if (self.rgbSource.numRestarts > 2) {
-//    ;
-//  }
-  
   self.isLooping = TRUE;
-  
   self.heldRGBFrame = nil;
   self.heldAlphaFrame = nil;
   
   //CFTimeInterval syncTime = self.syncTime;
   //float playRate = self.playRate;
   
-  //[self.rgbSource seekToTimeZero];
-  //[self.alphaSource seekToTimeZero];
-  //[self.rgbSource setRate:playRate atHostTime:syncTime];
-  //[self.alphaSource setRate:playRate atHostTime:syncTime];
+  //[self seekToTimeZero];
+  //[self setRate:playRate atHostTime:syncTime];
   
-  [self.rgbSource restart];
+  // Note that alpha is restarted first since rgb host
+  // time is used as master timeline for both sources.
+  
   [self.alphaSource restart];
+  [self.rgbSource restart];
 }
 
 - (void) lastSecond {
-  [self.rgbSource lastSecond];
   [self.alphaSource lastSecond];
+  [self.rgbSource lastSecond];
 }
 
 @end
