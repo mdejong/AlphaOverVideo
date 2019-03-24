@@ -482,6 +482,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 {
 #if defined(DEBUG)
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+  NSAssert(rate > 0.0, @"rate is %.3f", rate);
 #endif // DEBUG
   
   self.playRate = rate;

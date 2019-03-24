@@ -177,15 +177,13 @@
     isLooping = TRUE;
   }
   
-  // Attempt to fixup held over frames
+  // Attempt to fixup held over frames. Note that isHeldOver and isLooping
+  // do not mix since fixing up a frame at the end or the start of a
+  // video would fail because the video was just switched. nop in that case.
   
   const BOOL isHeldOverLogging = TRUE;
   
-  if (isHeldOver) {
-    // isHeldOver and isLooping do not mix since restart would switch to new stream,
-    // simply avoid attempts to fixup frame number mismatch when looping
-    NSAssert(isLooping == FALSE, @"isLooping");
-    
+  if (isHeldOver && (isLooping == FALSE)) {
     if (rgbFrameNum == alphaFrameNum) {
       if (isHeldOverLogging) {
         NSLog(@"isHeldOver REPAIRED");
