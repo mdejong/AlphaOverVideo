@@ -707,8 +707,10 @@
   pvo.secondaryLoopAsset = TRUE;
   pvo.playRate = self.playRate;
   
+#if defined(DEBUG)
   AVAsset *asset = pvo.playerItem.asset;
   NSAssert(asset, @"curent item asset is nil");
+#endif // DEBUG
 }
 
 // Define a CMTimescale that will be used by the player, this

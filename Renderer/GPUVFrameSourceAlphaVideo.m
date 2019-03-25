@@ -325,7 +325,6 @@
   self.alphaSource.uid = @"alpha";
   
   self.rgbSource.lastSecondFrameDelta = 3.0;
-  self.alphaSource.lastSecondFrameDelta = 2.5;
 }
 
 // Init from pair of asset names
@@ -612,8 +611,31 @@
 }
 
 - (void) lastSecond {
-  [self.alphaSource lastSecond];
-  [self.rgbSource lastSecond];
+//  [self.alphaSource lastSecond];
+//  [self.rgbSource lastSecond];
+  
+  // Stagger alpha and rgb advance to next clip logic across frames
+  // to avoid a glitching issue on A7 devices. This is not a problem
+  // on A8 and newer devices.
+  
+  __weak typeof(self) weakSelf = self;
+  
+  float firstFrameDuration = 0.5 * self.frameDuration;
+  float laterFrameDuration = 5 * self.frameDuration;
+  
+  float maxLoadDuration = 1.0;
+  
+  if (laterFrameDuration > maxLoadDuration) {
+    laterFrameDuration = maxLoadDuration;
+  }
+  
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(firstFrameDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    [weakSelf.alphaSource lastSecond];
+  });
+  
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(laterFrameDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    [weakSelf.rgbSource lastSecond];
+  });
 }
 
 @end

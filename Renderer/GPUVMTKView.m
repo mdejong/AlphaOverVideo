@@ -608,6 +608,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
     };
     
 #if defined(LOAD_ALPHA_VIDEO)
+    // RGB + A channels as 2 streams
     [weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
     //[weakFrameSourceVideo loadFromAssets:@"CountToTenA.m4v" alphaResFilename:@"CountToTenA_alpha.m4v"];    
 #else
