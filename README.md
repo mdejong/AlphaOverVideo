@@ -1,19 +1,19 @@
-# MetalBT709Decoder
+# AlphaOverVideo
 
-Proper rendering of BT.709 encoded H.264 image using Metal
+iOS alpha channel video player library implemented on top of Metal
 
 ## Overview
 
-This project is adapted from the Apple BasicTexturing example code. This render logic attempts to solve the gamma adjustment problem found in Apple provided render logic from example code like AVBasicVideoOutput (and other projects). While the rendering logic works perfectly for video source encoded with linear gamma, real world BT.709 video uses a gamma transfer function defined in the specifications that is non-linear. The result is that real world video authored to the BT.709 specifications will not render properly. This project addresses the problem by including gamma adjustment in the shader logic and making use of a two pass render process to first decode non-linear values and then rescale sRGB encoded pixels into a MTKView.
+This project implements a high performance interface to real-time rendering of alpha channel video as well as regular (opaque) video. The render layer is implemented using MetalKit and makes use of Metal shaders to decode and rescale video with the maximum possible performance on modern 64 bit iOS devices. As of iOS 12, the minimum device requirements are a 64 bit device that supports Metal. The MetalKit framework is leveraged to support rendering directly into a MTKView which can then be managed the same as any other UIView. Seamless looping and seamless transition from one video clip to another is supported.
 
 ## Status
 
-This Metal logic will render BT.709 YCbCr data to a sRGB texture. This implementation takes care to get gamma decoding right according to the BT.709 specifications.
+Both BT.709 encoded H.264 video and an advanced new sRGB gamma curve encoding are supported.
 
 ## Decoding Speed
 
-The decoder targets the highest quality render possible given a H.264 source with 4:2:0 YCbCr encoding. The implementation is very fast and supports full screen output at 60 fPS.
+The Metal implementation renders YCbCr data as RGB pixels and is able to execute quickly enough to run full speed at 30 FPS, even on the first 64 bit A7 devices! On an A8 iPhone device both RGB+A mixing and video rescaling executes in under 2 ms.
 
 ## Implementation
 
-See AAPLRenderer.m and AAPLShaders.metal for the core GPU rendering logic. This render logic works on iOS and MacOSX.
+See examples for source code that creates player objects with 24 BPP or 32 BPP videos.
