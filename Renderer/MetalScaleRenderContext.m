@@ -9,7 +9,7 @@
 //  in the case where a 2D rescale operation is needed
 //  to fit the contents of a Metal texture into a view.
 
-#include "MetalScaleRenderContext.h"
+#import "MetalScaleRenderContext.h"
 
 // Header shared between C code here, which executes Metal API commands, and .metal files, which
 //   uses these types as inpute to the shaders
@@ -52,7 +52,7 @@
 
 // Render into MTKView with 2D scale operation
 
-- (void) renderScaled:(MetalRenderContext*)mrc
+- (BOOL) renderScaled:(MetalRenderContext*)mrc
               mtkView:(nonnull MTKView *)mtkView
           renderWidth:(int)renderWidth
          renderHeight:(int)renderHeight
@@ -71,6 +71,8 @@
   
   if (renderPassDescriptor != nil)
   {
+    renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionDontCare;
+    
     // Create a render command encoder so we can render into something
     id<MTLRenderCommandEncoder> renderEncoder =
     [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
@@ -99,8 +101,9 @@
     
     [renderEncoder endEncoding];
     
-    // Schedule a present once the framebuffer is complete using the current drawable
-    [commandBuffer presentDrawable:mtkView.currentDrawable];
+    return TRUE;
+  } else {
+    return FALSE;
   }
 }
 

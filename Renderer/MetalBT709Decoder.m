@@ -36,11 +36,19 @@
   self.inputCbCrTexture = nil;
   
   if (_textureCache != NULL) {
-    CVMetalTextureCacheFlush(_textureCache, 0);
+    [self flushTextureCache];
     CFRelease(_textureCache);
+    _textureCache = NULL;
   }
   
   return;
+}
+
+- (void) flushTextureCache
+{
+  if (_textureCache != NULL) {
+    CVMetalTextureCacheFlush(_textureCache, 0);
+  }
 }
 
 - (BOOL) setupMetal
@@ -86,7 +94,10 @@
     return FALSE;
   }
   
-  // Setup texture cache so that pixel buffers can be represented by a Metal texture
+  // Setup texture cache so that pixel buffers can be represented by a Metal texture.
+  // Note the kCVMetalTextureCacheMaximumTextureAgeKey here which disables time based
+  // flushing of textures, an explicit call to flush the texture cache is needed to
+  // ensure that CoreVideo buffers represented by Metal textures are reused.
   
   NSDictionary *cacheAttributes = @{
                                     (NSString*)kCVMetalTextureCacheMaximumTextureAgeKey: @(0),
@@ -322,18 +333,40 @@ renderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor
   // Require iOS 12 or newer to access kCVImageBufferTransferFunction_sRGB and kCVImageBufferTransferFunction_Linear
   //const NSString *kCVImageBufferTransferFunction_sRGB_str = @"IEC_sRGB";
   //const NSString *kCVImageBufferTransferFunction_Linear_str = @"Linear";
+  
+  MetalBT709Gamma gamma = self.gamma;
  
-  BOOL isBT709Gamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_ITU_R_709_2, 0) == kCFCompareEqualTo);
-  //BOOL isSRGBGamma = (CFStringCompare(transferFunctionKeyAttachment, (__bridge CFStringRef)kCVImageBufferTransferFunction_sRGB_str, 0) == kCFCompareEqualTo);
-  BOOL isSRGBGamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_sRGB, 0) == kCFCompareEqualTo);
-  //BOOL isLinearGamma = (CFStringCompare(transferFunctionKeyAttachment, (__bridge CFStringRef)kCVImageBufferTransferFunction_Linear_str, 0) == kCFCompareEqualTo);
-  BOOL isLinearGamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_Linear, 0) == kCFCompareEqualTo);
+  BOOL isBT709Gamma = FALSE;
+  BOOL isSRGBGamma = FALSE;
+  BOOL isLinearGamma = FALSE;
+  
+  if (transferFunctionKeyAttachment == NULL) {
+#if TARGET_OS_IOS
+    // nop
+#else
+    // MacOSX
+    
+    // The "CVImageBufferTransferFunction" pixel buffer key is not include in "propagatedAttachments"
+    // under MacOSX so there is no way to check the gamma setting. Need to assume user configured
+    // this input correctly since there is no way to detect at runtime.
+    
+    if (gamma == MetalBT709GammaApple) {
+      isBT709Gamma = TRUE;
+    } else if (gamma == MetalBT709GammaSRGB) {
+      isSRGBGamma = TRUE;
+    } else if (gamma == MetalBT709GammaLinear) {
+      isLinearGamma = TRUE;
+    }
+#endif // TARGET_OS_IOS
+  } else {
+    isBT709Gamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_ITU_R_709_2, 0) == kCFCompareEqualTo);
+    isSRGBGamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_sRGB, 0) == kCFCompareEqualTo);
+    isLinearGamma = (CFStringCompare(transferFunctionKeyAttachment, kCVImageBufferTransferFunction_Linear, 0) == kCFCompareEqualTo);
+  }
   
 #if defined(DEBUG)
   //NSLog(@"isBT709Gamma %d : isSRGBGamma %d : isSRGBGamma %d", isBT709Gamma, isSRGBGamma, isLinearGamma);
 #endif // DEBUG
-  
-  MetalBT709Gamma gamma = self.gamma;
   
   if (gamma == MetalBT709GammaApple) {
     if (isBT709Gamma == FALSE) {
@@ -356,6 +389,8 @@ renderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor
   
   if (alphaPixelBuffer != NULL) {
     CFTypeRef transferFunctionKeyAttachment = CVBufferGetAttachment(alphaPixelBuffer, kCVImageBufferTransferFunctionKey, NULL);
+    // On MacOSX the kCVImageBufferTransferFunctionKey key always returns nil
+#if TARGET_OS_IOS
 #if defined(DEBUG)
     assert(transferFunctionKeyAttachment != NULL);
 #endif // DEBUG
@@ -365,6 +400,10 @@ renderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor
       NSLog(@"Decoder alpha pixel buffer TransferFunction must be linear, it was \"%@\"", transferFunctionKeyAttachment);
       return FALSE;
     }
+#else
+    // nop on MacOSX
+    transferFunctionKeyAttachment = transferFunctionKeyAttachment;
+#endif // TARGET_OS_IOS
   }
   
   // Map Metal texture to the CoreVideo pixel buffer
@@ -631,6 +670,9 @@ renderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor
   
   if (renderPassDescriptor != nil)
   {
+    // Clear operation is never needed for load action since all pixels are written
+    renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionDontCare;
+
     id<MTLRenderCommandEncoder> renderEncoder =
       [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
     renderEncoder.label = label;

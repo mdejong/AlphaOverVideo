@@ -6,9 +6,10 @@ Implementation of our cross-platform view controller
 */
 
 #import "AAPLViewController.h"
-#import "AAPLRenderer.h"
 
 #import <QuartzCore/QuartzCore.h>
+
+#import "GPUVMTKView.h"
 
 @implementation AAPLViewController
 {
@@ -18,14 +19,29 @@ Implementation of our cross-platform view controller
     IBOutlet NSImageView *imageView;
 #endif // TARGET_OS_IOS
   
-    IBOutlet MTKView *mtkView;
-
-    AAPLRenderer *_renderer;
+    IBOutlet GPUVMTKView *mtkView;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+  
+    // Verify that this MTKView is a GPUVMTKView instance
+
+    {
+      MTKView *loadedMtkView = mtkView;
+      
+      if (loadedMtkView == nil)
+      {
+        NSLog(@"MTKView loaded from NIB is nil");
+        return;
+      }
+      
+      if ([loadedMtkView isKindOfClass:GPUVMTKView.class] == FALSE) {
+        NSLog(@"MTKView loaded from NIB does not extend GPUVMTKView base class");
+        return;
+      }
+    }
 
     BOOL alphaImageBackground = TRUE;
     // If alphaImageBackground is FALSE, background can be black or white
@@ -73,18 +89,16 @@ Implementation of our cross-platform view controller
         return;
     }
 
-    _renderer = [[AAPLRenderer alloc] initWithMetalKitView:mtkView];
-
-    if(!_renderer)
+    // Configure Metal view and playback logic
+    BOOL worked = [mtkView configure];
+    if(!worked)
     {
-        NSLog(@"Renderer failed initialization");
-        return;
+      NSLog(@"configure failed for GPUVMTKView");
+      return;
     }
-
-    // Initialize our renderer with the view size
-    [_renderer mtkView:mtkView drawableSizeWillChange:mtkView.drawableSize];
-
-    mtkView.delegate = _renderer;
+  
+    // Drop active ref to mtkView, parent window still hold a ref
+    self->mtkView = nil;
 }
 
 @end

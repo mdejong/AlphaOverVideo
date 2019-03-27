@@ -1192,7 +1192,7 @@ int main(int argc, const char * argv[]) {
           } else if (strcmp(arg, "0") == 0) {
             args[@"-alpha"] = @FALSE;
           } else {
-            printf("unknown option -alpha value \"%s\", must be 0 or 1", arg);
+            printf("unknown option -alpha value \"%s\", must be 0 or 1\n", arg);
             exit(3);
           }
         } else if (strcmp(arg, "-gamma") == 0) {
@@ -1207,7 +1207,7 @@ int main(int argc, const char * argv[]) {
           } else if (strcmp(arg, "linear") == 0) {
             args[@"-gamma"] = @"linear";
           } else {
-            printf("option -gamma unknown value \"%s\"", arg);
+            printf("option -gamma unknown value \"%s\"\n", arg);
             exit(3);
           }
         } else if (strcmp(arg, "-fps") == 0) {
@@ -1217,6 +1217,8 @@ int main(int argc, const char * argv[]) {
           
           if (strcmp(arg, "1") == 0) {
             args[@"-fps"] = @(Y4MHeaderFPS_1);
+          } else if (strcmp(arg, "2") == 0) {
+            args[@"-fps"] = @(Y4MHeaderFPS_2);
           } else if (strcmp(arg, "15") == 0) {
             args[@"-fps"] = @(Y4MHeaderFPS_15);
           } else if (strcmp(arg, "24") == 0) {
@@ -1228,7 +1230,7 @@ int main(int argc, const char * argv[]) {
           } else if (strcmp(arg, "60") == 0) {
             args[@"-fps"] = @(Y4MHeaderFPS_60);
           } else {
-            printf("option -fps unknown value \"%s\"", arg);
+            printf("option -fps unknown value \"%s\"\n", arg);
             exit(3);
           }
         } else if (strcmp(arg, "-frame") == 0) {
@@ -1244,7 +1246,7 @@ int main(int argc, const char * argv[]) {
           
           inPNG = arg;
           
-          // Default to 1 frame displayed for 1 second
+          // Default to 1 frame displayed for 1 second with a single image
           args[@"-fps"] = @(Y4MHeaderFPS_1);
         } else if (strcmp(arg, "-frames") == 0) {
           // -frames F0001.png indicates the start
@@ -1320,7 +1322,7 @@ int main(int argc, const char * argv[]) {
     if ([args[@"-alpha"] boolValue]) {
       BOOL isSRGB = [args[@"-gamma"] isEqualToString:@"srgb"];
       if (!isSRGB) {
-        printf("-alpha 1 can only be used with -gamma srgb\n : got \"%@\"", args[@"-gamma"]);
+        printf("-alpha 1 can only be used with -gamma srgb\n : got \"%s\"", [args[@"-gamma"] UTF8String]);
         exit(3);
       }
     }

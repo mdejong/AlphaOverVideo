@@ -10,7 +10,7 @@
 //  render frame. There is 1 render context for N render frames.
 
 //@import MetalKit;
-#include <MetalKit/MetalKit.h>
+#import <MetalKit/MetalKit.h>
 
 @interface MetalRenderContext : NSObject
 

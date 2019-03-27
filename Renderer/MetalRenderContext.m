@@ -9,7 +9,7 @@
 //  rendering context like a view but are not defined on a
 //  render frame. There is 1 render contet for N render frames.
 
-#include "MetalRenderContext.h"
+#import "MetalRenderContext.h"
 
 // Header shared between C code here, which executes Metal API commands, and .metal files, which
 //   uses these types as inpute to the shaders

@@ -10,7 +10,7 @@
 //  to fit the contents of a Metal texture into a view.
 
 //@import MetalKit;
-#include <MetalKit/MetalKit.h>
+#import <MetalKit/MetalKit.h>
 
 @class MetalRenderContext;
 
@@ -31,7 +31,7 @@
 
 // Render into MTKView with 2D scale operation
 
-- (void) renderScaled:(MetalRenderContext*)mrc
+- (BOOL) renderScaled:(MetalRenderContext*)mrc
               mtkView:(nonnull MTKView *)mtkView
           renderWidth:(int)renderWidth
          renderHeight:(int)renderHeight
