@@ -97,6 +97,9 @@
 		3C4A77C121DEA5290041ACE3 /* encode_h264.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A77C021DEA5280041ACE3 /* encode_h264.m */; };
 		3C4A77C521DEAB0E0041ACE3 /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */; };
 		3C4A77C621DEAB0E0041ACE3 /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */; };
+		3C7631A622495ABB00D92C5B /* GPUVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* GPUVDisplayLink.m */; };
+		3C7631A722495ABB00D92C5B /* GPUVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* GPUVDisplayLink.m */; };
+		3C7631A822495ABB00D92C5B /* GPUVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* GPUVDisplayLink.m */; };
 		3C76939422308A81000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
 		3C76939522308A84000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
 		3C76939622308A84000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
@@ -353,6 +356,8 @@
 		3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = QuickTime_Test_Pattern_HD.mov; sourceTree = "<group>"; };
 		3C4A77BE21DEA50F0041ACE3 /* encode_h264 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = encode_h264; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C4A77C021DEA5280041ACE3 /* encode_h264.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = encode_h264.m; sourceTree = "<group>"; };
+		3C7631A422495ABA00D92C5B /* GPUVDisplayLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVDisplayLink.h; sourceTree = "<group>"; };
+		3C7631A522495ABA00D92C5B /* GPUVDisplayLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVDisplayLink.m; sourceTree = "<group>"; };
 		3C76939222308A7B000D03CE /* CountToTenA.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CountToTenA.m4v; sourceTree = "<group>"; };
 		3C76939322308A7F000D03CE /* CountToTenA_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CountToTenA_alpha.m4v; sourceTree = "<group>"; };
 		3C7E37C42218BC9D00116145 /* ColorsAlpha4by4.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = ColorsAlpha4by4.m4v; sourceTree = "<group>"; };
@@ -583,6 +588,8 @@
 				3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */,
 				3C1310CF222214FE000C4972 /* GPUVMTKView.h */,
 				3C1310D0222214FE000C4972 /* GPUVMTKView.m */,
+				3C7631A422495ABA00D92C5B /* GPUVDisplayLink.h */,
+				3C7631A522495ABA00D92C5B /* GPUVDisplayLink.m */,
 				3C97793522161CF2003721FD /* MetalScaleRenderContext.h */,
 				3C97793622161CF3003721FD /* MetalScaleRenderContext.m */,
 				3CB6E80121D6C62A005424E6 /* MetalBT709Decoder.h */,
@@ -1233,6 +1240,7 @@
 				3C4A773321D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				63B42F161ED2063300859D09 /* AAPLShaders.metal in Sources */,
 				3CB6E80321D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
+				3C7631A722495ABB00D92C5B /* GPUVDisplayLink.m in Sources */,
 				3CE62FD122233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */,
 				3A30EDF91EB67EA800B4FC0B /* AAPLImage.m in Sources */,
 				3CB6E81521D73BB5005424E6 /* CGFrameBuffer.m in Sources */,
@@ -1265,6 +1273,7 @@
 				3C4A773421D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3AFD65731F71A8A10008A125 /* main.m in Sources */,
 				3A30EDFF1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
+				3C7631A822495ABB00D92C5B /* GPUVDisplayLink.m in Sources */,
 				3CB6E80C21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
 				3CE62FD222233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */,
 			);
@@ -1288,6 +1297,7 @@
 				3CB6E80221D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
 				3C4A773221D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3A30EDFE1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
+				3C7631A622495ABB00D92C5B /* GPUVDisplayLink.m in Sources */,
 				3CB6E80A21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
 				3CE62FD022233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */,
 			);

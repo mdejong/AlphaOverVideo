@@ -611,12 +611,12 @@
 }
 
 - (void) lastSecond {
-//  [self.alphaSource lastSecond];
-//  [self.rgbSource lastSecond];
-  
   // Stagger alpha and rgb advance to next clip logic across frames
   // to avoid a glitching issue on A7 devices. This is not a problem
   // on A8 and newer devices.
+  
+  //  [self.alphaSource lastSecond];
+  //  [self.rgbSource lastSecond];
   
   __weak typeof(self) weakSelf = self;
   
@@ -636,6 +636,12 @@
   dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(laterFrameDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
     [weakSelf.rgbSource lastSecond];
   });
+}
+
+// Getter for loopCount property
+
+- (int) loopCount {
+  return self.rgbSource.loopCount;
 }
 
 @end

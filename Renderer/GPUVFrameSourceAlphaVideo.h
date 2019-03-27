@@ -36,6 +36,12 @@
 
 @property (nonatomic, readonly) int isLooping;
 
+// The integer count of the number of times the video has looped.
+// This value starts out as zero, it then increases each time
+// the active item changes.
+
+@property (nonatomic, readonly) int loopCount;
+
 // This block is invoked on the main thread once source video data
 // has been loaded. This callback is invoked just once for a video
 // source object and the block is set to nil once completed.

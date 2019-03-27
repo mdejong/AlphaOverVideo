@@ -451,10 +451,19 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   //[self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
  
   // Invoking removeOutput seems to make looping miss 2 frames
-  //[self.playerItem removeOutput:self.playerItemVideoOutput];
   
+  // [self.playerItem removeOutput:self.playerItemVideoOutput];
+  
+//  AVPlayerItem *playerItem = self.playerItem;
+//  AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
+//
+//  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//    [playerItem removeOutput:playerItemVideoOutput];
+//  });
+  
+  self.playerItem = nil;
   self.playerItemVideoOutput = nil;
-  
+
   // FIXME: Instead of invoking setRate or pause here, could the player AVPlayerActionAtItemEnd
   // value for player.actionAtItemEnd be set to AVPlayerActionAtItemEndPause ?
   
@@ -468,8 +477,16 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   
   [self unregisterForItemNotificaitons];
   
-  [self.playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
+  //AVPlayerItem *playerItem = self.playerItem;
+  AVPlayerItemVideoOutput *playerItemVideoOutput = self.playerItemVideoOutput;
   
+  [playerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:self.frameDuration];
+  
+  //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+  // [playerItem removeOutput:playerItemVideoOutput];
+  //});
+  
+  self.playerItem = nil;
   self.playerItemVideoOutput = nil;
   
   [self.player setRate:0.0];
@@ -524,6 +541,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
         atHostTime:(CFTimeInterval)atHostTime
 {
 #if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+  NSAssert(rate > 0.0, @"rate is %.3f", rate);
   NSAssert(self.isAssetAsyncLoaded == TRUE, @"isAssetAsyncLoaded must be TRUE when syncStart in invoked");
 #endif // DEBUG
   
