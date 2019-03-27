@@ -375,7 +375,6 @@ void validate_storage_mode(id<MTLTexture> texture)
 #else
     [weakFrameSourceVideo loadFromAsset:@"CarSpin.m4v"];
     //[weakFrameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
-    //[weakFrameSourceVideo loadFromAsset:@"BT709tagged.mp4"];
     //[weakFrameSourceVideo loadFromAsset:@"CountToTen.m4v"];
     
     weakFrameSourceVideo.playedToEndBlock = nil;
