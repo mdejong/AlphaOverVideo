@@ -3,7 +3,7 @@
 //
 //  Copyright 2016 Mo DeJong.
 //
-//  See LICENSE for terms.
+//  See license.txt for license terms.
 //
 //  This module references Metal objects that are associated with
 //  a rendering context, like a view but are not defined on a

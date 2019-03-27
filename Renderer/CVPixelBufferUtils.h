@@ -5,7 +5,7 @@
 //
 //  Utility functions for CoreVideo pixel buffers.
 //
-//  Licensed under BSD terms.
+//  See license.txt for license terms.
 
 #if !defined(_CVPixelBufferUtils_H)
 #define _CVPixelBufferUtils_H

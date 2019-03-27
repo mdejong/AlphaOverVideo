@@ -3,7 +3,7 @@
 //
 //  Created by Mo DeJong on 7/6/16.
 //
-//  See license.txt for BSD license terms.
+//  See license.txt for license terms.
 //
 //  This module wraps AVFoundation APIs so that a H264 video can
 //  be created from CoreGraphics refrences to image data. The

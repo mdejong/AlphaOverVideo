@@ -10,7 +10,7 @@
 //  https://forums.creativecow.net/thread/2/1131717
 //  https://www.khronos.org/registry/DataFormat/specs/1.2/dataformat.1.2.html#TRANSFER_ITU
 //
-//  Licensed under BSD terms.
+//  See license.txt for license terms.
 
 #include "sRGB.h"
 

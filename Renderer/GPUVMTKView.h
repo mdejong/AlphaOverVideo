@@ -3,7 +3,7 @@
 //
 //  Created by Mo DeJong on 2/22/19.
 //
-//  See license.txt for BSD license terms.
+//  See license.txt for license terms.
 //
 //  This object provides a base class for functionaity required
 //  on top of a plain MTKView. This view adds support for

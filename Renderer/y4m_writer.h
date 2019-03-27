@@ -7,7 +7,7 @@
 //  a Y4M file that contains tagged YUV bytes
 //  in 4:2:0 format.
 //
-//  Licensed under BSD terms.
+//  See license.txt for license terms.
 
 #if !defined(_Y4M_WRITER_H)
 #define _Y4M_WRITER_H

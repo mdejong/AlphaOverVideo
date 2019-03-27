@@ -3,7 +3,7 @@
 //
 //  Copyright 2019 Mo DeJong.
 //
-//  See LICENSE for terms.
+//  See license.txt for license terms.
 //
 //  This module will render into an existing MTKView
 //  in the case where a 2D rescale operation is needed

@@ -3,7 +3,7 @@
 //
 //  Created by Mo DeJong on 7/6/16.
 //
-//  See license.txt for BSD license terms.
+//  See license.txt for license terms.
 //
 //  This module provides an easy to use background processing queue
 //  that will decode frames from a H264 source and then re-encode the

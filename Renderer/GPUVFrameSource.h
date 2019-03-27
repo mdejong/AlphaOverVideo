@@ -3,7 +3,7 @@
 //
 //  Created by Mo DeJong on 2/22/19.
 //
-//  See license.txt for BSD license terms.
+//  See license.txt for license terms.
 //
 //  This frame source protocol defines a generic interface
 //  that can be implemented by any class in order to generate

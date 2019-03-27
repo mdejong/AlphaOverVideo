@@ -8,7 +8,7 @@
 //
 //  http://www.color.org/srgb.pdf
 //
-//  Licensed under BSD terms.
+//  See license.txt for license terms.
 
 #if !defined(_SRGB_H)
 #define _SRGB_H
