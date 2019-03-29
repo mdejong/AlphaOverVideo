@@ -8,7 +8,11 @@
 
 #import "GPUVFrameSourceAlphaVideo.h"
 
+@import Metal;
+
 //#define STORE_TIMES
+
+static int cachedFeatureSet = -1;
 
 // Private API
 
@@ -623,35 +627,42 @@
   // to avoid a glitching issue on A7 devices. This is not a problem
   // on A8 and newer devices.
   
-  //  [self.alphaSource lastSecond];
-  //  [self.rgbSource lastSecond];
-  
-  __weak typeof(self) weakSelf = self;
-
-  float frameDuration = self.frameDuration;
-  
-  // Note that in the case where frameDuration is quite large, like 1.0 FPS, the
-  // delay of 1/2 a second can be very slow. Limit the max frameDuration to
-  // 2 * (1.0/30) so that very slow loading does not become a problem that
-  // causes loading to not happen quickly enough.
-  
-  if (frameDuration > (1.0f/15.0f)) {
-    frameDuration = (1.0f/15.0f);
+#if TARGET_OS_IOS
+  if ([self isMetalDeviceA8OrNewer]) {
+    [self.alphaSource lastSecond];
+    [self.rgbSource lastSecond];
+  } else {
+    __weak typeof(self) weakSelf = self;
+    
+    float frameDuration = self.frameDuration;
+    
+    // Note that in the case where frameDuration is quite large, like 1.0 FPS, the
+    // delay of 1/2 a second can be very slow. Limit the max frameDuration to
+    // 2 * (1.0/30) so that very slow loading does not become a problem that
+    // causes loading to not happen quickly enough.
+    
+    if (frameDuration > (1.0f/15.0f)) {
+      frameDuration = (1.0f/15.0f);
+    }
+    
+    float firstFrameDuration = 0.5 * frameDuration;
+    float laterFrameDuration = 5 * frameDuration;
+    
+    // FIXME: figure out how to deal with case where track is very short, such that loading would
+    // take too long.
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(firstFrameDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+      [weakSelf.alphaSource lastSecond];
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(laterFrameDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+      [weakSelf.rgbSource lastSecond];
+    });
   }
-  
-  float firstFrameDuration = 0.5 * frameDuration;
-  float laterFrameDuration = 5 * frameDuration;
-  
-  // FIXME: figure out how to deal with case where track is very short, such that loading would
-  // take too long.
-  
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(firstFrameDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    [weakSelf.alphaSource lastSecond];
-  });
-  
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(laterFrameDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    [weakSelf.rgbSource lastSecond];
-  });
+#else
+  [self.alphaSource lastSecond];
+  [self.rgbSource lastSecond];
+#endif // TARGET_OS_IOS
 }
 
 // Getter for loopCount property
@@ -659,5 +670,48 @@
 - (int) loopCount {
   return self.rgbSource.loopCount;
 }
+
+#if TARGET_OS_IPHONE
+
+- (NSUInteger)highestSupportedFeatureSet
+{
+  const NSUInteger maxKnownFeatureSet = MTLFeatureSet_iOS_GPUFamily2_v1;
+  
+  id <MTLDevice> device = MTLCreateSystemDefaultDevice();
+  
+  for (int featureSet = maxKnownFeatureSet; featureSet >= 0; --featureSet)
+  {
+    if ([device supportsFeatureSet:featureSet])
+    {
+      return featureSet;
+    }
+  }
+  
+  return MTLFeatureSet_iOS_GPUFamily1_v1;
+}
+
+- (NSUInteger)featureSetGPUFamily
+{
+  if (cachedFeatureSet == -1) {
+    cachedFeatureSet = (int) self.highestSupportedFeatureSet;
+  }
+  
+  switch (cachedFeatureSet)
+  {
+    case MTLFeatureSet_iOS_GPUFamily2_v1:
+      return 2;
+    case MTLFeatureSet_iOS_GPUFamily1_v1:
+    default:
+      return 1;
+  }
+}
+
+- (BOOL)isMetalDeviceA8OrNewer
+{
+  NSUInteger val = [self featureSetGPUFamily];
+  return (val > 1);
+}
+
+#endif // TARGET_OS_IPHONE
 
 @end
