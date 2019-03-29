@@ -235,11 +235,17 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   }
   
   {
-    // Calculate load time, this is one second before the end of the clip
+    // Calculate load time, this is 1-3 seconds before the end of the clip
+    // unless the frame duration is very long and then more preroll time
+    // is required.
 
     float lastSecondFrameDelta = self.lastSecondFrameDelta;
     if (lastSecondFrameDelta == 0) {
-      lastSecondFrameDelta = 1.5;
+      lastSecondFrameDelta = 3.0;
+    }
+    if (self.FPS < 15) {
+      lastSecondFrameDelta = self.frameDuration * 6;
+      self.lastSecondFrameDelta = lastSecondFrameDelta;
     }
     self.lastSecondFrameTime = trackDuration - lastSecondFrameDelta;
     

@@ -619,15 +619,23 @@
   //  [self.rgbSource lastSecond];
   
   __weak typeof(self) weakSelf = self;
+
+  float frameDuration = self.frameDuration;
   
-  float firstFrameDuration = 0.5 * self.frameDuration;
-  float laterFrameDuration = 5 * self.frameDuration;
+  // Note that in the case where frameDuration is quite large, like 1.0 FPS, the
+  // delay of 1/2 a second can be very slow. Limit the max frameDuration to
+  // 2 * (1.0/30) so that very slow loading does not become a problem that
+  // causes loading to not happen quickly enough.
   
-  float maxLoadDuration = 1.0;
-  
-  if (laterFrameDuration > maxLoadDuration) {
-    laterFrameDuration = maxLoadDuration;
+  if (frameDuration > (1.0f/15.0f)) {
+    frameDuration = (1.0f/15.0f);
   }
+  
+  float firstFrameDuration = 0.5 * frameDuration;
+  float laterFrameDuration = 5 * frameDuration;
+  
+  // FIXME: figure out how to deal with case where track is very short, such that loading would
+  // take too long.
   
   dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(firstFrameDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
     [weakSelf.alphaSource lastSecond];

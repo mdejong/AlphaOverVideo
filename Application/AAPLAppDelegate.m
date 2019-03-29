@@ -13,4 +13,9 @@ Implementation of our iOS & tvOS application delegate
     return YES;
 }
 
+- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
+{
+  NSLog(@"applicationDidReceiveMemoryWarning");
+}
+
 @end
