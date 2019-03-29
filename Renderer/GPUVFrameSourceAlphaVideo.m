@@ -107,6 +107,14 @@
   alphaSource.syncTime = hostPresentationTime;
   
   CMTime itemTime = [rgbSource itemTimeForHostTime:hostTime];
+  
+  if (CMTIME_COMPARE_INLINE(itemTime, ==, kCMTimeInvalid)) {
+    if (debugDumpForHostTimeValues) {
+      NSLog(@"rgb+a : video stream not ready yet");
+    }
+    
+    return nil;
+  }
 
   if ((0)) {
     NSLog(@"%@ : frameForHostTime at host time %.3f : CACurrentMediaTime() %.3f", self, hostTime, CACurrentMediaTime());

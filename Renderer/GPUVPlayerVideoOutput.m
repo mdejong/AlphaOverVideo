@@ -371,16 +371,18 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     
     [self playWithPreroll:playRate block:^{
 #if defined(DEBUG)
-      NSLog(@"secondaryLoopAsset playWithPreroll finished at time %.3f", CACurrentMediaTime());
+      NSLog(@"%p secondaryLoopAsset playWithPreroll finished at time %.3f", weakSelf, CACurrentMediaTime());
 #endif // DEBUG
       
       weakSelf.isReadyToPlay = TRUE;
-      //CFTimeInterval syncTime = weakSelf.syncTime;
-      //[weakSelf syncStart:playRate itemTime:0.0 atHostTime:syncTime];
       
       if (weakSelf.asyncReadyToPlayBlock != nil) {
         weakSelf.asyncReadyToPlayBlock();
         weakSelf.asyncReadyToPlayBlock = nil;
+      } else {
+#if defined(DEBUG)
+        NSLog(@"%p secondaryLoopAsset asyncReadyToPlayBlock is nil", weakSelf);
+#endif // DEBUG
       }
     }];
     
@@ -480,6 +482,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 {
   self.isPlaying = FALSE;
   self.isReadyToPlay = FALSE;
+
+  self.secondaryLoopAsset = FALSE;
   
   [self unregisterForItemNotificaitons];
   
@@ -517,7 +521,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   [self seekToTimeZero];
   
 #if defined(DEBUG)
-  NSLog(@"AVPlayer playWithPreroll : %.2f : starting at time %.3f", rate, CACurrentMediaTime());
+  NSLog(@"%p AVPlayer playWithPreroll : %.2f : starting at time %.3f", self, rate, CACurrentMediaTime());
 #endif // DEBUG
   
   //self.loopCount = 0;
@@ -529,7 +533,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
     // FIXME: Should pass rate to block
     
 #if defined(DEBUG)
-    NSLog(@"AVPlayer playWithPreroll finished at time %.3f", CACurrentMediaTime());
+    NSLog(@"%p AVPlayer playWithPreroll finished at time %.3f", self, CACurrentMediaTime());
 #endif // DEBUG
     
     if (finished) {
@@ -539,7 +543,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 }
 
 // Sync start will seek to the given time and then invoke
-// a sync sync method to play at the given rate after
+// a sync method to play at the given rate after
 // aligning the given host time to the indicated time.
 
 - (void) syncStart:(float)rate
@@ -550,7 +554,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
   NSAssert(rate > 0.0, @"rate is %.3f", rate);
   NSAssert(self.isAssetAsyncLoaded == TRUE, @"isAssetAsyncLoaded must be TRUE when syncStart in invoked");
+  NSAssert(self.isReadyToPlay == TRUE, @"isReadyToPlay must be TRUE when syncStart in invoked");
 #endif // DEBUG
+  
+  self.secondaryLoopAsset = FALSE;
   
   CMTime syncTimeCM = CMTimeMake(itemTime * 1000.0f, 1000);
   [self.player seekToTime:syncTimeCM completionHandler:^(BOOL finished){
@@ -574,8 +581,17 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 - (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime
 {
   if ((0)) {
-    NSLog(@"GPUVPlayerVideoOutput:setRate : at %.3f : with item time %.3f", atHostTime, CMTimeGetSeconds(self.player.currentTime));
+    NSLog(@"GPUVPlayerVideoOutput:setRate : sync %.3f to item time %.3f", atHostTime, CMTimeGetSeconds(self.player.currentTime));
   }
+  
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+  NSAssert(rate > 0.0, @"rate is %.3f", rate);
+  NSAssert(self.isAssetAsyncLoaded == TRUE, @"isAssetAsyncLoaded must be TRUE when setRate in invoked");
+  NSAssert(self.isReadyToPlay == TRUE, @"isReadyToPlay must be TRUE when setRate in invoked");
+  // Note that self.isPlaying could be true since setRate can be invoked to
+  // resync a pair of streams that are already playing.
+#endif // DEBUG
   
   CMTime hostTimeCM = CMTimeMake(atHostTime * 1000.0f, 1000);
   [self.player setRate:rate time:kCMTimeInvalid atHostTime:hostTimeCM];
@@ -601,6 +617,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 #if defined(DEBUG)
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
+  
+  self.secondaryLoopAsset = FALSE;
   
   // Sync item time 0.0 to supplied host time (system clock)
   

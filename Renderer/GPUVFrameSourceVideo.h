@@ -147,6 +147,9 @@
             presentationTimePtr:(float*)presentationTimePtr;
 
 // Map host time to item time for the current item.
+// Note that kCMTimeInvalid is returned if the host
+// time cannot be mapped to an item time yet due to
+// the video stream not yet being ready to play.
 
 - (CMTime) itemTimeForHostTime:(CFTimeInterval)hostTime;
 

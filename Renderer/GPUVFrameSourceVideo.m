@@ -92,10 +92,23 @@
 }
 
 // Map host time to item time for the current item.
+// Note that kCMTimeInvalid is returned if the host
+// time cannot be mapped to an item time yet due to
+// the video stream not yet being ready to play.
 
 - (CMTime) itemTimeForHostTime:(CFTimeInterval)hostTime
 {
   GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  if (pvo.isPlaying == FALSE) {
+    // It is possible for a display link to fire before async callbacks
+    // actuall start playing a stream, return kCMTimeInvalid to indicate
+    // that this API is not yet ready to serve up frames.
+    return kCMTimeInvalid;
+  }
+#if defined(DEBUG)
+  NSAssert(pvo.isReadyToPlay == TRUE, @"isReadyToPlay");
+#endif // DEBUG
+
   AVPlayerItemVideoOutput *playerItemVideoOutput = pvo.playerItemVideoOutput;
   CMTime currentItemTime = [playerItemVideoOutput itemTimeForHostTime:hostTime];
   return currentItemTime;
@@ -641,6 +654,10 @@
   if (pvo.isReadyToPlay == FALSE) {
     //NSAssert(pvo.isReadyToPlay == TRUE, @"preloaded 2nd player must be ready to play");
     
+#if defined(DEBUG)
+    NSLog(@"%@ define asyncReadyToPlayBlock in !isReadyToPlay block", self.uid);
+#endif // DEBUG
+    
     pvo.asyncReadyToPlayBlock = ^{
       [weakSelf asyncStartWhenReadyToPlay];
     };
@@ -680,11 +697,17 @@
 
   // FIXME: Should this method just return if stopped or isReadyToPlay is FALSE for some reason?
   
+#if defined(DEBUG)
   NSAssert(pvo.isReadyToPlay == TRUE, @"preloaded secondary player must be ready to play");
+#endif // DEBUG
   
   CFTimeInterval atHostTime = self.syncTime;
   
   float playRate = self.playRate;
+  
+#if defined(DEBUG)
+  NSAssert(playRate > 0, @"playRate is zero");
+#endif // DEBUG
   
   [pvo setRate:playRate atHostTime:atHostTime];
   
