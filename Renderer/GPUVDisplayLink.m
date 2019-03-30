@@ -238,6 +238,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
       // dispatch_async()
       // dispatch_sync()
       dispatch_async(dispatch_get_main_queue(), ^{
+        @autoreleasepool {
 #if defined(DEBUG)
         if (debugPrintAll) {
         printf("before displayLinkCallback in main thread CACurrentMediaTime() %.6f\n", CACurrentMediaTime());
@@ -246,6 +247,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
         
         GPUVDisplayLink *displayLinkWeakSelf = displayLinkPrivateInterface.weakSelf;
         [displayLinkWeakSelf displayLinkCallback:frameSeconds displayAt:displaySeconds];
+        }
       });
     }
   }

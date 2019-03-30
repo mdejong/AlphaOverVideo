@@ -94,25 +94,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   // to the active player ?
 
   if (self.secondaryLoopAsset) {
-    // Looping over N assets and this is not the first asset.
-    // Preload the player with asset metadata but do not
-    // initiate playback.
-    
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//      float rate = weakSelf.playRate;
-//      assert(rate != 0.0f);
-//
-//      [weakSelf playWithPreroll:rate block:^{
-//        NSLog(@"secondaryLoopAsset playWithPreroll finished at time %.2f", CACurrentMediaTime());
-//
-//        weakSelf.isReadyToPlay = TRUE;
-//        CFTimeInterval syncTime = weakSelf.syncTime;
-//        float playRate = weakSelf.playRate;
-//
-//        //[weakSelf syncStart:playRate itemTime:0.0 atHostTime:syncTime];
-//      }];
-//    });
-    
+    // nop    
   } else {
     dispatch_async(dispatch_get_main_queue(), ^{
       self.isReadyToPlay = TRUE;
@@ -332,29 +314,6 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 #endif // DEBUG
   } else {
     assert(0);
-    
-    // Changing the item connected to the video output
-#if defined(DEBUG)
-    NSAssert(playerItem != self.playerItem, @"playerItem != self.playerItem");
-#endif // DEBUG
-    [self.playerItem removeOutput:self.playerItemVideoOutput];
-    if (1) {
-      // FIXME: Destroy the old output and create a new one ??
-    }
-    [playerItem addOutput:self.playerItemVideoOutput];
-    NSLog(@"OUTPUT changed remove/add %p -> %p", self.playerItem, playerItem);
-    self.playerItem = playerItem;
-    
-    // Resync current item time to next frame sync time
-    
-    //[self seekToTimeZero];
-    //[self setRate:self.playRate atHostTime:self.syncTime];
-    //NSLog(@"Player setRate with current time %.3f", CMTimeGetSeconds(self.player.currentTime));
-    
-    [self syncStart:self.playRate itemTime:0.0 atHostTime:self.syncTime];
-    
-    //NSLog(@"incr loopCount from %d to %d", self.loopCount, self.loopCount+1);
-    //self.loopCount = self.loopCount + 1;
   }
   
   // Kick off preroll from main thread but do not actually start playback at this point.
