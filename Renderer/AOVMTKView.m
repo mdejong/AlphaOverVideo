@@ -1,12 +1,12 @@
 //
-//  GPUVMTKView.m
+//  AOVMTKView.m
 //
 //  Created by Mo DeJong on 2/22/19.
 //
 //  See license.txt for license terms.
 //
 
-#import "GPUVMTKView.h"
+#import "AOVMTKView.h"
 
 // Header shared between C code here, which executes Metal API commands, and .metal files, which
 //   uses these types as inputs to the shaders
@@ -19,14 +19,14 @@
 #import "BGDecodeEncode.h"
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
-#import "GPUVDisplayLink.h"
+#import "AOVDisplayLink.h"
 
 #define LOAD_ALPHA_VIDEO
 
 #if defined(LOAD_ALPHA_VIDEO)
-#import "GPUVFrameSourceAlphaVideo.h"
+#import "AOVFrameSourceAlphaVideo.h"
 #else
-#import "GPUVFrameSourceVideo.h"
+#import "AOVFrameSourceVideo.h"
 #endif // LOAD_ALPHA_VIDEO
 
 // Define this symbol to enable private texture mode on MacOSX.
@@ -65,7 +65,7 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 // Private API
 
-@interface GPUVMTKView ()
+@interface AOVMTKView ()
 
 @property (nonatomic, retain) MetalBT709Decoder *metalBT709Decoder;
 
@@ -79,11 +79,11 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 @property (nonatomic, assign) CFTimeInterval presentationTime;
 
-@property (nonatomic, retain) GPUVDisplayLink *displayLink;
+@property (nonatomic, retain) AOVDisplayLink *displayLink;
 
 @end
 
-@implementation GPUVMTKView
+@implementation AOVMTKView
 {
   unsigned int viewportWidth;
   unsigned int viewportHeight;
@@ -137,7 +137,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   int width = (int) -1;
   int height = (int) -1;
   
-  return [NSString stringWithFormat:@"GPUVMTKView %p %dx%d",
+  return [NSString stringWithFormat:@"AOVMTKView %p %dx%d",
           self,
           width,
           height];
@@ -235,7 +235,7 @@ void validate_storage_mode(id<MTLTexture> texture)
 /// Initialize with the MetalKit view from which we'll obtain our Metal device
 - (BOOL) configureMetalKitView
 {
-  GPUVMTKView *mtkView = self;
+  AOVMTKView *mtkView = self;
   
   [self checkSRGBPixelSupport];
   
@@ -275,18 +275,18 @@ void validate_storage_mode(id<MTLTexture> texture)
     
 #if defined(LOAD_ALPHA_VIDEO)
     if (self.frameSource == nil) {
-      self.frameSource = [[GPUVFrameSourceAlphaVideo alloc] init];
+      self.frameSource = [[AOVFrameSourceAlphaVideo alloc] init];
     }
 #else
     if (self.frameSource == nil) {
-      self.frameSource = [[GPUVFrameSourceVideo alloc] init];
+      self.frameSource = [[AOVFrameSourceVideo alloc] init];
     }
 #endif // LOAD_ALPHA_VIDEO
     
 #if defined(LOAD_ALPHA_VIDEO)
-    __weak GPUVFrameSourceAlphaVideo *weakFrameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
+    __weak AOVFrameSourceAlphaVideo *weakFrameSourceVideo = (AOVFrameSourceAlphaVideo *) self.frameSource;
 #else
-    __weak GPUVFrameSourceVideo *weakFrameSourceVideo = (GPUVFrameSourceVideo *) self.frameSource;
+    __weak AOVFrameSourceVideo *weakFrameSourceVideo = (AOVFrameSourceVideo *) self.frameSource;
 #endif // LOAD_ALPHA_VIDEO
     
     // Note that framerate and dimensions must be loaded from video metadata before
@@ -337,19 +337,19 @@ void validate_storage_mode(id<MTLTexture> texture)
     // invoked once display link is running and then
     // preroll async callback has been invoked.
     
-    self.displayLink = [[GPUVDisplayLink alloc] init];
+    self.displayLink = [[AOVDisplayLink alloc] init];
 
     self.displayLink.loadedBlock = ^(CFTimeInterval hostTime){
-      NSLog(@"GPUVDisplayLink loadedBlock");
+      NSLog(@"AOVDisplayLink loadedBlock");
       
       // This block is invoked when display link is running and
       // playback is ready to begin. This loaded block should
       // kick off playback, it will only be invoked once.
       
 #if defined(LOAD_ALPHA_VIDEO)
-      GPUVFrameSourceAlphaVideo *frameSourceVideo = (GPUVFrameSourceAlphaVideo *) weakSelf.frameSource;
+      AOVFrameSourceAlphaVideo *frameSourceVideo = (AOVFrameSourceAlphaVideo *) weakSelf.frameSource;
 #else
-      GPUVFrameSourceVideo *frameSourceVideo = (GPUVFrameSourceVideo *) weakSelf.frameSource;
+      AOVFrameSourceVideo *frameSourceVideo = (AOVFrameSourceVideo *) weakSelf.frameSource;
 #endif // LOAD_ALPHA_VIDEO
       
       // FIXME: playback rate?
@@ -363,7 +363,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     // Invocation block for each display timer tick
     
     self.displayLink.invocationBlock = ^(CFTimeInterval hostTime, CFTimeInterval displayTime){
-      NSLog(@"GPUVDisplayLink invocationBlock");
+      NSLog(@"AOVDisplayLink invocationBlock");
       
       [weakSelf displayLinkCallback:hostTime displayTime:displayTime];
     };
@@ -383,7 +383,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     weakFrameSourceVideo.uid = @"rgb";
     
     weakFrameSourceVideo.finalFrameBlock = ^{
-      //NSLog(@"GPUVFrameSourceVideo.finalFrameBlock %.3f", CACurrentMediaTime());
+      //NSLog(@"AOVFrameSourceVideo.finalFrameBlock %.3f", CACurrentMediaTime());
       [weakFrameSourceVideo restart];
     };
 #endif // LOAD_ALPHA_VIDEO
@@ -752,7 +752,7 @@ void validate_storage_mode(id<MTLTexture> texture)
 
 // This method is invoked when a new frame of video data is ready to be displayed.
 
-- (void) nextFrameReady:(GPUVFrame*)nextFrame {
+- (void) nextFrameReady:(AOVFrame*)nextFrame {
 #if defined(DEBUG)
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
@@ -760,7 +760,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   //@synchronized (self)
   {
 #if defined(DEBUG)
-    // Should drop last ref to previous GPUVFrame here
+    // Should drop last ref to previous frame here
     if (self.prevFrame != nil) {
       self.prevFrame = nil;
     }
@@ -910,8 +910,8 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   // Pull frame for time from video source
   
-  id<GPUVFrameSource> frameSource = self.frameSource;
-  GPUVFrame *nextFrame = [frameSource frameForHostTime:hostTime hostPresentationTime:displayTime presentationTimePtr:NULL];
+  id<AOVFrameSource> frameSource = self.frameSource;
+  AOVFrame *nextFrame = [frameSource frameForHostTime:hostTime hostPresentationTime:displayTime presentationTimePtr:NULL];
   
   if (nextFrame == nil) {
     // No frame loaded for this time
@@ -930,9 +930,9 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   if ((0)) {
 #if defined(LOAD_ALPHA_VIDEO)
-    GPUVFrameSourceAlphaVideo *frameSourceVideo = (GPUVFrameSourceAlphaVideo *) self.frameSource;
+    AOVFrameSourceAlphaVideo *frameSourceVideo = (AOVFrameSourceAlphaVideo *) self.frameSource;
 #else
-    GPUVFrameSourceVideo *frameSourceVideo = (GPUVFrameSourceVideo *) self.frameSource;
+    AOVFrameSourceVideo *frameSourceVideo = (AOVFrameSourceVideo *) self.frameSource;
 #endif // LOAD_ALPHA_VIDEO
     
     if (frameSourceVideo.loopCount > 5 && self.frameSource) {

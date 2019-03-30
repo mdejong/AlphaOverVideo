@@ -9,7 +9,7 @@ Implementation of our cross-platform view controller
 
 #import <QuartzCore/QuartzCore.h>
 
-#import "GPUVMTKView.h"
+#import "AOVMTKView.h"
 
 @implementation AAPLViewController
 {
@@ -19,14 +19,14 @@ Implementation of our cross-platform view controller
     IBOutlet NSImageView *imageView;
 #endif // TARGET_OS_IOS
   
-    IBOutlet GPUVMTKView *mtkView;
+    IBOutlet AOVMTKView *mtkView;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
   
-    // Verify that this MTKView is a GPUVMTKView instance
+    // Verify that this MTKView is a AOVMTKView instance
 
     {
       MTKView *loadedMtkView = mtkView;
@@ -37,8 +37,8 @@ Implementation of our cross-platform view controller
         return;
       }
       
-      if ([loadedMtkView isKindOfClass:GPUVMTKView.class] == FALSE) {
-        NSLog(@"MTKView loaded from NIB does not extend GPUVMTKView base class");
+      if ([loadedMtkView isKindOfClass:AOVMTKView.class] == FALSE) {
+        NSLog(@"MTKView loaded from NIB does not extend AOVMTKView base class");
         return;
       }
     }
@@ -93,7 +93,7 @@ Implementation of our cross-platform view controller
     BOOL worked = [mtkView configure];
     if(!worked)
     {
-      NSLog(@"configure failed for GPUVMTKView");
+      NSLog(@"configure failed for AOVMTKView");
       return;
     }
   

@@ -1,18 +1,18 @@
 //
-//  GPUVDisplayLink.m
+//  AOVDisplayLink.m
 //
 //  Created by Mo DeJong on 2/22/19.
 //
 //  See license.txt for license terms.
 //
 
-#import "GPUVDisplayLink.h"
+#import "AOVDisplayLink.h"
 
 //#define LOG_DISPLAY_LINK_TIMINGS
 
 // Private API
 
-@interface GPUVDisplayLink ()
+@interface AOVDisplayLink ()
 
 #if TARGET_OS_IOS
 @property (nonatomic, retain) CADisplayLink *displayLink;
@@ -59,7 +59,7 @@
 
 // Ref to the view the display link is associated with
 
-@property (atomic, weak) GPUVDisplayLink *weakSelf;
+@property (atomic, weak) AOVDisplayLink *weakSelf;
 
 @property (nonatomic, assign) float frameDuration;
 
@@ -85,7 +85,7 @@
 
 - (NSString*) description
 {
-  return [NSString stringWithFormat:@"DisplayLinkPrivateInterface %p : GPUVDisplayLink %p", self, self.weakSelf];
+  return [NSString stringWithFormat:@"DisplayLinkPrivateInterface %p : AOVDisplayLink %p", self, self.weakSelf];
 }
 
 @end // end DisplayLinkPrivateInterface
@@ -99,7 +99,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 {
   @autoreleasepool {
     DisplayLinkPrivateInterface *displayLinkPrivateInterface = (__bridge DisplayLinkPrivateInterface *) displayLinkContext;
-    GPUVDisplayLink *displayLinkWeakSelf = displayLinkPrivateInterface.weakSelf;
+    AOVDisplayLink *displayLinkWeakSelf = displayLinkPrivateInterface.weakSelf;
     
     const int debugPrintAll = 0;
     const int debugPrintDeliveredToMainThread = 0;
@@ -245,7 +245,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
         }
 #endif // DEBUG
         
-        GPUVDisplayLink *displayLinkWeakSelf = displayLinkPrivateInterface.weakSelf;
+        AOVDisplayLink *displayLinkWeakSelf = displayLinkPrivateInterface.weakSelf;
         [displayLinkWeakSelf displayLinkCallback:frameSeconds displayAt:displaySeconds];
         }
       });
@@ -256,7 +256,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
 }
 #endif
 
-@implementation GPUVDisplayLink
+@implementation AOVDisplayLink
 {
 #if TARGET_OS_IOS
   // nop
@@ -292,7 +292,7 @@ static CVReturn displayLinkRenderCallback(CVDisplayLinkRef displayLink,
   int width = (int) -1;
   int height = (int) -1;
   
-  return [NSString stringWithFormat:@"GPUVDisplayLink %p %dx%d",
+  return [NSString stringWithFormat:@"AOVDisplayLink %p %dx%d",
           self,
           width,
           height];

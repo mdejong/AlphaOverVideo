@@ -1,11 +1,11 @@
 //
-//  GPUVFrameSourceAlphaVideo.h
+//  AOVFrameSourceAlphaVideo.h
 //
 //  Created by Mo DeJong on 2/22/19.
 //
 //  See license.txt for license terms.
 //
-//  GPUVFrameSourceAlphaVideo class implements the GPUVFrameSource
+//  AOVFrameSourceAlphaVideo class implements the AOVFrameSource
 //  protocol and provides an implementation that loads
 //  frames from a video source via an AVPlayer instance.
 
@@ -16,10 +16,10 @@
 @import CoreMedia;
 @import VideoToolbox;
 
-#import "GPUVFrameSource.h"
-#import "GPUVFrameSourceVideo.h"
+#import "AOVFrameSource.h"
+#import "AOVFrameSourceVideo.h"
 
-@interface GPUVFrameSourceAlphaVideo : NSObject <GPUVFrameSource>
+@interface AOVFrameSourceAlphaVideo : NSObject <AOVFrameSource>
 
 @property (nonatomic, assign) CFTimeInterval syncTime;
 @property (nonatomic, assign) float playRate;

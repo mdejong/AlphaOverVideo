@@ -1,5 +1,5 @@
 //
-//  GPUVFrame.h
+//  AOVFrame.h
 //
 //  Created by Mo DeJong on 2/22/19.
 //
@@ -17,9 +17,9 @@
 @import CoreMedia;
 @import VideoToolbox;
 
-// GPUVFrame class
+// AOVFrame class
 
-@interface GPUVFrame : NSObject
+@interface AOVFrame : NSObject
 
 @property (nonatomic, assign) CVPixelBufferRef yCbCrPixelBuffer;
 @property (nonatomic, assign) CVPixelBufferRef alphaPixelBuffer;

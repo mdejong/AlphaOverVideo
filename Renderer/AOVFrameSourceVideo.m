@@ -1,32 +1,32 @@
 //
-//  GPUVFrameSourceVideo.m
+//  AOVFrameSourceVideo.m
 //
 //  Created by Mo DeJong on 2/22/19.
 //
 //  See license.txt for license terms.
 //
 
-#import "GPUVFrameSourceVideo.h"
+#import "AOVFrameSourceVideo.h"
 
 #import <QuartzCore/QuartzCore.h>
 
 #import "BGRAToBT709Converter.h"
 
-#import "GPUVPlayerVideoOutput.h"
+#import "AOVPlayerVideoOutput.h"
 
 //#define LOG_DISPLAY_LINK_TIMINGS
 //#define STORE_TIMES
 
 // Private API
 
-@interface GPUVFrameSourceVideo ()
+@interface AOVFrameSourceVideo ()
 
 @property (nonatomic, retain) NSMutableArray<AVURLAsset *> *assets;
 @property (nonatomic, assign) int assetOffset;
 
 @property (nonatomic, assign) BOOL isPlayer2Active;
-@property (nonatomic, retain) GPUVPlayerVideoOutput *playerVideoOutput1;
-@property (nonatomic, retain) GPUVPlayerVideoOutput *playerVideoOutput2;
+@property (nonatomic, retain) AOVPlayerVideoOutput *playerVideoOutput1;
+@property (nonatomic, retain) AOVPlayerVideoOutput *playerVideoOutput2;
 
 @property (nonatomic, assign) int frameNum;
 
@@ -38,15 +38,15 @@
 
 @end
 
-@implementation GPUVFrameSourceVideo
+@implementation AOVFrameSourceVideo
 {
 }
 
 - (nullable instancetype) init
 {
   if (self = [super init]) {
-    self.playerVideoOutput1 = [[GPUVPlayerVideoOutput alloc] init];
-    self.playerVideoOutput2 = [[GPUVPlayerVideoOutput alloc] init];
+    self.playerVideoOutput1 = [[AOVPlayerVideoOutput alloc] init];
+    self.playerVideoOutput2 = [[AOVPlayerVideoOutput alloc] init];
     self.playRate = 1.0;
     self.lastSecondFrameDelta = 1.5;
   }
@@ -64,14 +64,14 @@
   int width = self.width;
   int height = self.height;
   
-  return [NSString stringWithFormat:@"GPUVFrameSourceVideo %p (%@) %dx%d ",
+  return [NSString stringWithFormat:@"AOVFrameSourceVideo %p (%@) %dx%d ",
           self,
           self.uid,
           width,
           height];
 }
 
-- (GPUVPlayerVideoOutput*) getCurrentPlayerVideoOutput
+- (AOVPlayerVideoOutput*) getCurrentPlayerVideoOutput
 {
   if (self.isPlayer2Active) {
     //NSLog(@"playerVideoOutput2 is active");
@@ -82,7 +82,7 @@
   }
 }
 
-- (GPUVPlayerVideoOutput*) getNextPlayerVideoOutput
+- (AOVPlayerVideoOutput*) getNextPlayerVideoOutput
 {
   if (self.isPlayer2Active) {
     return self.playerVideoOutput1;
@@ -98,7 +98,7 @@
 
 - (CMTime) itemTimeForHostTime:(CFTimeInterval)hostTime
 {
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   if (pvo.isPlaying == FALSE) {
     // It is possible for a display link to fire before async callbacks
     // actuall start playing a stream, return kCMTimeInvalid to indicate
@@ -114,7 +114,7 @@
   return currentItemTime;
 }
 
-// Given a host time offset, return a GPUVFrame that corresponds
+// Given a host time offset, return a AOVFrame that corresponds
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
 // The hostPresentationTime indicates the host time when the
@@ -123,7 +123,7 @@
 // DTS (display time stamp) of the decoded frame in the H.264 stream.
 // Note that presentationTimePtr can be NULL.
 
-- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
+- (AOVFrame*) frameForHostTime:(CFTimeInterval)hostTime
            hostPresentationTime:(CFTimeInterval)hostPresentationTime
             presentationTimePtr:(float*)presentationTimePtr
 {
@@ -133,7 +133,7 @@
   }
 #endif // LOG_DISPLAY_LINK_TIMINGS
 
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   
   // Update sync time even if not actually playing yet
   
@@ -171,12 +171,12 @@
 // (0.0, (N * frameDuration))
 // Note that hostTime is used only for debug output here
 
-- (GPUVFrame*) frameForItemTime:(CMTime)itemTime
+- (AOVFrame*) frameForItemTime:(CMTime)itemTime
                        hostTime:(CFTimeInterval)hostTime
            hostPresentationTime:(CFTimeInterval)hostPresentationTime
             presentationTimePtr:(float*)presentationTimePtr
 {
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   
   if (pvo.isPlaying == FALSE) {
     NSLog(@"player not playing yet in frameForItemTime");
@@ -191,7 +191,7 @@
   
   AVPlayerItemVideoOutput *playerItemVideoOutput = pvo.playerItemVideoOutput;
   
-  GPUVFrame *nextFrame = nil;
+  AOVFrame *nextFrame = nil;
   
   // Map time offset to item time
   
@@ -252,9 +252,9 @@
       NSLog(@"                     display time %0.3f", presentationTimeSeconds);
 #endif // LOG_DISPLAY_LINK_TIMINGS
       
-      nextFrame = [[GPUVFrame alloc] init];
+      nextFrame = [[AOVFrame alloc] init];
       nextFrame.yCbCrPixelBuffer = rgbPixelBuffer;
-      nextFrame.frameNum = [GPUVFrame calcFrameNum:presentationTimeSeconds fps:self.FPS];
+      nextFrame.frameNum = [AOVFrame calcFrameNum:presentationTimeSeconds fps:self.FPS];
       CVPixelBufferRelease(rgbPixelBuffer);
 
 #if defined(LOG_DISPLAY_LINK_TIMINGS)
@@ -397,7 +397,7 @@
   // Default setting for end of clip will stop playback
   
   self.playedToEndBlock = ^{
-    NSLog(@"GPUVFrameSourceVideo.playedToEndBlock %.3f", CACurrentMediaTime());
+    NSLog(@"AOVFrameSourceVideo.playedToEndBlock %.3f", CACurrentMediaTime());
     [weakSelf stop];
   };
 
@@ -410,7 +410,7 @@
   // Note that this logic returns player1 in the init case.
 
   self.isPlayer2Active = TRUE;
-  GPUVPlayerVideoOutput *pvo = [self preloadNextItem];
+  AOVPlayerVideoOutput *pvo = [self preloadNextItem];
   self.isPlayer2Active = FALSE;
 
   NSAssert(pvo.player, @"player");
@@ -428,7 +428,7 @@
 }
 
 - (void) startAsyncTracksLoad:(AVAsset*)asset
-                      pvo:(GPUVPlayerVideoOutput*)pvo
+                      pvo:(AOVPlayerVideoOutput*)pvo
 {
   __weak typeof(self) weakSelf = self;
   __weak typeof(pvo) weakPvo = pvo;
@@ -491,7 +491,7 @@
 // loaded and is ready to be inspected.
 
 - (BOOL) asyncTracksReady:(AVAsset*)asset
-                      pvo:(GPUVPlayerVideoOutput*)pvo
+                      pvo:(AOVPlayerVideoOutput*)pvo
 {
   NSLog(@"asyncTracksReady");
   
@@ -520,9 +520,9 @@
   return firstAsset;
 }
 
-// Associate AVPlayer inside GPUVPlayerVideoOutput object with next asset
+// Associate AVPlayer inside AOVPlayerVideoOutput object with next asset
 
-- (void) assocPlayerItem:(GPUVPlayerVideoOutput*)pvo
+- (void) assocPlayerItem:(AOVPlayerVideoOutput*)pvo
 {
   NSAssert(pvo, @"pvo");
   
@@ -555,20 +555,20 @@
 // and associating it with AVPlayer. Note that this method
 // does not switch the next item to the active item
 
-- (GPUVPlayerVideoOutput*) preloadNextItem
+- (AOVPlayerVideoOutput*) preloadNextItem
 {
-  GPUVPlayerVideoOutput *pvo = [self getNextPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getNextPlayerVideoOutput];
   [self assocPlayerItem:pvo];
 
   return pvo;
 }
 
-- (GPUVPlayerVideoOutput*) advanceToNextItem
+- (AOVPlayerVideoOutput*) advanceToNextItem
 {
   // Switch to other player
   self.isPlayer2Active = ! self.isPlayer2Active;
   
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   
   [self assocPlayerItem:pvo];
 
@@ -598,7 +598,7 @@
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
   
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   [pvo play:syncTime];
 }
 
@@ -609,7 +609,7 @@
 #endif // DEBUG
   
   // Configure player layer now that asset tracks is loaded
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   [pvo stop];
 }
 
@@ -631,7 +631,7 @@
   
   // Halt playback of current item
   
-  GPUVPlayerVideoOutput *pvoPrev = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvoPrev = [self getCurrentPlayerVideoOutput];
   //[pvoPrev endOfLoop];
   
   // FIXME: should actually swapping the active player wait until
@@ -643,7 +643,7 @@
   
   self.isPlayer2Active = ! self.isPlayer2Active;
   
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   
 #if defined(DEBUG)
   NSAssert(pvo != pvoPrev, @"pvo != pvoPrev");
@@ -693,7 +693,7 @@
 
 - (void) asyncStartWhenReadyToPlay
 {
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
 
   // FIXME: Should this method just return if stopped or isReadyToPlay is FALSE for some reason?
   
@@ -724,7 +724,7 @@
   // Advance to next item, this preloading logic will
   // kick off an async asset ready to play notification.
   
-  GPUVPlayerVideoOutput *pvo = [self preloadNextItem];
+  AOVPlayerVideoOutput *pvo = [self preloadNextItem];
   NSAssert(pvo.player, @"player");
   
   pvo.secondaryLoopAsset = TRUE;
@@ -743,13 +743,13 @@
 
 - (void) useMasterClock:(CMClockRef)masterClock
 {
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   [pvo useMasterClock:masterClock];
 }
 
 - (void) seekToTimeZero
 {
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   [pvo seekToTimeZero];
 }
 
@@ -759,7 +759,7 @@
 - (void) playWithPreroll:(float)rate block:(void (^)(void))block
 {
   self.playRate = rate;
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   [pvo playWithPreroll:rate block:block];
 }
 
@@ -771,7 +771,7 @@
           itemTime:(CFTimeInterval)itemTime
         atHostTime:(CFTimeInterval)atHostTime
 {
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   [pvo syncStart:rate itemTime:itemTime atHostTime:atHostTime];
 }
 
@@ -783,7 +783,7 @@
 - (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime
 
 {
-  GPUVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
   [pvo setRate:rate atHostTime:atHostTime];
 }
 

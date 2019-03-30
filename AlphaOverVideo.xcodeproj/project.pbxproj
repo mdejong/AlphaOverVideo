@@ -30,12 +30,12 @@
 		3C02732E220B715C005FB416 /* QuickTime_Test_Pattern_HD_grayscale.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C02732C220B715C005FB416 /* QuickTime_Test_Pattern_HD_grayscale.m4v */; };
 		3C02732F220B715C005FB416 /* QuickTime_Test_Pattern_HD_grayscale.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C02732C220B715C005FB416 /* QuickTime_Test_Pattern_HD_grayscale.m4v */; };
 		3C0C3F1021FA642D00C498D3 /* AppleEncodeDecodeBT709Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0C3F0F21FA642C00C498D3 /* AppleEncodeDecodeBT709Tests.m */; };
-		3C1310CC2220D493000C4972 /* GPUVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310CB2220D493000C4972 /* GPUVFrame.m */; };
-		3C1310CD2220D898000C4972 /* GPUVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310CB2220D493000C4972 /* GPUVFrame.m */; };
-		3C1310CE2220D899000C4972 /* GPUVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310CB2220D493000C4972 /* GPUVFrame.m */; };
-		3C1310D1222214FE000C4972 /* GPUVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310D0222214FE000C4972 /* GPUVMTKView.m */; };
-		3C1310D2222214FF000C4972 /* GPUVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310D0222214FE000C4972 /* GPUVMTKView.m */; };
-		3C1310D3222214FF000C4972 /* GPUVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310D0222214FE000C4972 /* GPUVMTKView.m */; };
+		3C1310CC2220D493000C4972 /* AOVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310CB2220D493000C4972 /* AOVFrame.m */; };
+		3C1310CD2220D898000C4972 /* AOVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310CB2220D493000C4972 /* AOVFrame.m */; };
+		3C1310CE2220D899000C4972 /* AOVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310CB2220D493000C4972 /* AOVFrame.m */; };
+		3C1310D1222214FE000C4972 /* AOVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310D0222214FE000C4972 /* AOVMTKView.m */; };
+		3C1310D2222214FF000C4972 /* AOVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310D0222214FE000C4972 /* AOVMTKView.m */; };
+		3C1310D3222214FF000C4972 /* AOVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310D0222214FE000C4972 /* AOVMTKView.m */; };
 		3C18D3D0221D432F005DAF85 /* CarSpinAF10.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C18D3CE221D432E005DAF85 /* CarSpinAF10.m4v */; };
 		3C18D3D1221D432F005DAF85 /* CarSpinAF10.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C18D3CE221D432E005DAF85 /* CarSpinAF10.m4v */; };
 		3C18D3D2221D432F005DAF85 /* CarSpinAF10.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C18D3CE221D432E005DAF85 /* CarSpinAF10.m4v */; };
@@ -85,9 +85,9 @@
 		3C4A77B721DD87DA0041ACE3 /* QuickTime_Test_Pattern_HD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */; };
 		3C4A77B821DD87DA0041ACE3 /* QuickTime_Test_Pattern_HD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */; };
 		3C4A77B921DD87DA0041ACE3 /* QuickTime_Test_Pattern_HD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */; };
-		3C7631A622495ABB00D92C5B /* GPUVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* GPUVDisplayLink.m */; };
-		3C7631A722495ABB00D92C5B /* GPUVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* GPUVDisplayLink.m */; };
-		3C7631A822495ABB00D92C5B /* GPUVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* GPUVDisplayLink.m */; };
+		3C7631A622495ABB00D92C5B /* AOVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* AOVDisplayLink.m */; };
+		3C7631A722495ABB00D92C5B /* AOVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* AOVDisplayLink.m */; };
+		3C7631A822495ABB00D92C5B /* AOVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* AOVDisplayLink.m */; };
 		3C76939422308A81000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
 		3C76939522308A84000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
 		3C76939622308A84000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
@@ -157,15 +157,15 @@
 		3CC9ECB3222C7A1000C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
 		3CC9ECB4222C7A1200C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
 		3CC9ECB5222C7A1300C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
-		3CE0B329222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */; };
-		3CE0B32A222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */; };
-		3CE0B32B222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */; };
-		3CE3B8B2223C2F54005B11C4 /* GPUVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B8B0223C2F53005B11C4 /* GPUVPlayerVideoOutput.m */; };
-		3CE3B8B3223C2F54005B11C4 /* GPUVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B8B0223C2F53005B11C4 /* GPUVPlayerVideoOutput.m */; };
-		3CE3B8B4223C2F54005B11C4 /* GPUVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B8B0223C2F53005B11C4 /* GPUVPlayerVideoOutput.m */; };
-		3CE62FD022233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
-		3CE62FD122233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
-		3CE62FD222233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */; };
+		3CE0B329222728C800E2BE82 /* AOVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* AOVFrameSourceAlphaVideo.m */; };
+		3CE0B32A222728C800E2BE82 /* AOVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* AOVFrameSourceAlphaVideo.m */; };
+		3CE0B32B222728C800E2BE82 /* AOVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* AOVFrameSourceAlphaVideo.m */; };
+		3CE3B8B2223C2F54005B11C4 /* AOVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B8B0223C2F53005B11C4 /* AOVPlayerVideoOutput.m */; };
+		3CE3B8B3223C2F54005B11C4 /* AOVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B8B0223C2F53005B11C4 /* AOVPlayerVideoOutput.m */; };
+		3CE3B8B4223C2F54005B11C4 /* AOVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B8B0223C2F53005B11C4 /* AOVPlayerVideoOutput.m */; };
+		3CE62FD022233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* AOVFrameSourceVideo.m */; };
+		3CE62FD122233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* AOVFrameSourceVideo.m */; };
+		3CE62FD222233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* AOVFrameSourceVideo.m */; };
 		3CF086C0221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
 		3CF086C1221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
 		3CF086C2221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
@@ -235,10 +235,10 @@
 		3C013D2A21E6F7C200C0807C /* MetalSRGBDecoderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetalSRGBDecoderTests.m; sourceTree = "<group>"; };
 		3C02732C220B715C005FB416 /* QuickTime_Test_Pattern_HD_grayscale.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = QuickTime_Test_Pattern_HD_grayscale.m4v; sourceTree = "<group>"; };
 		3C0C3F0F21FA642C00C498D3 /* AppleEncodeDecodeBT709Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppleEncodeDecodeBT709Tests.m; sourceTree = "<group>"; };
-		3C1310CA2220D492000C4972 /* GPUVFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrame.h; sourceTree = "<group>"; };
-		3C1310CB2220D493000C4972 /* GPUVFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVFrame.m; sourceTree = "<group>"; };
-		3C1310CF222214FE000C4972 /* GPUVMTKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVMTKView.h; sourceTree = "<group>"; };
-		3C1310D0222214FE000C4972 /* GPUVMTKView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVMTKView.m; sourceTree = "<group>"; };
+		3C1310CA2220D492000C4972 /* AOVFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AOVFrame.h; sourceTree = "<group>"; };
+		3C1310CB2220D493000C4972 /* AOVFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AOVFrame.m; sourceTree = "<group>"; };
+		3C1310CF222214FE000C4972 /* AOVMTKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AOVMTKView.h; sourceTree = "<group>"; };
+		3C1310D0222214FE000C4972 /* AOVMTKView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AOVMTKView.m; sourceTree = "<group>"; };
 		3C18D3CE221D432E005DAF85 /* CarSpinAF10.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CarSpinAF10.m4v; sourceTree = "<group>"; };
 		3C18D3CF221D432E005DAF85 /* CarSpinAF10_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CarSpinAF10_alpha.m4v; sourceTree = "<group>"; };
 		3C483FE82207A5A100AC51AC /* y4m_writer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = y4m_writer.h; sourceTree = "<group>"; };
@@ -272,8 +272,8 @@
 		3C4A77B021DD79DF0041ACE3 /* CoreImageMetalFilterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreImageMetalFilterTests.m; sourceTree = "<group>"; };
 		3C4A77B221DD87D50041ACE3 /* QuickTime_Test_Pattern_SD.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = QuickTime_Test_Pattern_SD.mov; sourceTree = "<group>"; };
 		3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = QuickTime_Test_Pattern_HD.mov; sourceTree = "<group>"; };
-		3C7631A422495ABA00D92C5B /* GPUVDisplayLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVDisplayLink.h; sourceTree = "<group>"; };
-		3C7631A522495ABA00D92C5B /* GPUVDisplayLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVDisplayLink.m; sourceTree = "<group>"; };
+		3C7631A422495ABA00D92C5B /* AOVDisplayLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AOVDisplayLink.h; sourceTree = "<group>"; };
+		3C7631A522495ABA00D92C5B /* AOVDisplayLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AOVDisplayLink.m; sourceTree = "<group>"; };
 		3C76939222308A7B000D03CE /* CountToTenA.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CountToTenA.m4v; sourceTree = "<group>"; };
 		3C76939322308A7F000D03CE /* CountToTenA_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CountToTenA_alpha.m4v; sourceTree = "<group>"; };
 		3C7E37C42218BC9D00116145 /* ColorsAlpha4by4.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = ColorsAlpha4by4.m4v; sourceTree = "<group>"; };
@@ -301,13 +301,13 @@
 		3CB6E81221D73BB3005424E6 /* CGFrameBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGFrameBuffer.h; sourceTree = "<group>"; };
 		3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CGFrameBuffer.m; sourceTree = "<group>"; };
 		3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CountToTen.m4v; sourceTree = "<group>"; };
-		3CE0B327222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSourceAlphaVideo.h; sourceTree = "<group>"; };
-		3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVFrameSourceAlphaVideo.m; sourceTree = "<group>"; };
-		3CE3B8B0223C2F53005B11C4 /* GPUVPlayerVideoOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVPlayerVideoOutput.m; sourceTree = "<group>"; };
-		3CE3B8B1223C2F54005B11C4 /* GPUVPlayerVideoOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVPlayerVideoOutput.h; sourceTree = "<group>"; };
-		3CE62FC922233B850003EA70 /* GPUVFrameSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSource.h; sourceTree = "<group>"; };
-		3CE62FCE22233DBA0003EA70 /* GPUVFrameSourceVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUVFrameSourceVideo.h; sourceTree = "<group>"; };
-		3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUVFrameSourceVideo.m; sourceTree = "<group>"; };
+		3CE0B327222728C700E2BE82 /* AOVFrameSourceAlphaVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AOVFrameSourceAlphaVideo.h; sourceTree = "<group>"; };
+		3CE0B328222728C700E2BE82 /* AOVFrameSourceAlphaVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AOVFrameSourceAlphaVideo.m; sourceTree = "<group>"; };
+		3CE3B8B0223C2F53005B11C4 /* AOVPlayerVideoOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AOVPlayerVideoOutput.m; sourceTree = "<group>"; };
+		3CE3B8B1223C2F54005B11C4 /* AOVPlayerVideoOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AOVPlayerVideoOutput.h; sourceTree = "<group>"; };
+		3CE62FC922233B850003EA70 /* AOVFrameSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AOVFrameSource.h; sourceTree = "<group>"; };
+		3CE62FCE22233DBA0003EA70 /* AOVFrameSourceVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AOVFrameSourceVideo.h; sourceTree = "<group>"; };
+		3CE62FCF22233DBB0003EA70 /* AOVFrameSourceVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AOVFrameSourceVideo.m; sourceTree = "<group>"; };
 		3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = GlobeLEDAlpha.m4v; sourceTree = "<group>"; };
 		3CF086BF221773C000FD7802 /* GlobeLEDAlpha_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = GlobeLEDAlpha_alpha.m4v; sourceTree = "<group>"; };
 		3CF086C622178F0500FD7802 /* RedCircleOverWhiteA.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = RedCircleOverWhiteA.m4v; sourceTree = "<group>"; };
@@ -439,19 +439,19 @@
 				3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */,
 				3C76939222308A7B000D03CE /* CountToTenA.m4v */,
 				3C76939322308A7F000D03CE /* CountToTenA_alpha.m4v */,
-				3C1310CA2220D492000C4972 /* GPUVFrame.h */,
-				3C1310CB2220D493000C4972 /* GPUVFrame.m */,
-				3CE62FC922233B850003EA70 /* GPUVFrameSource.h */,
-				3CE3B8B1223C2F54005B11C4 /* GPUVPlayerVideoOutput.h */,
-				3CE3B8B0223C2F53005B11C4 /* GPUVPlayerVideoOutput.m */,
-				3CE62FCE22233DBA0003EA70 /* GPUVFrameSourceVideo.h */,
-				3CE62FCF22233DBB0003EA70 /* GPUVFrameSourceVideo.m */,
-				3CE0B327222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.h */,
-				3CE0B328222728C700E2BE82 /* GPUVFrameSourceAlphaVideo.m */,
-				3C1310CF222214FE000C4972 /* GPUVMTKView.h */,
-				3C1310D0222214FE000C4972 /* GPUVMTKView.m */,
-				3C7631A422495ABA00D92C5B /* GPUVDisplayLink.h */,
-				3C7631A522495ABA00D92C5B /* GPUVDisplayLink.m */,
+				3C1310CA2220D492000C4972 /* AOVFrame.h */,
+				3C1310CB2220D493000C4972 /* AOVFrame.m */,
+				3CE62FC922233B850003EA70 /* AOVFrameSource.h */,
+				3CE3B8B1223C2F54005B11C4 /* AOVPlayerVideoOutput.h */,
+				3CE3B8B0223C2F53005B11C4 /* AOVPlayerVideoOutput.m */,
+				3CE62FCE22233DBA0003EA70 /* AOVFrameSourceVideo.h */,
+				3CE62FCF22233DBB0003EA70 /* AOVFrameSourceVideo.m */,
+				3CE0B327222728C700E2BE82 /* AOVFrameSourceAlphaVideo.h */,
+				3CE0B328222728C700E2BE82 /* AOVFrameSourceAlphaVideo.m */,
+				3C1310CF222214FE000C4972 /* AOVMTKView.h */,
+				3C1310D0222214FE000C4972 /* AOVMTKView.m */,
+				3C7631A422495ABA00D92C5B /* AOVDisplayLink.h */,
+				3C7631A522495ABA00D92C5B /* AOVDisplayLink.m */,
 				3C97793522161CF2003721FD /* MetalScaleRenderContext.h */,
 				3C97793622161CF3003721FD /* MetalScaleRenderContext.m */,
 				3CB6E80121D6C62A005424E6 /* MetalBT709Decoder.h */,
@@ -884,23 +884,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CA8B6C621E1682600D2B853 /* H264Encoder.m in Sources */,
-				3CE0B32A222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */,
+				3CE0B32A222728C800E2BE82 /* AOVFrameSourceAlphaVideo.m in Sources */,
 				3C7E37D22218D03000116145 /* AAPLViewController.m in Sources */,
 				3C4A773321D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				63B42F161ED2063300859D09 /* AAPLShaders.metal in Sources */,
 				3CB6E80321D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
-				3C7631A722495ABB00D92C5B /* GPUVDisplayLink.m in Sources */,
-				3CE62FD122233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */,
+				3C7631A722495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
+				3CE62FD122233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */,
 				3A30EDF91EB67EA800B4FC0B /* AAPLImage.m in Sources */,
 				3CB6E81521D73BB5005424E6 /* CGFrameBuffer.m in Sources */,
 				3AFD65721F71A8A10008A125 /* main.m in Sources */,
 				3CB6E80B21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
 				3AFD656C1F71A8980008A125 /* AAPLAppDelegate.m in Sources */,
-				3CE3B8B3223C2F54005B11C4 /* GPUVPlayerVideoOutput.m in Sources */,
-				3C1310CD2220D898000C4972 /* GPUVFrame.m in Sources */,
+				3CE3B8B3223C2F54005B11C4 /* AOVPlayerVideoOutput.m in Sources */,
+				3C1310CD2220D898000C4972 /* AOVFrame.m in Sources */,
 				3C97793822161CF4003721FD /* MetalScaleRenderContext.m in Sources */,
 				3C4A770421D8498E0041ACE3 /* MetalRenderContext.m in Sources */,
-				3C1310D2222214FF000C4972 /* GPUVMTKView.m in Sources */,
+				3C1310D2222214FF000C4972 /* AOVMTKView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -911,20 +911,20 @@
 				3C4A770521D8498E0041ACE3 /* MetalRenderContext.m in Sources */,
 				3CB6E81621D73BB5005424E6 /* CGFrameBuffer.m in Sources */,
 				3CA8B6C721E1682600D2B853 /* H264Encoder.m in Sources */,
-				3C1310D3222214FF000C4972 /* GPUVMTKView.m in Sources */,
+				3C1310D3222214FF000C4972 /* AOVMTKView.m in Sources */,
 				3C97793922161CF4003721FD /* MetalScaleRenderContext.m in Sources */,
-				3C1310CE2220D899000C4972 /* GPUVFrame.m in Sources */,
+				3C1310CE2220D899000C4972 /* AOVFrame.m in Sources */,
 				3C7E37D12218D02F00116145 /* AAPLViewController.m in Sources */,
 				63B42F171ED2063800859D09 /* AAPLShaders.metal in Sources */,
-				3CE0B32B222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */,
-				3CE3B8B4223C2F54005B11C4 /* GPUVPlayerVideoOutput.m in Sources */,
+				3CE0B32B222728C800E2BE82 /* AOVFrameSourceAlphaVideo.m in Sources */,
+				3CE3B8B4223C2F54005B11C4 /* AOVPlayerVideoOutput.m in Sources */,
 				3AFD656D1F71A8980008A125 /* AAPLAppDelegate.m in Sources */,
 				3C4A773421D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3AFD65731F71A8A10008A125 /* main.m in Sources */,
 				3A30EDFF1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
-				3C7631A822495ABB00D92C5B /* GPUVDisplayLink.m in Sources */,
+				3C7631A822495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
 				3CB6E80C21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
-				3CE62FD222233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */,
+				3CE62FD222233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -935,20 +935,20 @@
 				3C4A770321D8498E0041ACE3 /* MetalRenderContext.m in Sources */,
 				3AFD65711F71A8A00008A125 /* main.m in Sources */,
 				3CB6E81421D73BB5005424E6 /* CGFrameBuffer.m in Sources */,
-				3C1310D1222214FE000C4972 /* GPUVMTKView.m in Sources */,
+				3C1310D1222214FE000C4972 /* AOVMTKView.m in Sources */,
 				3CA8B6C521E1682600D2B853 /* H264Encoder.m in Sources */,
-				3C1310CC2220D493000C4972 /* GPUVFrame.m in Sources */,
+				3C1310CC2220D493000C4972 /* AOVFrame.m in Sources */,
 				3C7E37D32218D03000116145 /* AAPLViewController.m in Sources */,
 				3C97793722161CF3003721FD /* MetalScaleRenderContext.m in Sources */,
-				3CE0B329222728C800E2BE82 /* GPUVFrameSourceAlphaVideo.m in Sources */,
-				3CE3B8B2223C2F54005B11C4 /* GPUVPlayerVideoOutput.m in Sources */,
+				3CE0B329222728C800E2BE82 /* AOVFrameSourceAlphaVideo.m in Sources */,
+				3CE3B8B2223C2F54005B11C4 /* AOVPlayerVideoOutput.m in Sources */,
 				63B42F181ED2063C00859D09 /* AAPLShaders.metal in Sources */,
 				3CB6E80221D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
 				3C4A773221D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3A30EDFE1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
-				3C7631A622495ABB00D92C5B /* GPUVDisplayLink.m in Sources */,
+				3C7631A622495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
 				3CB6E80A21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
-				3CE62FD022233DBB0003EA70 /* GPUVFrameSourceVideo.m in Sources */,
+				3CE62FD022233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

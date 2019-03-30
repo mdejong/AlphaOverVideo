@@ -1,17 +1,17 @@
 //
-//  GPUVPlayerVideoOutput.h
+//  AOVPlayerVideoOutput.h
 //
 //  Created by Mo DeJong on 2/22/19.
 //
 //  See license.txt for license terms.
 //
-//  GPUVFrameSourceVideo class implements the GPUVFrameSource
+//  AOVFrameSourceVideo class implements the AOVFrameSource
 //  protocol and provides an implementation that loads
 //  frames from a video source via an AVPlayer instance.
 
-#import "GPUVFrame.h"
+#import "AOVFrame.h"
 
-@interface GPUVPlayerVideoOutput : NSObject <AVPlayerItemOutputPullDelegate>
+@interface AOVPlayerVideoOutput : NSObject <AVPlayerItemOutputPullDelegate>
 
 @property (nonatomic, copy) NSString *uid;
 

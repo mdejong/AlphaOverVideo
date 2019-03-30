@@ -1,22 +1,22 @@
 //
-//  GPUVFrame.m
+//  AOVFrame.m
 //
 //  Created by Mo DeJong on 2/22/19.
 //
 //  See license.txt for license terms.
 //
 
-#import "GPUVFrame.h"
+#import "AOVFrame.h"
 
 #import <QuartzCore/QuartzCore.h>
 
 // Private API
 
-@interface GPUVFrame ()
+@interface AOVFrame ()
 
 @end
 
-@implementation GPUVFrame
+@implementation AOVFrame
 
 @synthesize yCbCrPixelBuffer = m_yCbCrPixelBuffer;
 @synthesize alphaPixelBuffer = m_alphaPixelBuffer;
@@ -68,7 +68,7 @@
     alphaRetainCount = (int)CFGetRetainCount(self.alphaPixelBuffer);
   }
 
-  return [NSString stringWithFormat:@"GPUVFrame %p %dx%d self.yCbCrPixelBuffer %p (%d) self.alphaPixelBuffer %p (%d) F=%05d",
+  return [NSString stringWithFormat:@"AOVFrame %p %dx%d self.yCbCrPixelBuffer %p (%d) self.alphaPixelBuffer %p (%d) F=%05d",
           self,
           width,
           height,

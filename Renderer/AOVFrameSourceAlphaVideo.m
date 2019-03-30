@@ -1,12 +1,12 @@
 //
-//  GPUVFrameSourceAlphaVideo.m
+//  AOVFrameSourceAlphaVideo.m
 //
 //  Created by Mo DeJong on 2/22/19.
 //
 //  See license.txt for license terms.
 //
 
-#import "GPUVFrameSourceAlphaVideo.h"
+#import "AOVFrameSourceAlphaVideo.h"
 
 @import Metal;
 
@@ -16,7 +16,7 @@ static int cachedFeatureSet = -1;
 
 // Private API
 
-@interface GPUVFrameSourceVideo ()
+@interface AOVFrameSourceVideo ()
 
 @property (nonatomic, retain) AVPlayer *player;
 @property (nonatomic, retain) AVPlayerItemVideoOutput *playerItemVideoOutput;
@@ -26,16 +26,16 @@ static int cachedFeatureSet = -1;
 
 // Private API
 
-@interface GPUVFrameSourceAlphaVideo ()
+@interface AOVFrameSourceAlphaVideo ()
 
-@property (nonatomic, retain) GPUVFrameSourceVideo *alphaSource;
-@property (nonatomic, retain) GPUVFrameSourceVideo *rgbSource;
+@property (nonatomic, retain) AOVFrameSourceVideo *alphaSource;
+@property (nonatomic, retain) AOVFrameSourceVideo *rgbSource;
 
 @property (nonatomic, assign) BOOL alphaSourceLoaded;
 @property (nonatomic, assign) BOOL rgbSourceLoaded;
 
-@property (nonatomic, retain) GPUVFrame *heldAlphaFrame;
-@property (nonatomic, retain) GPUVFrame *heldRGBFrame;
+@property (nonatomic, retain) AOVFrame *heldAlphaFrame;
+@property (nonatomic, retain) AOVFrame *heldRGBFrame;
 
 @property (nonatomic, assign) int isLooping;
 
@@ -45,7 +45,7 @@ static int cachedFeatureSet = -1;
 
 @end
 
-@implementation GPUVFrameSourceAlphaVideo
+@implementation AOVFrameSourceAlphaVideo
 
 - (void) dealloc
 {
@@ -59,17 +59,17 @@ static int cachedFeatureSet = -1;
   int width = self.width;
   int height = self.height;
   
-  return [NSString stringWithFormat:@"GPUVFrameSourceAlphaVideo %p %dx%d ",
+  return [NSString stringWithFormat:@"AOVFrameSourceAlphaVideo %p %dx%d ",
           self,
           width,
           height];
 }
 
-// Given a host time offset, return a GPUVFrame that corresponds
+// Given a host time offset, return a AOVFrame that corresponds
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
 
-- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
+- (AOVFrame*) frameForHostTime:(CFTimeInterval)hostTime
            hostPresentationTime:(CFTimeInterval)hostPresentationTime
             presentationTimePtr:(float*)presentationTimePtr
 {
@@ -103,8 +103,8 @@ static int cachedFeatureSet = -1;
 //  NSLog(@"rgb and alpha frameForHostTime %.3f", hostTime);
 //  }
   
-  GPUVFrameSourceVideo *rgbSource = self.rgbSource;
-  GPUVFrameSourceVideo *alphaSource = self.alphaSource;
+  AOVFrameSourceVideo *rgbSource = self.rgbSource;
+  AOVFrameSourceVideo *alphaSource = self.alphaSource;
 
   self.syncTime = hostPresentationTime;
   rgbSource.syncTime = hostPresentationTime;
@@ -129,8 +129,8 @@ static int cachedFeatureSet = -1;
     NSLog(@"rgb+a : host time %.3f -> item time %.3f", hostTime, CMTimeGetSeconds(itemTime));
   }
   
-  GPUVFrame *rgbFrame = nil;
-  GPUVFrame *alphaFrame = nil;
+  AOVFrame *rgbFrame = nil;
+  AOVFrame *alphaFrame = nil;
 
 #if defined(DEBUG)
   if (self.heldRGBFrame) {
@@ -330,8 +330,8 @@ static int cachedFeatureSet = -1;
 
 - (void) makeSources
 {
-  self.rgbSource = [[GPUVFrameSourceVideo alloc] init];
-  self.alphaSource = [[GPUVFrameSourceVideo alloc] init];
+  self.rgbSource = [[AOVFrameSourceVideo alloc] init];
+  self.alphaSource = [[AOVFrameSourceVideo alloc] init];
   
   self.rgbSource.uid = @"rgb";
   self.alphaSource.uid = @"alpha";

@@ -1,12 +1,12 @@
 //
-//  GPUVPlayerVideoOutput.m
+//  AOVPlayerVideoOutput.m
 //
 //  Created by Mo DeJong on 2/22/19.
 //
 //  See license.txt for license terms.
 //
 
-#import "GPUVPlayerVideoOutput.h"
+#import "AOVPlayerVideoOutput.h"
 
 #import "BGRAToBT709Converter.h"
 
@@ -14,13 +14,13 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 // Private API
 
-@interface GPUVPlayerVideoOutput ()
+@interface AOVPlayerVideoOutput ()
 
 @property (nonatomic, assign) BOOL addedObservers;
 
 @end
 
-@implementation GPUVPlayerVideoOutput
+@implementation AOVPlayerVideoOutput
 
 - (void) dealloc
 {
@@ -31,7 +31,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (NSString*) description
 {
-  return [NSString stringWithFormat:@"GPUVPlayerVideoOutput %p", self];
+  return [NSString stringWithFormat:@"AOVPlayerVideoOutput %p", self];
 }
 
 // Util method that creates AVPlayerItemVideoOutput instance
@@ -86,7 +86,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   NSAssert([NSThread isMainThread] == FALSE, @"!isMainThread");
 #endif // DEBUG
   
-  NSLog(@"outputMediaDataWillChange : GPUVPlayerVideoOutput %p", self);
+  NSLog(@"outputMediaDataWillChange : AOVPlayerVideoOutput %p", self);
   
   __weak typeof(self) weakSelf = self;
   
@@ -540,7 +540,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 - (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime
 {
   if ((0)) {
-    NSLog(@"GPUVPlayerVideoOutput:setRate : sync %.3f to item time %.3f", atHostTime, CMTimeGetSeconds(self.player.currentTime));
+    NSLog(@"AOVPlayerVideoOutput:setRate : sync %.3f to item time %.3f", atHostTime, CMTimeGetSeconds(self.player.currentTime));
   }
   
 #if defined(DEBUG)

@@ -1,5 +1,5 @@
 //
-//  GPUVDisplayLink.h
+//  AOVDisplayLink.h
 //
 //  Created by Mo DeJong on 2/22/19.
 //
@@ -11,9 +11,9 @@
 @import Foundation;
 @import AVFoundation;
 
-// GPUVDisplayLink provides
+// AOVDisplayLink provides
 
-@interface GPUVDisplayLink : NSObject
+@interface AOVDisplayLink : NSObject
 
 @property (nonatomic, assign) float FPS;
 @property (nonatomic, assign) float frameDuration;

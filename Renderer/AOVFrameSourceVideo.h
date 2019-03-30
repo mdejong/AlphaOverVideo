@@ -1,11 +1,11 @@
 //
-//  GPUVFrameSourceVideo.h
+//  AOVFrameSourceVideo.h
 //
 //  Created by Mo DeJong on 2/22/19.
 //
 //  See license.txt for license terms.
 //
-//  GPUVFrameSourceVideo class implements the GPUVFrameSource
+//  AOVFrameSourceVideo class implements the AOVFrameSource
 //  protocol and provides an implementation that loads
 //  frames from a video source via an AVPlayer instance.
 
@@ -16,9 +16,9 @@
 @import CoreMedia;
 @import VideoToolbox;
 
-#import "GPUVFrameSource.h"
+#import "AOVFrameSource.h"
 
-@interface GPUVFrameSourceVideo : NSObject <GPUVFrameSource>
+@interface AOVFrameSourceVideo : NSObject <AOVFrameSource>
 
 @property (nonatomic, copy) NSString *uid;
 
@@ -133,7 +133,7 @@
 // to manually convert host time to item time and then item
 // time can be used to lookup the specific frame.
 
-// Given a host time offset, return a GPUVFrame that corresponds
+// Given a host time offset, return a AOVFrame that corresponds
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
 // The hostPresentationTime indicates the host time when the
@@ -142,7 +142,7 @@
 // DTS (display time stamp) of the decoded frame in the H.264 stream.
 // Note that presentationTimePtr can be NULL.
 
-- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
+- (AOVFrame*) frameForHostTime:(CFTimeInterval)hostTime
            hostPresentationTime:(CFTimeInterval)hostPresentationTime
             presentationTimePtr:(float*)presentationTimePtr;
 
@@ -157,7 +157,7 @@
 // (0.0, (N * frameDuration))
 // Note that hostTime is used only for debug output here
 
-- (GPUVFrame*) frameForItemTime:(CMTime)itemTime
+- (AOVFrame*) frameForItemTime:(CMTime)itemTime
                        hostTime:(CFTimeInterval)hostTime
            hostPresentationTime:(CFTimeInterval)hostPresentationTime
             presentationTimePtr:(float*)presentationTimePtr;

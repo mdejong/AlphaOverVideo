@@ -1,5 +1,5 @@
 //
-//  GPUVFrameSource.h
+//  AOVFrameSource.h
 //
 //  Created by Mo DeJong on 2/22/19.
 //
@@ -7,18 +7,18 @@
 //
 //  This frame source protocol defines a generic interface
 //  that can be implemented by any class in order to generate
-//  GPUVFrame objects that can be consumed by a GPUVMTKView.
+//  AOVFrame objects that can be consumed by a AOVMTKView.
 
 @import Foundation;
 @import AVFoundation;
 
-#import "GPUVFrame.h"
+#import "AOVFrame.h"
 
-// GPUVFrameSource protocol
+// AOVFrameSource protocol
 
-@protocol GPUVFrameSource
+@protocol AOVFrameSource
 
-// Given a host time offset, return a GPUVFrame that corresponds
+// Given a host time offset, return a AOVVFrame that corresponds
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
 // The hostPresentationTime indicates the host time when the
@@ -27,7 +27,7 @@
 // DTS (display time stamp) of the decoded frame in the H.264 stream.
 // Note that presentationTimePtr can be NULL.
 
-- (GPUVFrame*) frameForHostTime:(CFTimeInterval)hostTime
+- (AOVFrame*) frameForHostTime:(CFTimeInterval)hostTime
            hostPresentationTime:(CFTimeInterval)hostPresentationTime
             presentationTimePtr:(float*)presentationTimePtr;
 

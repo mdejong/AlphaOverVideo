@@ -689,7 +689,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="e1q-bB-iiY"/>
                             </imageView>
-                            <view wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tyZ-Pt-a5P" userLabel="mtkView" customClass="GPUVMTKView">
+                            <view wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tyZ-Pt-a5P" userLabel="mtkView" customClass="AOVMTKView">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                 <subviews>
                                     <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gEj-YK-ifh">
