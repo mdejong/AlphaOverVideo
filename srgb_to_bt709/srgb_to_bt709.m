@@ -74,6 +74,7 @@ BOOL writeTableToCSV(NSString *filename, NSArray* labelsArr, NSArray* valuesArr)
 void usage() {
   printf("srgb_to_bt709 ?OPTIONS? OUTPUT.y4m\n");
   printf("OPTIONS:\n");
+  printf("-alpha 0|1 (set to 1 to write as srgb alpha channel)\n");
   printf("-frame F.png (input is a single frame)\n");
   printf("-frames F0001.png (first frame of N input frames)\n");
   printf("-gamma apple|srgb|linear (default is apple)\n");
@@ -777,7 +778,7 @@ CVPixelBufferRef loadFrameIntoCVPixelBuffer(
     // Dump
     
 #if defined(DEBUG)
-    if ((1)) {
+    if ((0)) {
       // Emit png with sRGB colorspace
       
       NSString *filename = [NSString stringWithFormat:@"Premultiplied.png"];
@@ -894,7 +895,7 @@ CVPixelBufferRef loadFrameIntoCVPixelBuffer(
 #if defined(DEBUG)
     // Dump linear output as PNG
     
-    if ((1)) {
+    if ((0)) {
       NSString *filename = [NSString stringWithFormat:@"Premultiplied_alpha_as_linear.png"];
       //NSString *tmpDir = NSTemporaryDirectory();
       NSString *dirName = [[NSFileManager defaultManager] currentDirectoryPath];
