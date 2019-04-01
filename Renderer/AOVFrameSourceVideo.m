@@ -698,6 +698,7 @@
   // FIXME: Should this method just return if stopped or isReadyToPlay is FALSE for some reason?
   
 #if defined(DEBUG)
+  NSAssert(pvo.isAssetAsyncLoaded == TRUE, @"asset must have been loaded");
   NSAssert(pvo.isReadyToPlay == TRUE, @"preloaded secondary player must be ready to play");
 #endif // DEBUG
   

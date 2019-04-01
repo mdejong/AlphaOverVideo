@@ -43,7 +43,7 @@ Implementation of our cross-platform view controller
       }
     }
 
-    BOOL alphaImageBackground = TRUE;
+    BOOL alphaImageBackground = FALSE;
     // If alphaImageBackground is FALSE, background can be black or white
     BOOL blackBackground = TRUE;
 
@@ -77,6 +77,7 @@ Implementation of our cross-platform view controller
         } else if (blackBackground) {
             color = [NSColor blackColor];
         }
+        [imageView setWantsLayer:YES];
         imageView.layer.backgroundColor = color.CGColor;
     }
 #endif // TARGET_OS_IOS

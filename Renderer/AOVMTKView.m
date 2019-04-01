@@ -370,8 +370,9 @@ void validate_storage_mode(id<MTLTexture> texture)
     
 #if defined(LOAD_ALPHA_VIDEO)
     // RGB + A channels as 2 streams
-    [weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
-    //[weakFrameSourceVideo loadFromAssets:@"CountToTenA.m4v" alphaResFilename:@"CountToTenA_alpha.m4v"];    
+    //[weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
+    //[weakFrameSourceVideo loadFromAssets:@"CountToTenA.m4v" alphaResFilename:@"CountToTenA_alpha.m4v"];
+    [weakFrameSourceVideo loadFromAssets:@"Field.m4v" alphaResFilename:@"Field_alpha.m4v"];
 #else
     [weakFrameSourceVideo loadFromAsset:@"CarSpin.m4v"];
     //[weakFrameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
@@ -478,7 +479,9 @@ void validate_storage_mode(id<MTLTexture> texture)
 #if defined(DEBUG)
   {
     CAMetalLayer *metalLayer = (CAMetalLayer *) self.layer;
-    assert(metalLayer.framebufferOnly == TRUE);
+    if (isCaptureRenderedTextureEnabled == 0) {
+      assert(metalLayer.framebufferOnly == TRUE);
+    }
   }
 #endif // DEBUG
   
