@@ -18,6 +18,16 @@
 
 @protocol AOVFrameSource
 
+@property (nonatomic, copy, nullable) void (^loadedBlock)(BOOL success);
+
+@property (nonatomic, readonly) int loopCount;
+
+@property (nonatomic, assign) float FPS;
+@property (nonatomic, assign) float frameDuration;
+
+@property (nonatomic, assign) int width;
+@property (nonatomic, assign) int height;
+
 // Given a host time offset, return a AOVVFrame that corresponds
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.
@@ -40,7 +50,24 @@
 
 - (NSString*) description;
 
+// Initiate playback by preloading for a specific rate (typically 1.0)
+// and invoke block callback.
+
+- (void) playWithPreroll:(float)rate block:(void (^)(void))block;
+
+// Sync start will seek to the given time and then invoke
+// a sync sync method to play at the given rate after
+// aligning the given host time to the indicated time.
+
+- (void) syncStart:(float)rate
+          itemTime:(CFTimeInterval)itemTime
+        atHostTime:(CFTimeInterval)atHostTime;
+
 // FIXME: provide a way to set preventsDisplaySleepDuringVideoPlayback
 // property on player objects unsed to implement playback.
+
+// Stop playback by setting player rate to 0.0
+
+- (void) stop;
 
 @end

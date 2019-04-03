@@ -85,6 +85,9 @@
 		3C4A77B721DD87DA0041ACE3 /* QuickTime_Test_Pattern_HD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */; };
 		3C4A77B821DD87DA0041ACE3 /* QuickTime_Test_Pattern_HD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */; };
 		3C4A77B921DD87DA0041ACE3 /* QuickTime_Test_Pattern_HD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */; };
+		3C51D8922253FA2C001B0BFF /* AOVPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C51D8912253FA2B001B0BFF /* AOVPlayer.m */; };
+		3C51D8932253FA2C001B0BFF /* AOVPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C51D8912253FA2B001B0BFF /* AOVPlayer.m */; };
+		3C51D8942253FA2C001B0BFF /* AOVPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C51D8912253FA2B001B0BFF /* AOVPlayer.m */; };
 		3C5A49AB22528A6200D559B4 /* Field.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C5A49A922528A6100D559B4 /* Field.m4v */; };
 		3C5A49AC22528A6200D559B4 /* Field.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C5A49A922528A6100D559B4 /* Field.m4v */; };
 		3C5A49AD22528A6200D559B4 /* Field.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C5A49A922528A6100D559B4 /* Field.m4v */; };
@@ -278,6 +281,8 @@
 		3C4A77B021DD79DF0041ACE3 /* CoreImageMetalFilterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreImageMetalFilterTests.m; sourceTree = "<group>"; };
 		3C4A77B221DD87D50041ACE3 /* QuickTime_Test_Pattern_SD.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = QuickTime_Test_Pattern_SD.mov; sourceTree = "<group>"; };
 		3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = QuickTime_Test_Pattern_HD.mov; sourceTree = "<group>"; };
+		3C51D8902253FA2B001B0BFF /* AOVPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AOVPlayer.h; sourceTree = "<group>"; };
+		3C51D8912253FA2B001B0BFF /* AOVPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AOVPlayer.m; sourceTree = "<group>"; };
 		3C5A49A922528A6100D559B4 /* Field.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = Field.m4v; sourceTree = "<group>"; };
 		3C5A49AA22528A6100D559B4 /* Field_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = Field_alpha.m4v; sourceTree = "<group>"; };
 		3C7631A422495ABA00D92C5B /* AOVDisplayLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AOVDisplayLink.h; sourceTree = "<group>"; };
@@ -458,6 +463,8 @@
 				3CE62FCF22233DBB0003EA70 /* AOVFrameSourceVideo.m */,
 				3CE0B327222728C700E2BE82 /* AOVFrameSourceAlphaVideo.h */,
 				3CE0B328222728C700E2BE82 /* AOVFrameSourceAlphaVideo.m */,
+				3C51D8902253FA2B001B0BFF /* AOVPlayer.h */,
+				3C51D8912253FA2B001B0BFF /* AOVPlayer.m */,
 				3C1310CF222214FE000C4972 /* AOVMTKView.h */,
 				3C1310D0222214FE000C4972 /* AOVMTKView.m */,
 				3C7631A422495ABA00D92C5B /* AOVDisplayLink.h */,
@@ -917,6 +924,7 @@
 				3C97793822161CF4003721FD /* MetalScaleRenderContext.m in Sources */,
 				3C4A770421D8498E0041ACE3 /* MetalRenderContext.m in Sources */,
 				3C1310D2222214FF000C4972 /* AOVMTKView.m in Sources */,
+				3C51D8932253FA2C001B0BFF /* AOVPlayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -937,6 +945,7 @@
 				3AFD656D1F71A8980008A125 /* AAPLAppDelegate.m in Sources */,
 				3C4A773421D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3AFD65731F71A8A10008A125 /* main.m in Sources */,
+				3C51D8942253FA2C001B0BFF /* AOVPlayer.m in Sources */,
 				3A30EDFF1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
 				3C7631A822495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
 				3CB6E80C21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
@@ -961,6 +970,7 @@
 				63B42F181ED2063C00859D09 /* AAPLShaders.metal in Sources */,
 				3CB6E80221D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
 				3C4A773221D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
+				3C51D8922253FA2C001B0BFF /* AOVPlayer.m in Sources */,
 				3A30EDFE1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
 				3C7631A622495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
 				3CB6E80A21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,

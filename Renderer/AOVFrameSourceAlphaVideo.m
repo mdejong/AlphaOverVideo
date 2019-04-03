@@ -374,6 +374,10 @@ static int cachedFeatureSet = -1;
     worked = [self.alphaSource loadFromURL:alphaURL];
   }
   
+  // redefine finished callbacks
+  
+  [self setBothLoadCallbacks];
+  
   return worked;
 }
 

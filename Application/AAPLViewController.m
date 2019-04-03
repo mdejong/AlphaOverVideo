@@ -11,6 +11,18 @@ Implementation of our cross-platform view controller
 
 #import "AOVMTKView.h"
 
+#import "AOVPlayer.h"
+
+#define LOAD_ALPHA_VIDEO
+
+// Private API
+
+@interface AAPLViewController ()
+
+@property (nonatomic, retain) AOVPlayer *player;
+
+@end
+
 @implementation AAPLViewController
 {
 #if TARGET_OS_IOS
@@ -91,10 +103,31 @@ Implementation of our cross-platform view controller
     }
 
     // Configure Metal view and playback logic
-    BOOL worked = [mtkView configure];
+
+#if defined(LOAD_ALPHA_VIDEO)
+  NSArray *clips = @[
+                     //@[ [AOVPlayer urlFromAsset:@"CarSpin.m4v"], [AOVPlayer urlFromAsset:@"CarSpin_alpha.m4v"] ]
+                     //@[ [AOVPlayer urlFromAsset:@"CountToTenA.m4v"], [AOVPlayer urlFromAsset:@"CountToTenA_alpha.m4v"] ]
+                     @[ [AOVPlayer urlFromAsset:@"Field.m4v"], [AOVPlayer urlFromAsset:@"Field_alpha.m4v"] ]
+                     ];
+#else
+  NSArray *clips = @[
+                     //[AOVPlayer urlFromAsset:@"CarSpin.m4v"]
+                     [AOVPlayer urlFromAsset:@"CountToTen.m4v"]
+                     ];
+#endif // LOAD_ALPHA_VIDEO
+
+    AOVPlayer *player = [AOVPlayer playerWithLoopedClips:clips];
+  
+    // Hold ref to AOVPlayer, note that a ref is never held by the AOVMTKView
+    self.player = player;
+  
+    // Attach player to view, note that this is the expensive API call since
+    // it will allocate textures and Metal state that depends on the player.
+    BOOL worked = [mtkView attachPlayer:player];
     if(!worked)
     {
-      NSLog(@"configure failed for AOVMTKView");
+      NSLog(@"attachPlayer failed for AOVMTKView");
       return;
     }
   

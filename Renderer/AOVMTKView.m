@@ -21,14 +21,6 @@
 #import "CVPixelBufferUtils.h"
 #import "AOVDisplayLink.h"
 
-#define LOAD_ALPHA_VIDEO
-
-#if defined(LOAD_ALPHA_VIDEO)
-#import "AOVFrameSourceAlphaVideo.h"
-#else
-#import "AOVFrameSourceVideo.h"
-#endif // LOAD_ALPHA_VIDEO
-
 // Define this symbol to enable private texture mode on MacOSX.
 
 //#define STORAGE_MODE_PRIVATE
@@ -80,6 +72,19 @@ void validate_storage_mode(id<MTLTexture> texture)
 @property (nonatomic, assign) CFTimeInterval presentationTime;
 
 @property (nonatomic, retain) AOVDisplayLink *displayLink;
+
+// Weak ref
+
+@property (nonatomic, assign) AOVPlayer *player;
+
+// Previous frame, ref to the previous frame is dropped as
+// soon as the next frame is delivered.
+
+@property (nonatomic, retain) AOVFrame *prevFrame;
+
+// Frame currently being displayed
+
+@property (nonatomic, retain) AOVFrame *currentFrame;
 
 @end
 
@@ -141,11 +146,6 @@ void validate_storage_mode(id<MTLTexture> texture)
           self,
           width,
           height];
-}
-
-- (BOOL) configure
-{
-  return [self configureMetalKitView];
 }
 
 // Invoked when viewport dimensions change
@@ -231,11 +231,16 @@ void validate_storage_mode(id<MTLTexture> texture)
   }
 #endif // TARGET_OS_IOS
 }
+ 
+// Attach a player to connect the output of the player to the input of the view.
+// Note that attaching a player is an expensive operation because it can
+// result in internal buffers being allocated.
 
-/// Initialize with the MetalKit view from which we'll obtain our Metal device
-- (BOOL) configureMetalKitView
+- (BOOL) attachPlayer:(AOVPlayer*)player
 {
   AOVMTKView *mtkView = self;
+
+  mtkView.player = player;
   
   [self checkSRGBPixelSupport];
   
@@ -254,7 +259,7 @@ void validate_storage_mode(id<MTLTexture> texture)
       // optimization means the GPU will not
       // have to write rescaled pixels back
       // to main memory.
-
+      
       mtkView.framebufferOnly = TRUE;
     }
     
@@ -271,23 +276,9 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     [self setupBT709Decoder:mtkView];
     
-    // Decode H.264 to CoreVideo pixel buffer
+    BOOL hasAlphaChannel = player.hasAlphaChannel;
     
-#if defined(LOAD_ALPHA_VIDEO)
-    if (self.frameSource == nil) {
-      self.frameSource = [[AOVFrameSourceAlphaVideo alloc] init];
-    }
-#else
-    if (self.frameSource == nil) {
-      self.frameSource = [[AOVFrameSourceVideo alloc] init];
-    }
-#endif // LOAD_ALPHA_VIDEO
-    
-#if defined(LOAD_ALPHA_VIDEO)
-    __weak AOVFrameSourceAlphaVideo *weakFrameSourceVideo = (AOVFrameSourceAlphaVideo *) self.frameSource;
-#else
-    __weak AOVFrameSourceVideo *weakFrameSourceVideo = (AOVFrameSourceVideo *) self.frameSource;
-#endif // LOAD_ALPHA_VIDEO
+    __weak id<AOVFrameSource> weakFrameSourceVideo = player.frameSource;
     
     // Note that framerate and dimensions must be loaded from video metadata before
     // display link and internal resize texture can be allocated.
@@ -309,7 +300,7 @@ void validate_storage_mode(id<MTLTexture> texture)
       
       float FPS = weakFrameSourceVideo.FPS;
       float frameDuration = weakFrameSourceVideo.frameDuration;
-
+      
       weakSelf.FPS = FPS;
       weakSelf.frameDuration = frameDuration;
       
@@ -321,7 +312,7 @@ void validate_storage_mode(id<MTLTexture> texture)
         [weakSelf.displayLink makeDisplayLink];
         [weakSelf.displayLink startDisplayLink];
       }
-
+      
       const float rate = 1.0f;
       
       [weakFrameSourceVideo playWithPreroll:rate block:^{
@@ -338,7 +329,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     // preroll async callback has been invoked.
     
     self.displayLink = [[AOVDisplayLink alloc] init];
-
+    
     self.displayLink.loadedBlock = ^(CFTimeInterval hostTime){
       NSLog(@"AOVDisplayLink loadedBlock");
       
@@ -346,20 +337,14 @@ void validate_storage_mode(id<MTLTexture> texture)
       // playback is ready to begin. This loaded block should
       // kick off playback, it will only be invoked once.
       
-#if defined(LOAD_ALPHA_VIDEO)
-      AOVFrameSourceAlphaVideo *frameSourceVideo = (AOVFrameSourceAlphaVideo *) weakSelf.frameSource;
-#else
-      AOVFrameSourceVideo *frameSourceVideo = (AOVFrameSourceVideo *) weakSelf.frameSource;
-#endif // LOAD_ALPHA_VIDEO
-      
       // FIXME: playback rate?
       
       const float rate = 1.0;
       const float frameDuration = weakSelf.frameDuration;
       
-      [frameSourceVideo syncStart:rate itemTime:frameDuration atHostTime:hostTime];
+      [weakFrameSourceVideo syncStart:rate itemTime:frameDuration atHostTime:hostTime];
     };
-
+    
     // Invocation block for each display timer tick
     
     self.displayLink.invocationBlock = ^(CFTimeInterval hostTime, CFTimeInterval displayTime){
@@ -368,42 +353,23 @@ void validate_storage_mode(id<MTLTexture> texture)
       [weakSelf displayLinkCallback:hostTime displayTime:displayTime];
     };
     
-#if defined(LOAD_ALPHA_VIDEO)
-    // RGB + A channels as 2 streams
-    //[weakFrameSourceVideo loadFromAssets:@"CarSpin.m4v" alphaResFilename:@"CarSpin_alpha.m4v"];
-    //[weakFrameSourceVideo loadFromAssets:@"CountToTenA.m4v" alphaResFilename:@"CountToTenA_alpha.m4v"];
-    [weakFrameSourceVideo loadFromAssets:@"Field.m4v" alphaResFilename:@"Field_alpha.m4v"];
-#else
-    [weakFrameSourceVideo loadFromAsset:@"CarSpin.m4v"];
-    //[weakFrameSourceVideo loadFromAsset:@"BigBuckBunny640x360.m4v"];
-    //[weakFrameSourceVideo loadFromAsset:@"CountToTen.m4v"];
-    
-    weakFrameSourceVideo.playedToEndBlock = nil;
-    weakFrameSourceVideo.finalFrameBlock = nil;
-    
-    weakFrameSourceVideo.uid = @"rgb";
-    
-    weakFrameSourceVideo.finalFrameBlock = ^{
-      //NSLog(@"AOVFrameSourceVideo.finalFrameBlock %.3f", CACurrentMediaTime());
-      [weakFrameSourceVideo restart];
-    };
-#endif // LOAD_ALPHA_VIDEO
-    
     //self.metalBT709Decoder.useComputeRenderer = TRUE;
     
-    // Process 32BPP input, a CoreVideo pixel buffer is modified so that
-    // an additional channel for Y is retained.
-#if defined(LOAD_ALPHA_VIDEO)
-    self.metalBT709Decoder.hasAlphaChannel = TRUE;
-#else
-    self.metalBT709Decoder.hasAlphaChannel = FALSE;
-#endif // LOAD_ALPHA_VIDEO
+    // Process 32BPP input via an additional Y buffer to represent Alpha.
+    
+    self.metalBT709Decoder.hasAlphaChannel = hasAlphaChannel;
     
     [self setupViewOpaqueProperty:mtkView];
     
+    // FIXME: Need to define gamma for input video, default to SRGB
+    // but it has to be possible to indicate BT.709
+    
     MetalBT709Gamma decodeGamma = MetalBT709GammaApple;
     
-    if ((1)) {
+    // FIXME: Need to detect MetalBT709GammaSRGB vs MetalBT709GammaApple
+    // when not playing alpha video.
+    
+    if (hasAlphaChannel) {
       // Explicitly set gamma to sRGB
       decodeGamma = MetalBT709GammaSRGB;
     } else if ((0)) {
@@ -416,8 +382,10 @@ void validate_storage_mode(id<MTLTexture> texture)
     // configure pipelines.
     
     BOOL worked = [self.metalBT709Decoder setupMetal];
+#if defined(DEBUG)
     worked = worked;
     NSAssert(worked, @"worked");
+#endif // DEBUG
     
     // Scale render is used to blit and rescale from the 709
     // BGRA pixels into the MTKView. Note that in the special
@@ -430,6 +398,21 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     self.metalScaleRenderContext = metalScaleRenderContext;
   }
+  
+  return TRUE;
+}
+
+// Detaching a player disconnects the player output so that it is
+// no longer displayed in the view.
+
+- (BOOL) detachPlayer:(AOVPlayer*)player
+{
+  // The player must be attached
+  NSAssert(self.player == player, @"detachPlayer invoked for player object that is not connected");
+  
+  [self.displayLink cancelDisplayLink];
+  self.displayLink = nil;
+  self.player = nil;
   
   return TRUE;
 }
@@ -913,7 +896,7 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   // Pull frame for time from video source
   
-  id<AOVFrameSource> frameSource = self.frameSource;
+  id<AOVFrameSource> frameSource = self.player.frameSource;
   AOVFrame *nextFrame = [frameSource frameForHostTime:hostTime hostPresentationTime:displayTime presentationTimePtr:NULL];
   
   if (nextFrame == nil) {
@@ -932,20 +915,14 @@ void validate_storage_mode(id<MTLTexture> texture)
   }
   
   if ((0)) {
-#if defined(LOAD_ALPHA_VIDEO)
-    AOVFrameSourceAlphaVideo *frameSourceVideo = (AOVFrameSourceAlphaVideo *) self.frameSource;
-#else
-    AOVFrameSourceVideo *frameSourceVideo = (AOVFrameSourceVideo *) self.frameSource;
-#endif // LOAD_ALPHA_VIDEO
-    
-    if (frameSourceVideo.loopCount > 5 && self.frameSource) {
+    if (frameSource.loopCount > 5 && frameSource) {
       [self.displayLink cancelDisplayLink];
       
-      [frameSourceVideo stop];
+      [frameSource stop];
       
       self.displayLink = nil;
-      self.frameSource = nil;
-      frameSourceVideo = nil;
+      self.player = nil;
+      frameSource = nil;
       
       [self removeFromSuperview];
     }
