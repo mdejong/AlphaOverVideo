@@ -283,6 +283,7 @@
 		3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = QuickTime_Test_Pattern_HD.mov; sourceTree = "<group>"; };
 		3C51D8902253FA2B001B0BFF /* AOVPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AOVPlayer.h; sourceTree = "<group>"; };
 		3C51D8912253FA2B001B0BFF /* AOVPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AOVPlayer.m; sourceTree = "<group>"; };
+		3C51D895225491A8001B0BFF /* MetalBT709Gamma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalBT709Gamma.h; sourceTree = "<group>"; };
 		3C5A49A922528A6100D559B4 /* Field.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = Field.m4v; sourceTree = "<group>"; };
 		3C5A49AA22528A6100D559B4 /* Field_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = Field_alpha.m4v; sourceTree = "<group>"; };
 		3C7631A422495ABA00D92C5B /* AOVDisplayLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AOVDisplayLink.h; sourceTree = "<group>"; };
@@ -471,6 +472,7 @@
 				3C7631A522495ABA00D92C5B /* AOVDisplayLink.m */,
 				3C97793522161CF2003721FD /* MetalScaleRenderContext.h */,
 				3C97793622161CF3003721FD /* MetalScaleRenderContext.m */,
+				3C51D895225491A8001B0BFF /* MetalBT709Gamma.h */,
 				3CB6E80121D6C62A005424E6 /* MetalBT709Decoder.h */,
 				3CB6E80021D6C62A005424E6 /* MetalBT709Decoder.m */,
 				3C4A770221D8498E0041ACE3 /* MetalRenderContext.h */,

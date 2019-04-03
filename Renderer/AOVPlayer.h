@@ -17,18 +17,30 @@
 @import VideoToolbox;
 
 #import "AOVFrameSource.h"
+#import "MetalBT709Gamma.h"
 
 // AOVFrame class
 
 @interface AOVPlayer : NSObject
 
-@property (nonatomic, assign) BOOL hasAlphaChannel;
+// This property is set automatically by the type
+// of asset clips passed into the player.
+
+@property (nonatomic, readonly) BOOL hasAlphaChannel;
 
 // Protocol that defines how AOVFrame objects are loaded,
 // the implementation is invoked from a display linked timer
 // to load the next frame of video data to be displayed.
 
 @property (nonatomic, retain) id<AOVFrameSource> frameSource;
+
+// The gamma setting to use when decoding the gamma curve used
+// by the YCbCr encoding in the H.264 file. This property defaults
+// to MetalBT709GammaSRGB, if the H.264 file is not encoded with
+// sRGB gamma then this property should be set to either
+// MetalBT709GammaApple or MetalBT709GammaLinear.
+
+@property (nonatomic, assign) MetalBT709Gamma decodeGamma;
 
 /*
 

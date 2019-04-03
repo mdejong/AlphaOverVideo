@@ -19,6 +19,8 @@
 
 @property (nonatomic, assign) int frameNum;
 
+@property (nonatomic, assign) BOOL hasAlphaChannel;
+
 @end
 
 @implementation AOVPlayer

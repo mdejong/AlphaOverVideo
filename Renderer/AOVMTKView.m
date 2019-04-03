@@ -360,22 +360,8 @@ void validate_storage_mode(id<MTLTexture> texture)
     self.metalBT709Decoder.hasAlphaChannel = hasAlphaChannel;
     
     [self setupViewOpaqueProperty:mtkView];
-    
-    // FIXME: Need to define gamma for input video, default to SRGB
-    // but it has to be possible to indicate BT.709
-    
-    MetalBT709Gamma decodeGamma = MetalBT709GammaApple;
-    
-    // FIXME: Need to detect MetalBT709GammaSRGB vs MetalBT709GammaApple
-    // when not playing alpha video.
-    
-    if (hasAlphaChannel) {
-      // Explicitly set gamma to sRGB
-      decodeGamma = MetalBT709GammaSRGB;
-    } else if ((0)) {
-      decodeGamma = MetalBT709GammaLinear;
-    }
-    
+        
+    MetalBT709Gamma decodeGamma = player.decodeGamma;
     self.metalBT709Decoder.gamma = decodeGamma;
     
     // Based on BPP and gamma config, choose Metal shader and

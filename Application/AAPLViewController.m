@@ -119,6 +119,9 @@ Implementation of our cross-platform view controller
 
     AOVPlayer *player = [AOVPlayer playerWithLoopedClips:clips];
   
+    // sRGB is the default gamma setting for a AOVPlayer, but explicitly set it here
+    player.decodeGamma = MetalBT709GammaSRGB;
+  
     // Hold ref to AOVPlayer, note that a ref is never held by the AOVMTKView
     self.player = player;
   

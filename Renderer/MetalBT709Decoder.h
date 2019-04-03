@@ -10,13 +10,9 @@
 #import <Metal/Metal.h>
 #import <CoreVideo/CoreVideo.h>
 
-@class MetalRenderContext;
+#import "MetalBT709Gamma.h"
 
-typedef enum {
-  MetalBT709GammaApple = 0, // default
-  MetalBT709GammaSRGB,
-  MetalBT709GammaLinear
-} MetalBT709Gamma;
+@class MetalRenderContext;
 
 @interface MetalBT709Decoder : NSObject
 
