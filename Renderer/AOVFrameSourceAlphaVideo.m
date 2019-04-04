@@ -339,39 +339,32 @@ static int cachedFeatureSet = -1;
   self.rgbSource.lastSecondFrameDelta = 3.0;
 }
 
-// Init from pair of asset names
+// Init from an array of NSURL objects, loads the first
+// RGB and Alpha URLS from urlArr[0]
 
-- (BOOL) loadFromAssets:(NSString*)resFilename alphaResFilename:(NSString*)resAlphaFilename
+- (BOOL) loadFromURLs:(NSArray*)urlArr
 {
   [self makeSources];
   
-  BOOL worked;
+  // Split RGB and Alpha URLS into 2 different arrays
   
-  worked = [self.rgbSource loadFromAsset:resFilename];
+  NSMutableArray *mRGBArr = [NSMutableArray array];
+  NSMutableArray *mAlphaArr = [NSMutableArray array];
   
-  if (worked) {
-    worked = [self.alphaSource loadFromAsset:resAlphaFilename];
+  for (NSArray *pair in urlArr ) {
+    NSURL *rgbURL = pair[0];
+    NSURL *alphaURL = pair[1];
+    
+    [mRGBArr addObject:rgbURL];
+    [mAlphaArr addObject:alphaURL];
   }
-  
-  // redefine finished callbacks
-  
-  [self setBothLoadCallbacks];
-  
-  return worked;
-}
 
-// Init from asset or remote URL
-
-- (BOOL) loadFromURLs:(NSURL*)URL alphaURL:(NSURL*)alphaURL
-{
-  [self makeSources];
-  
   BOOL worked;
   
-  worked = [self.rgbSource loadFromURL:URL];
+  worked = [self.rgbSource loadFromURLs:mRGBArr];
   
   if (worked) {
-    worked = [self.alphaSource loadFromURL:alphaURL];
+    worked = [self.alphaSource loadFromURLs:mAlphaArr];
   }
   
   // redefine finished callbacks

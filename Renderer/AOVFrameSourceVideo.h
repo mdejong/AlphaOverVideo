@@ -63,13 +63,9 @@
 @property (nonatomic, assign) BOOL lastSecondFrameBlockInvoked;
 @property (nonatomic, assign) float lastSecondFrameDelta;
 
-// Init from asset name
+// Init from array of URL assets
 
-- (BOOL) loadFromAsset:(NSString*)resFilename;
-
-// Init from asset or remote URL
-
-- (BOOL) loadFromURL:(NSURL*)URL;
+- (BOOL) loadFromURLs:(NSArray*)urlsArr;
 
 - (NSString*) description;
 

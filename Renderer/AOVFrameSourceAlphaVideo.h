@@ -48,13 +48,10 @@
 
 @property (nonatomic, copy, nullable) void (^loadedBlock)(BOOL success);
 
-// Init from pair of asset names
+// Init from an array of NSURL objects, loads the first
+// RGB and Alpha URLS from urlArr[0]
 
-- (BOOL) loadFromAssets:(NSString*)resFilename alphaResFilename:(NSString*)resAlphaFilename;
-
-// Init from asset or remote URL
-
-- (BOOL) loadFromURLs:(NSURL*)URL alphaURL:(NSURL*)alphaURL;
+- (BOOL) loadFromURLs:(NSArray*)urlArr;
 
 - (NSString*) description;
 

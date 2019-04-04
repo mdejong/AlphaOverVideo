@@ -347,23 +347,28 @@
   return TRUE;
 }
 
-// Init from asset name
+// Define clips array
 
-- (BOOL) loadFromAsset:(NSString*)resFilename
+- (void) makeAssetClipsFromURLs:(NSArray*)clipURLs
 {
-  NSString *path = [[NSBundle mainBundle] pathForResource:resFilename ofType:nil];
-  NSAssert(path, @"path is nil");
+  NSMutableArray<AVURLAsset *> *assets = [NSMutableArray array];
   
-  NSURL *assetURL = [NSURL fileURLWithPath:path];
+  for (NSURL *url in clipURLs) {
+    AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:nil];
+    [assets addObject:urlAsset];
+  }
   
-  return [self decodeFromRGBResourceVideo:assetURL];
+  self.assets = assets;
+  self.assetOffset = 0;
+  
+  return;
 }
 
-// Init from asset or remote URL
+// Init from array of URL assets
 
-- (BOOL) loadFromURL:(NSURL*)URL
+- (BOOL) loadFromURLs:(NSArray*)urlsArr
 {
-  return [self decodeFromRGBResourceVideo:URL];
+  return [self decodeFromRGBResourceVideo:urlsArr];
 }
 
 - (void) setLoadedBlockCallbacks
@@ -381,16 +386,13 @@
 
 // Init video frame from the indicated URL
 
-- (BOOL) decodeFromRGBResourceVideo:(NSURL*)URL
+- (BOOL) decodeFromRGBResourceVideo:(NSArray*)urls
 {
-  AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:URL options:nil];
+  // Define clips as repeated instance of same clip
   
-  NSArray<AVURLAsset *> *assets = @[ urlAsset, urlAsset ];
+  NSLog(@"PlayerItem URL %@", urls[0]);
   
-  self.assets = [NSMutableArray arrayWithArray:assets];
-  self.assetOffset = 0;
-  
-  NSLog(@"PlayerItem URL %@", URL);
+  [self makeAssetClipsFromURLs:urls];
   
   __weak typeof(self) weakSelf = self;
   

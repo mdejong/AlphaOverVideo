@@ -85,18 +85,18 @@
   
   int num = (int) assetURLs.count;
   
-  NSMutableArray *mArr = [NSMutableArray array];
+  NSMutableArray *mURLs = [NSMutableArray array];
   
   // Note that (num == 0) is handled above
   
   if (num == 1) {
     // One clip will be initialized as using 2 copies of the url
     id url = assetURLs[0];
-    [mArr addObject:url];
-    [mArr addObject:url];
+    [mURLs addObject:url];
+    [mURLs addObject:url];
   } else {
     // Multiple urls passed as-is
-    [mArr addObjectsFromArray:assetURLs];
+    [mURLs addObjectsFromArray:assetURLs];
   }
   
   // If subCount is 1 then RGB clips, else RGB+A
@@ -112,11 +112,10 @@
     AOVFrameSourceAlphaVideo *frameSourceAlphaVideo = [[AOVFrameSourceAlphaVideo alloc] init];
     frameSource = frameSourceAlphaVideo;
     
-    NSURL *urlRGB = mArr[0][0];
-    NSURL *urlAlpha = mArr[0][1];
-    
-    BOOL result = [frameSourceAlphaVideo loadFromURLs:urlRGB alphaURL:urlAlpha];
-    assert(result == TRUE);
+    BOOL result = [frameSourceAlphaVideo loadFromURLs:mURLs];
+    if (result != TRUE) {
+      return nil;
+    }
   } else {
     // RGB 24BPP (opaque) video
     AOVFrameSourceVideo *frameSourceVideo = [[AOVFrameSourceVideo alloc] init];
@@ -134,12 +133,10 @@
       [weakFrameSourceVideo restart];
     };
     
-    // Load first asset
-    
-    NSURL *urlRGB = mArr[0];
-    
-    BOOL result = [frameSourceVideo loadFromURL:urlRGB];
-    assert(result == TRUE);
+    BOOL result = [frameSourceVideo loadFromURLs:mURLs];
+    if (result != TRUE) {
+      return nil;
+    }
   }
   
   // Define source for frames in terms of generic interface ref
