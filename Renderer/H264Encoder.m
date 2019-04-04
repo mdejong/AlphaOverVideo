@@ -21,12 +21,6 @@
 @import CoreGraphics;
 @import VideoToolbox;
 
-//#if defined(DEBUG)
-//static const int dumpFramesImages = 1;
-//#else
-static const int dumpFramesImages = 0;
-//#endif // DEBUG
-
 #define LOGGING 1
 //#define LOGGING_EVERY_FRAME 1
 

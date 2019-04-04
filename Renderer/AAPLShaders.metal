@@ -91,20 +91,20 @@ samplingShader(RasterizerData in [[stage_in]],
 // an actual 2x performance improvement can be enabled by simply
 // doing 1 render pass instead of 2 when rendering at exact pixel size.
 
-static inline
-float BT709_nonLinearNormToLinear(float normV) {
-  
-  if (normV < 0.081f) {
-    normV *= (1.0f / 4.5f);
-  } else {
-    const float a = 0.099f;
-    const float gamma = 1.0f / 0.45f; // 2.2
-    normV = (normV + a) * (1.0f / (1.0f + a));
-    normV = pow(normV, gamma);
-  }
-  
-  return normV;
-}
+//static inline
+//float BT709_nonLinearNormToLinear(float normV) {
+//  
+//  if (normV < 0.081f) {
+//    normV *= (1.0f / 4.5f);
+//  } else {
+//    const float a = 0.099f;
+//    const float gamma = 1.0f / 0.45f; // 2.2
+//    normV = (normV + a) * (1.0f / (1.0f + a));
+//    normV = pow(normV, gamma);
+//  }
+//  
+//  return normV;
+//}
 
 #define APPLE_GAMMA_196 (1.960938f)
 

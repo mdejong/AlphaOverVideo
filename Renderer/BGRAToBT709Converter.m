@@ -101,7 +101,7 @@ static inline uint32_t byte_to_grayscale24(uint32_t byteVal)
       
       int Y, Cb, Cr;
       
-      if (1) {
+      if ((1)) {
         // sRGB -> Apple 1.96 gamma curve -> YCbCr
         
         int result = Apple196_from_sRGB_convertRGBToYCbCr(
@@ -708,7 +708,7 @@ static inline uint32_t byte_to_grayscale24(uint32_t byteVal)
     assert(status == kCVReturnSuccess);
   }
   
-  if (dump && 0) {
+  if (dump && (0)) {
     uint8_t *yPtr = (uint8_t*)Y.bytes;
     uint8_t *cbPtr = (uint8_t*)Cb.bytes;
     uint8_t *crPtr = (uint8_t*)Cr.bytes;

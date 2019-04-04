@@ -66,7 +66,6 @@
 		3C4A773421D894720041ACE3 /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */; };
 		3C4A774221D898BE0041ACE3 /* MetalBT709Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80021D6C62A005424E6 /* MetalBT709Decoder.m */; };
 		3C4A774321D898BE0041ACE3 /* MetalRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A770121D8498E0041ACE3 /* MetalRenderContext.m */; };
-		3C4A774421D898BE0041ACE3 /* BGDecodeEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80921D6D15F005424E6 /* BGDecodeEncode.m */; };
 		3C4A774521D898BE0041ACE3 /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */; };
 		3C4A774621D898BE0041ACE3 /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */; };
 		3C4A774721D898CA0041ACE3 /* AAPLShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7E9C11EB64A46003BB06D /* AAPLShaders.metal */; };
@@ -145,7 +144,6 @@
 		3C97793722161CF3003721FD /* MetalScaleRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C97793622161CF3003721FD /* MetalScaleRenderContext.m */; };
 		3C97793822161CF4003721FD /* MetalScaleRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C97793622161CF3003721FD /* MetalScaleRenderContext.m */; };
 		3C97793922161CF4003721FD /* MetalScaleRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C97793622161CF3003721FD /* MetalScaleRenderContext.m */; };
-		3CA8B6C121E03A5300D2B853 /* BGDecodeEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80921D6D15F005424E6 /* BGDecodeEncode.m */; };
 		3CA8B6C521E1682600D2B853 /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8B6C421E1682600D2B853 /* H264Encoder.m */; };
 		3CA8B6C621E1682600D2B853 /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8B6C421E1682600D2B853 /* H264Encoder.m */; };
 		3CA8B6C721E1682600D2B853 /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8B6C421E1682600D2B853 /* H264Encoder.m */; };
@@ -157,9 +155,6 @@
 		3CB6E80521D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
 		3CB6E80621D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
 		3CB6E80721D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
-		3CB6E80A21D6D15F005424E6 /* BGDecodeEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80921D6D15F005424E6 /* BGDecodeEncode.m */; };
-		3CB6E80B21D6D15F005424E6 /* BGDecodeEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80921D6D15F005424E6 /* BGDecodeEncode.m */; };
-		3CB6E80C21D6D15F005424E6 /* BGDecodeEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80921D6D15F005424E6 /* BGDecodeEncode.m */; };
 		3CB6E81421D73BB5005424E6 /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */; };
 		3CB6E81521D73BB5005424E6 /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */; };
 		3CB6E81621D73BB5005424E6 /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */; };
@@ -310,8 +305,6 @@
 		3CB6E80021D6C62A005424E6 /* MetalBT709Decoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetalBT709Decoder.m; sourceTree = "<group>"; };
 		3CB6E80121D6C62A005424E6 /* MetalBT709Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalBT709Decoder.h; sourceTree = "<group>"; };
 		3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = osxcolor_test_image_24bit_BT709.m4v; sourceTree = "<group>"; };
-		3CB6E80821D6D15F005424E6 /* BGDecodeEncode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGDecodeEncode.h; sourceTree = "<group>"; };
-		3CB6E80921D6D15F005424E6 /* BGDecodeEncode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BGDecodeEncode.m; sourceTree = "<group>"; };
 		3CB6E81221D73BB3005424E6 /* CGFrameBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGFrameBuffer.h; sourceTree = "<group>"; };
 		3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CGFrameBuffer.m; sourceTree = "<group>"; };
 		3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CountToTen.m4v; sourceTree = "<group>"; };
@@ -477,8 +470,6 @@
 				3CB6E80021D6C62A005424E6 /* MetalBT709Decoder.m */,
 				3C4A770221D8498E0041ACE3 /* MetalRenderContext.h */,
 				3C4A770121D8498E0041ACE3 /* MetalRenderContext.m */,
-				3CB6E80821D6D15F005424E6 /* BGDecodeEncode.h */,
-				3CB6E80921D6D15F005424E6 /* BGDecodeEncode.m */,
 				3CB6E81221D73BB3005424E6 /* CGFrameBuffer.h */,
 				3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */,
 				3C4A773621D8981F0041ACE3 /* sRGB.h */,
@@ -919,7 +910,6 @@
 				3A30EDF91EB67EA800B4FC0B /* AAPLImage.m in Sources */,
 				3CB6E81521D73BB5005424E6 /* CGFrameBuffer.m in Sources */,
 				3AFD65721F71A8A10008A125 /* main.m in Sources */,
-				3CB6E80B21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
 				3AFD656C1F71A8980008A125 /* AAPLAppDelegate.m in Sources */,
 				3CE3B8B3223C2F54005B11C4 /* AOVPlayerVideoOutput.m in Sources */,
 				3C1310CD2220D898000C4972 /* AOVFrame.m in Sources */,
@@ -950,7 +940,6 @@
 				3C51D8942253FA2C001B0BFF /* AOVPlayer.m in Sources */,
 				3A30EDFF1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
 				3C7631A822495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
-				3CB6E80C21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
 				3CE62FD222233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -975,7 +964,6 @@
 				3C51D8922253FA2C001B0BFF /* AOVPlayer.m in Sources */,
 				3A30EDFE1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
 				3C7631A622495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
-				3CB6E80A21D6D15F005424E6 /* BGDecodeEncode.m in Sources */,
 				3CE62FD022233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -993,7 +981,6 @@
 				3C4A774321D898BE0041ACE3 /* MetalRenderContext.m in Sources */,
 				3C4A774221D898BE0041ACE3 /* MetalBT709Decoder.m in Sources */,
 				3C4A774721D898CA0041ACE3 /* AAPLShaders.metal in Sources */,
-				3C4A774421D898BE0041ACE3 /* BGDecodeEncode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1016,7 +1003,6 @@
 			files = (
 				3C4A77A521DAFF930041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3C4A775421DACE890041ACE3 /* srgb_to_bt709.m in Sources */,
-				3CA8B6C121E03A5300D2B853 /* BGDecodeEncode.m in Sources */,
 				3C4A77A421DAFF800041ACE3 /* CGFrameBuffer.m in Sources */,
 				3CA8B6CA21E1682600D2B853 /* H264Encoder.m in Sources */,
 			);

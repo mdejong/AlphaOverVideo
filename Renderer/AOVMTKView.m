@@ -16,7 +16,6 @@
 #import "MetalBT709Decoder.h"
 #import "MetalScaleRenderContext.h"
 #import "BGRAToBT709Converter.h"
-#import "BGDecodeEncode.h"
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
 #import "AOVDisplayLink.h"
