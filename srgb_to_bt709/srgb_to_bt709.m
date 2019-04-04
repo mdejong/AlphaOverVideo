@@ -839,7 +839,7 @@ CVPixelBufferRef loadFrameIntoCVPixelBuffer(
         uint32_t inPixel = inPixelsPtr[offset];
         uint32_t A = (inPixel >> 24) & 0xFF;
         
-        if ((1)) {
+        if ((0)) {
           // Slightly remap the alpha channel values, the resulting
           // output in the range [16, 235] covers 219+1 linear entries
           // while the original RGB values correspond to 256 values.
@@ -878,7 +878,7 @@ CVPixelBufferRef loadFrameIntoCVPixelBuffer(
           // 220 values, 219 steps
           int numSteps = (int) round(AN / AStep);
           float percentOfTotal = numSteps / 219.0f;
-          AOut = percentOfTotal * 255.0f;
+          AOut = (int) round(percentOfTotal * 255.0f);
           
           //NSLog(@"in A = %d : AN %.4f : AStep %.4f : numSteps %3d : percentOfTotal %.2f : AOut %d", A, AN, AStep, numSteps, percentOfTotal, AOut);
           
