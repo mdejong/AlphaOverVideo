@@ -11,9 +11,6 @@
 		3A1857F01EB7AF9E007D4F50 /* Image.tga in Resources */ = {isa = PBXBuildFile; fileRef = 3A1857EF1EB7AF9E007D4F50 /* Image.tga */; };
 		3A1857F11EB7AF9E007D4F50 /* Image.tga in Resources */ = {isa = PBXBuildFile; fileRef = 3A1857EF1EB7AF9E007D4F50 /* Image.tga */; };
 		3A1857F21EB7AF9E007D4F50 /* Image.tga in Resources */ = {isa = PBXBuildFile; fileRef = 3A1857EF1EB7AF9E007D4F50 /* Image.tga */; };
-		3A30EDF91EB67EA800B4FC0B /* AAPLImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A30EDF81EB67EA800B4FC0B /* AAPLImage.m */; };
-		3A30EDFE1EB698AD00B4FC0B /* AAPLImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A30EDF81EB67EA800B4FC0B /* AAPLImage.m */; };
-		3A30EDFF1EB698AD00B4FC0B /* AAPLImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A30EDF81EB67EA800B4FC0B /* AAPLImage.m */; };
 		3ABBE2791F7319890080C72C /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ABBE2761F7319760080C72C /* MetalKit.framework */; };
 		3ABBE27B1F7319900080C72C /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ABBE2781F7319760080C72C /* MetalKit.framework */; };
 		3ABBE27C1F7319950080C72C /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ABBE2771F7319760080C72C /* MetalKit.framework */; };
@@ -211,11 +208,7 @@
 
 /* Begin PBXFileReference section */
 		25849E602584CC8000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
-		2588B7602588B79000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		3A1857EF1EB7AF9E007D4F50 /* Image.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = Image.tga; sourceTree = "<group>"; };
-		3A30EDF71EB67EA800B4FC0B /* AAPLImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLImage.h; sourceTree = "<group>"; };
-		3A30EDF81EB67EA800B4FC0B /* AAPLImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLImage.m; sourceTree = "<group>"; };
-		3A93731A1EBB8C17007D505D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3ABBE2761F7319760080C72C /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		3ABBE2771F7319760080C72C /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		3ABBE2781F7319760080C72C /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.0.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -378,14 +371,6 @@
 			name = Configuration;
 			sourceTree = "<group>";
 		};
-		2588B3E02588B3B000000001 /* LICENSE */ = {
-			isa = PBXGroup;
-			children = (
-				2588B7602588B79000000001 /* LICENSE.txt */,
-			);
-			path = LICENSE;
-			sourceTree = "<group>";
-		};
 		3ABBE2751F73196D0080C72C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -399,7 +384,6 @@
 		3AF7E9B71EB64A46003BB06D = {
 			isa = PBXGroup;
 			children = (
-				3A93731A1EBB8C17007D505D /* README.md */,
 				3AF7E9BC1EB64A46003BB06D /* Renderer */,
 				3AFD65411F71A6D00008A125 /* Application */,
 				3C4A770B21D892BA0041ACE3 /* EmptyiOS */,
@@ -408,7 +392,6 @@
 				3ABBE2751F73196D0080C72C /* Frameworks */,
 				3AF7E9C91EB64A46003BB06D /* Products */,
 				2584CCE02584A3B000000001 /* Configuration */,
-				2588B3E02588B3B000000001 /* LICENSE */,
 			);
 			sourceTree = "<group>";
 		};
@@ -480,8 +463,6 @@
 				3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */,
 				3CA8B6C321E1682500D2B853 /* H264Encoder.h */,
 				3CA8B6C421E1682600D2B853 /* H264Encoder.m */,
-				3A30EDF71EB67EA800B4FC0B /* AAPLImage.h */,
-				3A30EDF81EB67EA800B4FC0B /* AAPLImage.m */,
 				3AF7E9C01EB64A46003BB06D /* AAPLShaderTypes.h */,
 				3AF7E9C11EB64A46003BB06D /* AAPLShaders.metal */,
 			);
@@ -907,7 +888,6 @@
 				3CB6E80321D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
 				3C7631A722495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
 				3CE62FD122233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */,
-				3A30EDF91EB67EA800B4FC0B /* AAPLImage.m in Sources */,
 				3CB6E81521D73BB5005424E6 /* CGFrameBuffer.m in Sources */,
 				3AFD65721F71A8A10008A125 /* main.m in Sources */,
 				3AFD656C1F71A8980008A125 /* AAPLAppDelegate.m in Sources */,
@@ -938,7 +918,6 @@
 				3C4A773421D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3AFD65731F71A8A10008A125 /* main.m in Sources */,
 				3C51D8942253FA2C001B0BFF /* AOVPlayer.m in Sources */,
-				3A30EDFF1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
 				3C7631A822495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
 				3CE62FD222233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */,
 			);
@@ -962,7 +941,6 @@
 				3CB6E80221D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
 				3C4A773221D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3C51D8922253FA2C001B0BFF /* AOVPlayer.m in Sources */,
-				3A30EDFE1EB698AD00B4FC0B /* AAPLImage.m in Sources */,
 				3C7631A622495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
 				3CE62FD022233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */,
 			);
