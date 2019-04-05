@@ -12,10 +12,25 @@
 		3C05520822571914000A4BA4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C05520622571914000A4BA4 /* Main.storyboard */; };
 		3C05520A2257191A000A4BA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C0552092257191A000A4BA4 /* Assets.xcassets */; };
 		3C05520D2257191A000A4BA4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C05520B2257191A000A4BA4 /* LaunchScreen.storyboard */; };
-		3C299DB122571D2E00A6D5B7 /* AlphaOverVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C299DB022571D2E00A6D5B7 /* AlphaOverVideo.framework */; };
 		3C299DBF22572E4600A6D5B7 /* CarSpin_alpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C299DBD22572E4600A6D5B7 /* CarSpin_alpha.m4v */; };
 		3C299DC022572E4600A6D5B7 /* CarSpin.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C299DBE22572E4600A6D5B7 /* CarSpin.m4v */; };
+		3CC1F5E122573FA000919910 /* AlphaOverVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C299DB022571D2E00A6D5B7 /* AlphaOverVideo.framework */; };
+		3CC1F5E222573FA000919910 /* AlphaOverVideo.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C299DB022571D2E00A6D5B7 /* AlphaOverVideo.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3CC1F5E322573FA000919910 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3CC1F5E222573FA000919910 /* AlphaOverVideo.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3C0551FF22571914000A4BA4 /* CarSpinAlpha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarSpinAlpha.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -35,7 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C299DB122571D2E00A6D5B7 /* AlphaOverVideo.framework in Frameworks */,
+				3CC1F5E122573FA000919910 /* AlphaOverVideo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +99,7 @@
 				3C0551FB22571914000A4BA4 /* Sources */,
 				3C0551FC22571914000A4BA4 /* Frameworks */,
 				3C0551FD22571914000A4BA4 /* Resources */,
+				3CC1F5E322573FA000919910 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -225,7 +241,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -280,7 +296,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

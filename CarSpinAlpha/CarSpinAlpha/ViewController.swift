@@ -13,7 +13,7 @@ class ViewController: UIViewController {
   
   @IBOutlet weak var mtkView: AOVMTKView!
   
-  weak var player: AOVPlayer?
+  var player: AOVPlayer?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -25,7 +25,7 @@ class ViewController: UIViewController {
       NSLog("Metal is not supported on this device");
       return;
     }
-
+        
     // Generate RGBA pair or urls to seamless loop an infinite number of times
     let url1 = AOVPlayer.url(fromAsset:"CarSpin.m4v")
     let url2 = AOVPlayer.url(fromAsset:"CarSpin_alpha.m4v")
@@ -42,6 +42,9 @@ class ViewController: UIViewController {
       NSLog("attach failed for AOVMTKView");
       return;
     }
+    
+    // FIXME: Need another view behind the spinning car to show alpha is active
+    //mtkView.backgroundColor = UIColor.white
   }
 }
 

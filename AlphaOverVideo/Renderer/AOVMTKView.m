@@ -207,15 +207,32 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   id<MTLDevice> device = mtkView.device;
   
+#if defined(DEBUG)
+  NSAssert(device != nil, @"Metal device is nil");
+#endif // DEBUG
+  
   MetalRenderContext *mrc = [[MetalRenderContext alloc] init];
   
   mrc.device = device;
+
+  // Load Metal from static library framework
   
-  // Load from Framework that contains this class (it might not be the main bundle)
-  NSBundle *containerBundle = [NSBundle bundleForClass:AOVMTKView.class];
+  NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
+  NSString *metalLibraryPath = bundlePath;
+  
+  metalLibraryPath = [metalLibraryPath stringByAppendingPathComponent:@"Frameworks"];
+  metalLibraryPath = [metalLibraryPath stringByAppendingPathComponent:@"AlphaOverVideo.framework"];
+  metalLibraryPath = [metalLibraryPath stringByAppendingPathComponent:@"default.metallib"];
   NSError *bundleError = nil;
   
-  id<MTLLibrary> defaultLibrary = [device newDefaultLibraryWithBundle:containerBundle error:&bundleError];
+  id<MTLLibrary> defaultLibrary = nil;
+  
+  if ([[NSFileManager defaultManager] fileExistsAtPath:metalLibraryPath]) {
+    defaultLibrary = [device newLibraryWithFile:metalLibraryPath error:&bundleError];
+  } else {
+    defaultLibrary = [device newDefaultLibrary];
+  }
+
 #if defined(DEBUG)
   NSAssert(defaultLibrary != nil, @"defaultLibrary");
   NSAssert(bundleError == nil, @"bundleError \"%@\"", bundleError);
