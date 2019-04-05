@@ -18,6 +18,9 @@ The Metal implementation renders YCbCr data as RGB pixels and is able to execute
 
 See examples for source code that creates player objects with 24 BPP or 32 BPP videos.
 
+CarSpinAlpha : Example iOS app implemented in Swift, displays seamless looping car over changing backgrounds
+AlphaOverVideo : Framework Implementation source code, example iOS and MacOSX app, tests
+
 ## Encoding
 
 To encode your own video, compile the srgb_to_bt709 command line target and use it to convert a series of PNG images to a .y4m file.
