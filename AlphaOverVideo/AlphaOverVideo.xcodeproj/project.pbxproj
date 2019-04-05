@@ -74,6 +74,16 @@
 		3C18D3D3221D432F005DAF85 /* CarSpinAF10_alpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C18D3CF221D432E005DAF85 /* CarSpinAF10_alpha.m4v */; };
 		3C18D3D4221D432F005DAF85 /* CarSpinAF10_alpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C18D3CF221D432E005DAF85 /* CarSpinAF10_alpha.m4v */; };
 		3C18D3D5221D432F005DAF85 /* CarSpinAF10_alpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C18D3CF221D432E005DAF85 /* CarSpinAF10_alpha.m4v */; };
+		3C299DB222571ED800A6D5B7 /* AOVFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C1310CA2220D492000C4972 /* AOVFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C299DB322571EDC00A6D5B7 /* AOVFrameSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE62FC922233B850003EA70 /* AOVFrameSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C299DB422571EE100A6D5B7 /* AOVPlayerVideoOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE3B8B1223C2F54005B11C4 /* AOVPlayerVideoOutput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C299DB522571EE400A6D5B7 /* AOVFrameSourceVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE62FCE22233DBA0003EA70 /* AOVFrameSourceVideo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C299DB622571EE900A6D5B7 /* AOVFrameSourceAlphaVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE0B327222728C700E2BE82 /* AOVFrameSourceAlphaVideo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C299DB722571EF300A6D5B7 /* AOVPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C51D8902253FA2B001B0BFF /* AOVPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C299DB822571EF600A6D5B7 /* AOVMTKView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C1310CF222214FE000C4972 /* AOVMTKView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C299DB922571EF900A6D5B7 /* AOVDisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C7631A422495ABA00D92C5B /* AOVDisplayLink.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C299DBB2257201200A6D5B7 /* MetalBT709Gamma.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C51D895225491A8001B0BFF /* MetalBT709Gamma.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C299DBC225720E600A6D5B7 /* H264Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA8B6C321E1682500D2B853 /* H264Encoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C483FF62209196E00AC51AC /* drop-of-water-iPad-2048-1536-apple-crf20.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C483FF42209196A00AC51AC /* drop-of-water-iPad-2048-1536-apple-crf20.m4v */; };
 		3C483FF72209196F00AC51AC /* drop-of-water-iPad-2048-1536-apple-crf20.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C483FF42209196A00AC51AC /* drop-of-water-iPad-2048-1536-apple-crf20.m4v */; };
 		3C483FF82209196F00AC51AC /* drop-of-water-iPad-2048-1536-sRGB-crf20.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C483FF52209196C00AC51AC /* drop-of-water-iPad-2048-1536-sRGB-crf20.m4v */; };
@@ -633,6 +643,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C0551CB2256C068000A4BA4 /* AlphaOverVideo.h in Headers */,
+				3C299DB222571ED800A6D5B7 /* AOVFrame.h in Headers */,
+				3C299DB322571EDC00A6D5B7 /* AOVFrameSource.h in Headers */,
+				3C299DB422571EE100A6D5B7 /* AOVPlayerVideoOutput.h in Headers */,
+				3C299DB522571EE400A6D5B7 /* AOVFrameSourceVideo.h in Headers */,
+				3C299DB622571EE900A6D5B7 /* AOVFrameSourceAlphaVideo.h in Headers */,
+				3C299DB722571EF300A6D5B7 /* AOVPlayer.h in Headers */,
+				3C299DB822571EF600A6D5B7 /* AOVMTKView.h in Headers */,
+				3C299DB922571EF900A6D5B7 /* AOVDisplayLink.h in Headers */,
+				3C299DBB2257201200A6D5B7 /* MetalBT709Gamma.h in Headers */,
+				3C299DBC225720E600A6D5B7 /* H264Encoder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1430,6 +1450,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideo;
@@ -1461,6 +1482,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideo;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
