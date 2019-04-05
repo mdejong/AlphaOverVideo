@@ -12,6 +12,7 @@
 		3C05520822571914000A4BA4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C05520622571914000A4BA4 /* Main.storyboard */; };
 		3C05520A2257191A000A4BA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C0552092257191A000A4BA4 /* Assets.xcassets */; };
 		3C05520D2257191A000A4BA4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C05520B2257191A000A4BA4 /* LaunchScreen.storyboard */; };
+		3C176332225811EC001C8CCF /* AlphaBGHalf.png in Resources */ = {isa = PBXBuildFile; fileRef = 3C176331225811EB001C8CCF /* AlphaBGHalf.png */; };
 		3C299DBF22572E4600A6D5B7 /* CarSpin_alpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C299DBD22572E4600A6D5B7 /* CarSpin_alpha.m4v */; };
 		3C299DC022572E4600A6D5B7 /* CarSpin.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C299DBE22572E4600A6D5B7 /* CarSpin.m4v */; };
 		3CC1F5E122573FA000919910 /* AlphaOverVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C299DB022571D2E00A6D5B7 /* AlphaOverVideo.framework */; };
@@ -40,6 +41,7 @@
 		3C0552092257191A000A4BA4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3C05520C2257191A000A4BA4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3C05520E2257191A000A4BA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3C176331225811EB001C8CCF /* AlphaBGHalf.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AlphaBGHalf.png; sourceTree = "<group>"; };
 		3C299DB022571D2E00A6D5B7 /* AlphaOverVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AlphaOverVideo.framework; sourceTree = "<group>"; };
 		3C299DBD22572E4600A6D5B7 /* CarSpin_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CarSpin_alpha.m4v; sourceTree = "<group>"; };
 		3C299DBE22572E4600A6D5B7 /* CarSpin.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CarSpin.m4v; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 				3C05520E2257191A000A4BA4 /* Info.plist */,
 				3C299DBE22572E4600A6D5B7 /* CarSpin.m4v */,
 				3C299DBD22572E4600A6D5B7 /* CarSpin_alpha.m4v */,
+				3C176331225811EB001C8CCF /* AlphaBGHalf.png */,
 			);
 			path = CarSpinAlpha;
 			sourceTree = "<group>";
@@ -152,6 +155,7 @@
 				3C05520A2257191A000A4BA4 /* Assets.xcassets in Resources */,
 				3C299DC022572E4600A6D5B7 /* CarSpin.m4v in Resources */,
 				3C05520822571914000A4BA4 /* Main.storyboard in Resources */,
+				3C176332225811EC001C8CCF /* AlphaBGHalf.png in Resources */,
 				3C299DBF22572E4600A6D5B7 /* CarSpin_alpha.m4v in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

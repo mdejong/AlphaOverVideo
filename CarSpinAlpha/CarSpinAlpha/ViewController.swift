@@ -11,12 +11,17 @@ import AlphaOverVideo
 
 class ViewController: UIViewController {
 
+  @IBOutlet weak var imageView: UIImageView!
   @IBOutlet weak var mtkView: AOVMTKView!
   
   var player: AOVPlayer?
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    let patternImg = UIImage.init(imageLiteralResourceName: "AlphaBGHalf.png")
+    let patternColor = UIColor.init(patternImage: patternImg)
+    imageView.backgroundColor = patternColor;
     
     mtkView.device = MTLCreateSystemDefaultDevice()
     
@@ -44,19 +49,20 @@ class ViewController: UIViewController {
     }
     
     if (true) {
-      // Cycle background color change animation to demonstrate alpha channel
+      // Cycle background color alpha to demonstrate alpha channel in mtkView
       
-      let view = self.view!;
+      let view = self.imageView!;
       
-      view.backgroundColor = UIColor.darkGray
+      view.alpha = 1.0
       UIView.beginAnimations(nil, context: nil)
       UIView.setAnimationDuration(5.0)
-      UIView.setAnimationRepeatCount(30.0)
+      UIView.setAnimationRepeatCount(30)
       UIView.setAnimationRepeatAutoreverses(true)
-      view.backgroundColor = UIColor.white
+      view.alpha = 0.0
       UIView.commitAnimations()
     }
 
+    return
   }
 }
 

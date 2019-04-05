@@ -20,20 +20,31 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tW2-v7-Awi" userLabel="mtkView" customClass="AOVMTKView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oVS-al-0HO" userLabel="imageView" customClass="UIImageView">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tW2-v7-Awi" userLabel="mtkView" customClass="AOVMTKView">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.0078431372549019607" green="0.60255281690140849" blue="0.0078431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="tW2-v7-Awi" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="1wR-xM-JId"/>
+                            <constraint firstItem="oVS-al-0HO" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="6cR-og-HbY"/>
+                            <constraint firstItem="oVS-al-0HO" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="Esb-GH-ZQG"/>
                             <constraint firstItem="tW2-v7-Awi" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="Qqo-Kb-6zH"/>
+                            <constraint firstItem="oVS-al-0HO" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="WZO-FU-hKi"/>
+                            <constraint firstItem="tW2-v7-Awi" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="cIc-eZ-ITO"/>
+                            <constraint firstItem="tW2-v7-Awi" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="f48-BW-ons"/>
+                            <constraint firstItem="oVS-al-0HO" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="fXQ-Xa-2zK"/>
                         </constraints>
                     </view>
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="imageView" destination="oVS-al-0HO" id="qRW-Iu-mD1"/>
                         <outlet property="mtkView" destination="tW2-v7-Awi" id="EsU-cv-U4J"/>
                     </connections>
                 </viewController>
