@@ -10,7 +10,7 @@ import UIKit
 import AlphaOverVideo
 
 class ViewController: UIViewController {
-  
+
   @IBOutlet weak var mtkView: AOVMTKView!
   
   var player: AOVPlayer?
@@ -43,8 +43,20 @@ class ViewController: UIViewController {
       return;
     }
     
-    // FIXME: Need another view behind the spinning car to show alpha is active
-    //mtkView.backgroundColor = UIColor.white
+    if (true) {
+      // Cycle background color change animation to demonstrate alpha channel
+      
+      let view = self.view!;
+      
+      view.backgroundColor = UIColor.darkGray
+      UIView.beginAnimations(nil, context: nil)
+      UIView.setAnimationDuration(5.0)
+      UIView.setAnimationRepeatCount(30.0)
+      UIView.setAnimationRepeatAutoreverses(true)
+      view.backgroundColor = UIColor.white
+      UIView.commitAnimations()
+    }
+
   }
 }
 

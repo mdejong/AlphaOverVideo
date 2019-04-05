@@ -16,15 +16,25 @@
                         <viewControllerLayoutGuide type="top" id="28f-4d-efv"/>
                         <viewControllerLayoutGuide type="bottom" id="JmB-Q9-1cG"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC" customClass="AOVMTKView">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC" userLabel="view">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tW2-v7-Awi" userLabel="mtkView" customClass="AOVMTKView">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="tW2-v7-Awi" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="1wR-xM-JId"/>
+                            <constraint firstItem="tW2-v7-Awi" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="Qqo-Kb-6zH"/>
+                        </constraints>
                     </view>
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="mtkView" destination="8bC-Xf-vdC" id="hnk-4F-N9E"/>
+                        <outlet property="mtkView" destination="tW2-v7-Awi" id="EsU-cv-U4J"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
