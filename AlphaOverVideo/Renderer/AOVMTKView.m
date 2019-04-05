@@ -210,7 +210,17 @@ void validate_storage_mode(id<MTLTexture> texture)
   MetalRenderContext *mrc = [[MetalRenderContext alloc] init];
   
   mrc.device = device;
-  mrc.defaultLibrary = [device newDefaultLibrary];
+  
+  // Load from Framework that contains this class (it might not be the main bundle)
+  NSBundle *containerBundle = [NSBundle bundleForClass:AOVMTKView.class];
+  NSError *bundleError = nil;
+  
+  id<MTLLibrary> defaultLibrary = [device newDefaultLibraryWithBundle:containerBundle error:&bundleError];
+#if defined(DEBUG)
+  NSAssert(defaultLibrary != nil, @"defaultLibrary");
+  NSAssert(bundleError == nil, @"bundleError \"%@\"", bundleError);
+#endif // DEBUG
+  mrc.defaultLibrary = defaultLibrary;
   mrc.commandQueue = [device newCommandQueue];
   
   // Init metalBT709Decoder with MetalRenderContext set as a property
