@@ -65,10 +65,6 @@
 	<dict>
 		<key>Headers/AOVDisplayLink.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			W2O34FIix6hL2CjVgeYmYn9sEJU=
-			</data>
 			<key>hash2</key>
 			<data>
 			inU8iRz6aDedrozU5uGq6reVAhyDvr0k37Hiqj5o+jI=
@@ -76,10 +72,6 @@
 		</dict>
 		<key>Headers/AOVFrame.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			v7YR+FmLq2y4tPZiSx/nj20sBNQ=
-			</data>
 			<key>hash2</key>
 			<data>
 			+XK+kctP3K01Ny47srCKOGc9YE3ZIj119mxA1Ln3KnQ=
@@ -87,10 +79,6 @@
 		</dict>
 		<key>Headers/AOVFrameSource.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			ER6+2B3MUhkbQYt0WtnFRQtX1Pw=
-			</data>
 			<key>hash2</key>
 			<data>
 			6ukW5WyEcIiBk1Bz8vPKIivOhC3VObwn+lL+3FOV8Wg=
@@ -98,10 +86,6 @@
 		</dict>
 		<key>Headers/AOVFrameSourceAlphaVideo.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			Xceqe/ClIwBXxjMhruYF1fIIsXU=
-			</data>
 			<key>hash2</key>
 			<data>
 			Vb0y0qAgih9hrhDQCjjvkd54KO2nx7bUecDYahGl4QI=
@@ -109,10 +93,6 @@
 		</dict>
 		<key>Headers/AOVFrameSourceVideo.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			1NRX/RiGUPHBBrMpOQ16QuPp+Ss=
-			</data>
 			<key>hash2</key>
 			<data>
 			bErvrseAGA1LHVoNA9zeshPp/RnGfSdR4cNM4qqreyM=
@@ -120,10 +100,6 @@
 		</dict>
 		<key>Headers/AOVMTKView.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			PwEZhseqL8txAlIKYjT/wpnTFeM=
-			</data>
 			<key>hash2</key>
 			<data>
 			O7//MuJz7iyUw7HQhINyzsvth1/8VF6SLOUeCRebXe8=
@@ -131,10 +107,6 @@
 		</dict>
 		<key>Headers/AOVPlayer.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			UF30sm62Moc7pbIwhmDRUDi6qQI=
-			</data>
 			<key>hash2</key>
 			<data>
 			WtvRv76SnMlOItIH43bp7F44z2fjuo9ZHUrxCoOSlg4=
@@ -142,10 +114,6 @@
 		</dict>
 		<key>Headers/AOVPlayerVideoOutput.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			d+vyCxH8Z1Js3kOyvcM/M2OFeqI=
-			</data>
 			<key>hash2</key>
 			<data>
 			AC4qaXeP4R3yV2p99ivLhK4Ey0SvHIamQ86nZYd4fqI=
@@ -153,10 +121,6 @@
 		</dict>
 		<key>Headers/AlphaOverVideo.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			JkI+YCc0utXuOLGT3LU8whrdQ+0=
-			</data>
 			<key>hash2</key>
 			<data>
 			WJWdq442J5SJYy/vSR/BKjtGbYIw83svJPh91ztDwvs=
@@ -164,10 +128,6 @@
 		</dict>
 		<key>Headers/H264Encoder.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			MCxA/AjI4ZWFhXcKBywpFYNqI/I=
-			</data>
 			<key>hash2</key>
 			<data>
 			7Rfq3qu7M0N4xd7HuEQWoc14WacPd9LiLi6UhUVzcH8=
@@ -175,10 +135,6 @@
 		</dict>
 		<key>Headers/MetalBT709Gamma.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			Sb/tz919W6yERDBFdd/qZLgOllc=
-			</data>
 			<key>hash2</key>
 			<data>
 			9HLr/M6Pbn5m6B7FFOnhm/NrNv+Q0giYfVwfsHWVQi0=
@@ -186,10 +142,6 @@
 		</dict>
 		<key>Modules/module.modulemap</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			NbkJBYiqwkNefcJRJLLQ/9V0Kco=
-			</data>
 			<key>hash2</key>
 			<data>
 			GYlBdHmfsIwS2VAlAHcys67dOA+cPYE4fpmIZAmeYm0=
@@ -197,10 +149,6 @@
 		</dict>
 		<key>default.metallib</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			W2PSUFwc//h2Hj36w4SzbPj07FA=
-			</data>
 			<key>hash2</key>
 			<data>
 			I+dR0k3MGCgIl74HJiWni+WsAEred58kSWsX7e+aivU=
