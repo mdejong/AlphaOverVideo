@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina4_7" orientation="portrait">
+    <device id="retina4_0" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -18,19 +17,39 @@
                         <viewControllerLayoutGuide type="bottom" id="8Iq-Ep-ysK"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" translatesAutoresizingMaskIntoConstraints="NO" id="zk7-AQ-Tif">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                             </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JLn-Pa-bZl" userLabel="subview">
+                                <rect key="frame" x="164" y="40" width="240" height="240"/>
+                                <subviews>
+                                    <imageView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Chains" translatesAutoresizingMaskIntoConstraints="NO" id="k7Y-S5-gR0">
+                                        <rect key="frame" x="0.0" y="0.0" width="240" height="240"/>
+                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="k7Y-S5-gR0" firstAttribute="centerY" secondItem="JLn-Pa-bZl" secondAttribute="centerY" id="52n-No-ybA"/>
+                                    <constraint firstItem="k7Y-S5-gR0" firstAttribute="centerX" secondItem="JLn-Pa-bZl" secondAttribute="centerX" id="Z8A-He-d8r"/>
+                                    <constraint firstItem="k7Y-S5-gR0" firstAttribute="width" secondItem="JLn-Pa-bZl" secondAttribute="width" id="dRU-Ht-YPD"/>
+                                    <constraint firstItem="k7Y-S5-gR0" firstAttribute="height" secondItem="JLn-Pa-bZl" secondAttribute="height" id="tUu-QQ-Xcf"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="zk7-AQ-Tif" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="6Se-Qk-9cm"/>
+                            <constraint firstItem="JLn-Pa-bZl" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.75" id="Ji2-Cj-wSZ"/>
+                            <constraint firstItem="JLn-Pa-bZl" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.75" id="Sck-MN-Eop"/>
                             <constraint firstItem="zk7-AQ-Tif" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="U5M-Wr-NdT"/>
                             <constraint firstItem="zk7-AQ-Tif" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="n2E-rE-5z2"/>
                             <constraint firstItem="zk7-AQ-Tif" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="nNd-Cj-AGn"/>
+                            <constraint firstItem="JLn-Pa-bZl" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="pPP-GI-n6t"/>
+                            <constraint firstItem="JLn-Pa-bZl" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="tCi-CR-TS7"/>
                         </constraints>
                     </view>
                     <nil key="simulatedTopBarMetrics"/>
@@ -45,5 +64,6 @@
     </scenes>
     <resources>
         <image name="Background" width="2000" height="1500"/>
+        <image name="Chains" width="245.75999450683594" height="245.75999450683594"/>
     </resources>
 </document>
