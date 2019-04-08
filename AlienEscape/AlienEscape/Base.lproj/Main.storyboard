@@ -26,16 +26,32 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JLn-Pa-bZl" userLabel="subview">
                                 <rect key="frame" x="164" y="40" width="240" height="240"/>
                                 <subviews>
-                                    <imageView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Chains" translatesAutoresizingMaskIntoConstraints="NO" id="k7Y-S5-gR0">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t21-zc-ifX" userLabel="bgColor">
                                         <rect key="frame" x="0.0" y="0.0" width="240" height="240"/>
                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </view>
+                                    <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="M3r-vp-08e" userLabel="mtkView" customClass="AOVMTKView">
+                                        <rect key="frame" x="0.0" y="0.0" width="240" height="240"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </view>
+                                    <imageView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Chains" translatesAutoresizingMaskIntoConstraints="NO" id="k7Y-S5-gR0">
+                                        <rect key="frame" x="0.0" y="0.0" width="240" height="240"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstItem="M3r-vp-08e" firstAttribute="centerY" secondItem="JLn-Pa-bZl" secondAttribute="centerY" id="2TI-0F-80T"/>
+                                    <constraint firstItem="M3r-vp-08e" firstAttribute="centerX" secondItem="JLn-Pa-bZl" secondAttribute="centerX" id="32z-UF-CfW"/>
                                     <constraint firstItem="k7Y-S5-gR0" firstAttribute="centerY" secondItem="JLn-Pa-bZl" secondAttribute="centerY" id="52n-No-ybA"/>
+                                    <constraint firstItem="t21-zc-ifX" firstAttribute="width" secondItem="JLn-Pa-bZl" secondAttribute="width" id="68Y-2Q-vrb"/>
+                                    <constraint firstItem="M3r-vp-08e" firstAttribute="height" secondItem="JLn-Pa-bZl" secondAttribute="height" id="Ape-98-mCK"/>
+                                    <constraint firstItem="t21-zc-ifX" firstAttribute="centerY" secondItem="JLn-Pa-bZl" secondAttribute="centerY" id="DtL-zn-H1F"/>
+                                    <constraint firstItem="t21-zc-ifX" firstAttribute="centerX" secondItem="JLn-Pa-bZl" secondAttribute="centerX" id="Ecq-ts-a9x"/>
                                     <constraint firstItem="k7Y-S5-gR0" firstAttribute="centerX" secondItem="JLn-Pa-bZl" secondAttribute="centerX" id="Z8A-He-d8r"/>
                                     <constraint firstItem="k7Y-S5-gR0" firstAttribute="width" secondItem="JLn-Pa-bZl" secondAttribute="width" id="dRU-Ht-YPD"/>
+                                    <constraint firstItem="M3r-vp-08e" firstAttribute="width" secondItem="JLn-Pa-bZl" secondAttribute="width" id="n6a-ze-a88"/>
+                                    <constraint firstItem="t21-zc-ifX" firstAttribute="height" secondItem="JLn-Pa-bZl" secondAttribute="height" id="tLM-Y0-TY3"/>
                                     <constraint firstItem="k7Y-S5-gR0" firstAttribute="height" secondItem="JLn-Pa-bZl" secondAttribute="height" id="tUu-QQ-Xcf"/>
                                 </constraints>
                             </view>
@@ -56,6 +72,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="bgImageView" destination="zk7-AQ-Tif" id="FTt-xa-URy"/>
+                        <outlet property="mtkView" destination="M3r-vp-08e" id="FyV-sk-njA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
