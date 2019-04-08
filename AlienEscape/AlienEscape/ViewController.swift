@@ -60,10 +60,13 @@ class ViewController: UIViewController {
       NSLog("attach failed for AOVMTKView");
       return;
     }
+    
+    thankYouLabel.layer.cornerRadius = 10;
+    thankYouLabel.layer.masksToBounds = true;
   }
   
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-    if touches.first != nil {      
+    if touches.first != nil {
       if (self.tapCount == 0) {
         let alertController = UIAlertController(title: "HowTo", message: "Tap 10 times to free the alien!", preferredStyle: .alert)
         let defaultAction = UIAlertAction.init(title: "OK", style: .default, handler:{ (UIAlertAction) in
