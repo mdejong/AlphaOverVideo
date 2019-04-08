@@ -16,6 +16,8 @@ class ViewController: UIViewController {
   
   @IBOutlet weak var chainsImageView: UIImageView!
   @IBOutlet weak var subviewBG: UIView!
+
+  @IBOutlet weak var thankYouLabel: UILabel!
   
   var player: AOVPlayer?
 
@@ -32,6 +34,7 @@ class ViewController: UIViewController {
     assert(mtkView != nil)
     assert(chainsImageView != nil)
     assert(subviewBG != nil)
+    assert(thankYouLabel != nil)
     
     mtkView.device = MTLCreateSystemDefaultDevice()
     
@@ -60,7 +63,7 @@ class ViewController: UIViewController {
   }
   
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-    if let theTouch = touches.first {
+    if touches.first != nil {      
       if (self.tapCount == 0) {
         let alertController = UIAlertController(title: "HowTo", message: "Tap 10 times to free the alien!", preferredStyle: .alert)
         let defaultAction = UIAlertAction.init(title: "OK", style: .default, handler:{ (UIAlertAction) in
@@ -78,6 +81,9 @@ class ViewController: UIViewController {
           chainsImageView.alpha = 1.0
           subviewBG.alpha = 1.0
           
+          thankYouLabel.isHidden = false
+          thankYouLabel.alpha = 0.0
+          
           UIView.beginAnimations(nil, context: nil)
           
           UIView.setAnimationDuration(9.0)
@@ -85,6 +91,7 @@ class ViewController: UIViewController {
           //UIView.setAnimationRepeatAutoreverses(true)
           chainsImageView.alpha = 0.0
           subviewBG.alpha = 0.0
+          thankYouLabel.alpha = 1.0
           
           UIView.commitAnimations()
         }
