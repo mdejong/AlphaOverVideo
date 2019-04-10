@@ -1,0 +1,6 @@
+framework module AlphaOverVideo {
+  umbrella header "AlphaOverVideo.h"
+
+  export *
+  module * { export * }
+}

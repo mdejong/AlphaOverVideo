@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="U2L-Ge-9DK">
+    <device id="retina4_0" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment version="4608" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Animating View Controller-->
+        <scene sceneID="TAU-r1-FD6">
+            <objects>
+                <viewController id="U2L-Ge-9DK" customClass="AnimatingViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="HQ2-EA-tez"/>
+                        <viewControllerLayoutGuide type="bottom" id="9rT-Rp-QhC"/>
+                    </layoutGuides>
+                    <view key="view" clipsSubviews="YES" contentMode="scaleToFill" id="bO3-ua-S6W">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" placeholderIntrinsicWidth="360" placeholderIntrinsicHeight="204" translatesAutoresizingMaskIntoConstraints="NO" id="yvR-hX-uaN" userLabel="wheelMTKView" customClass="AOVMTKView">
+                                <rect key="frame" x="-40" y="364" width="360" height="204"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="204" id="60f-Lz-SjK"/>
+                                    <constraint firstAttribute="width" constant="360" id="UNa-io-Zo9"/>
+                                    <constraint firstAttribute="width" secondItem="yvR-hX-uaN" secondAttribute="height" multiplier="30:17" id="vOf-rL-DxE"/>
+                                </constraints>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Fireworks!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CBv-jp-wvH">
+                                <rect key="frame" x="193" y="271" width="215" height="58"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="48"/>
+                                <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5ZL-q3-NYj" userLabel="redMTKView" customClass="AOVMTKView">
+                                <rect key="frame" x="0.0" y="75" width="320" height="180"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="5ZL-q3-NYj" secondAttribute="height" multiplier="16:9" id="NQa-rE-oRC"/>
+                                    <constraint firstAttribute="width" constant="320" id="w7Y-aH-LKJ"/>
+                                    <constraint firstAttribute="height" constant="180" id="wYb-mh-Q10"/>
+                                </constraints>
+                            </view>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="Moon.png" translatesAutoresizingMaskIntoConstraints="NO" id="uGy-sX-rTP">
+                                <rect key="frame" x="20" y="0.0" width="100" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="XL8-5y-sAX"/>
+                                    <constraint firstAttribute="height" constant="100" id="fv7-vS-W6O"/>
+                                    <constraint firstAttribute="width" secondItem="uGy-sX-rTP" secondAttribute="height" multiplier="1:1" id="obl-EX-2C3"/>
+                                </constraints>
+                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IWi-ud-Sae" userLabel="Field Container">
+                                <rect key="frame" x="0.0" y="60" width="320" height="408"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="uGy-sX-rTP" firstAttribute="leading" secondItem="bO3-ua-S6W" secondAttribute="leadingMargin" id="0EN-Ij-f2q"/>
+                            <constraint firstItem="9rT-Rp-QhC" firstAttribute="top" secondItem="IWi-ud-Sae" secondAttribute="bottom" constant="100" id="3X7-1K-WCc"/>
+                            <constraint firstItem="5ZL-q3-NYj" firstAttribute="centerX" secondItem="bO3-ua-S6W" secondAttribute="centerX" id="5o5-ak-u0w"/>
+                            <constraint firstItem="CBv-jp-wvH" firstAttribute="centerX" secondItem="bO3-ua-S6W" secondAttribute="centerX" id="AnE-LO-jDl"/>
+                            <constraint firstItem="IWi-ud-Sae" firstAttribute="centerX" secondItem="bO3-ua-S6W" secondAttribute="centerX" id="HPF-eu-cgB"/>
+                            <constraint firstItem="IWi-ud-Sae" firstAttribute="width" secondItem="bO3-ua-S6W" secondAttribute="width" id="VbA-UA-Zax"/>
+                            <constraint firstItem="uGy-sX-rTP" firstAttribute="top" secondItem="bO3-ua-S6W" secondAttribute="topMargin" id="Xdf-xG-LwI"/>
+                            <constraint firstAttribute="right" secondItem="yvR-hX-uaN" secondAttribute="right" id="fR6-XE-oO0"/>
+                            <constraint firstItem="5ZL-q3-NYj" firstAttribute="bottom" secondItem="CBv-jp-wvH" secondAttribute="top" id="gNE-hb-LNP"/>
+                            <constraint firstItem="CBv-jp-wvH" firstAttribute="centerY" secondItem="bO3-ua-S6W" secondAttribute="centerY" id="h48-fS-Dr1"/>
+                            <constraint firstItem="IWi-ud-Sae" firstAttribute="top" secondItem="HQ2-EA-tez" secondAttribute="bottom" constant="40" id="jcd-Ae-2RY"/>
+                            <constraint firstItem="yvR-hX-uaN" firstAttribute="bottom" secondItem="bO3-ua-S6W" secondAttribute="bottom" id="kxZ-Bg-yE8"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="fieldContainer" destination="IWi-ud-Sae" id="OdM-b0-TI1"/>
+                        <outlet property="fireworksLabel" destination="CBv-jp-wvH" id="vUF-5m-1mt"/>
+                        <outlet property="redMTKView" destination="5ZL-q3-NYj" id="QZa-m6-Puq"/>
+                        <outlet property="wheelMTKView" destination="yvR-hX-uaN" id="Sg4-g4-Jdj"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Gfi-0i-cjX" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1136" y="343"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Moon.png" width="300" height="300"/>
+    </resources>
+</document>
