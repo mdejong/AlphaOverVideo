@@ -715,4 +715,21 @@ static int cachedFeatureSet = -1;
 
 #endif // TARGET_OS_IPHONE
 
+// Setter for loopMaxCount which needs to be delivered to both RGB and Alpha streams
+
+- (void) setLoopMaxCount:(int)value {
+  self.rgbSource.loopMaxCount = value;
+  self.alphaSource.loopMaxCount = value;
+}
+
+- (BOOL) isPlaying
+{
+  return self.rgbSource.isPlaying;
+}
+
+- (BOOL) isFinishedPlaying
+{
+  return self.rgbSource.isFinishedPlaying;
+}
+
 @end

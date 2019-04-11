@@ -69,6 +69,13 @@
 @property (nonatomic, assign) BOOL lastSecondFrameBlockInvoked;
 @property (nonatomic, assign) float lastSecondFrameDelta;
 
+// Returns TRUE when video is playing
+@property (nonatomic, readonly) BOOL isPlaying;
+
+// Return TRUE when video has been playing and has reache the end of
+// a clip or has looped clips the maximum number of times.
+@property (nonatomic, readonly) BOOL isFinishedPlaying;
+
 // Init from array of URL assets
 
 - (BOOL) loadFromURLs:(NSArray*)urlsArr;

@@ -18,6 +18,10 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 @property (nonatomic, assign) BOOL addedObservers;
 
+@property (nonatomic, assign) BOOL isPlaying;
+@property (nonatomic, assign) BOOL isReadyToPlay;
+@property (nonatomic, assign) BOOL isFinishedPlaying;
+
 @end
 
 @implementation AOVPlayerVideoOutput
@@ -348,7 +352,6 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   } else {
   }
 
-  //self.isReadyToPlay = TRUE;
   return;
 }
 
@@ -441,6 +444,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 {
   self.isPlaying = FALSE;
   self.isReadyToPlay = FALSE;
+  self.isFinishedPlaying = TRUE;
 
   self.secondaryLoopAsset = FALSE;
   
@@ -515,6 +519,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 #endif // DEBUG
   
   self.secondaryLoopAsset = FALSE;
+  self.isFinishedPlaying = FALSE;
   
   CMTime syncTimeCM = CMTimeMake(itemTime * 1000.0f, 1000);
   [self.player seekToTime:syncTimeCM completionHandler:^(BOOL finished){
@@ -555,6 +560,7 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   if (rate == 0) {
     // setRate(0) will stop playback
     self.isPlaying = FALSE;
+    self.isFinishedPlaying = TRUE;
   } else {
 #if defined(DEBUG)
     NSAssert(self.isAssetAsyncLoaded == TRUE, @"isAssetAsyncLoaded must be TRUE when setRate in invoked");
@@ -588,6 +594,8 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   [self.player setRate:self.playRate time:kCMTimeInvalid atHostTime:hostTimeCM];
   
   NSLog(@"play AVPlayer.item %d / %d : %0.3f", (int)item.currentTime.value, (int)item.currentTime.timescale, CMTimeGetSeconds(item.currentTime));
+  
+  self.isFinishedPlaying = FALSE;
 }
 
 // Define a CMTimescale that will be used by the player, this

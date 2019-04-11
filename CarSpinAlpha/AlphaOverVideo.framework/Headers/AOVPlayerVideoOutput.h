@@ -38,8 +38,9 @@
 @property (nonatomic, retain) AVPlayerItemVideoOutput *playerItemVideoOutput;
 @property (nonatomic, retain) dispatch_queue_t playerQueue;
 
-@property (nonatomic, assign) BOOL isReadyToPlay;
-@property (nonatomic, assign) BOOL isPlaying;
+@property (nonatomic, readonly) BOOL isReadyToPlay;
+@property (nonatomic, readonly) BOOL isPlaying;
+@property (nonatomic, readonly) BOOL isFinishedPlaying;
 
 @property (nonatomic, assign) BOOL isAssetAsyncLoaded;
 

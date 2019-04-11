@@ -29,6 +29,10 @@
 @property (nonatomic, assign) int width;
 @property (nonatomic, assign) int height;
 
+@property (nonatomic, readonly) BOOL isReadyToPlay;
+@property (nonatomic, readonly) BOOL isPlaying;
+@property (nonatomic, readonly) BOOL isFinishedPlaying;
+
 // Given a host time offset, return a AOVVFrame that corresponds
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.

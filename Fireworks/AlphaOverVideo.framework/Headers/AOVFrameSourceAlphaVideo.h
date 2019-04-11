@@ -54,6 +54,13 @@
 
 @property (nonatomic, copy, nullable) void (^loadedBlock)(BOOL success);
 
+// Returns TRUE when video is playing
+@property (nonatomic, readonly) BOOL isPlaying;
+
+// Return TRUE when video has been playing and has reache the end of
+// a clip or has looped clips the maximum number of times.
+@property (nonatomic, readonly) BOOL isFinishedPlaying;
+
 // Init from an array of NSURL objects, loads the first
 // RGB and Alpha URLS from urlArr[0]
 

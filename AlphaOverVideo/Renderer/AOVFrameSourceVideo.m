@@ -632,7 +632,10 @@
 #endif // DEBUG
   
   if ((self.loopMaxCount != 0) && (self.loopCount >= self.loopMaxCount)) {
-    // A restart is a nop when all loops (including 1) have completed
+    // When restart is invoked but the max number of loops has been reached
+    // invoke stop to discontinue looped playback. Note that in the trivial
+    // case of no loops the loopMaxCount is 1.
+    [self stop];
     return;
   }
   
@@ -815,6 +818,26 @@
     self.loadedBlock(success);
     //self.loadedBlock = nil;
   }
+}
+
+- (BOOL) isPlaying
+{
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+  
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  return pvo.isPlaying;
+}
+
+- (BOOL) isFinishedPlaying
+{
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+  
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  return pvo.isFinishedPlaying;
 }
 
 @end

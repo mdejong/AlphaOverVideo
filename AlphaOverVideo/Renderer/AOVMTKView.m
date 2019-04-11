@@ -376,6 +376,14 @@ void validate_storage_mode(id<MTLTexture> texture)
     self.displayLink.invocationBlock = ^(CFTimeInterval hostTime, CFTimeInterval displayTime){
       NSLog(@"AOVDisplayLink invocationBlock");
       
+      if (weakFrameSourceVideo.isFinishedPlaying == TRUE) {
+        // When video playback has been started and it is now finished, terminate
+        // display link and detach player from the view.
+        
+        [weakSelf detachPlayer:weakSelf.player];
+        return;
+      }
+
       [weakSelf displayLinkCallback:hostTime displayTime:displayTime];
     };
     
@@ -425,6 +433,11 @@ void validate_storage_mode(id<MTLTexture> texture)
   [self.displayLink cancelDisplayLink];
   self.displayLink = nil;
   self.player = nil;
+  
+  // FIXME: Does view hold on to a ref to the most recent pixel buffer from a pool
+  // delivered to the view?
+  
+  self.prevFrame = nil;
   
   return TRUE;
 }
