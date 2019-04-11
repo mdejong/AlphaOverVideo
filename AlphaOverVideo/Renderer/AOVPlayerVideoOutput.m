@@ -483,8 +483,6 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   NSLog(@"%p AVPlayer playWithPreroll : %.2f : starting at time %.3f", self, rate, CACurrentMediaTime());
 #endif // DEBUG
   
-  //self.loopCount = 0;
-  
   player.automaticallyWaitsToMinimizeStalling = FALSE;
   
   [player prerollAtRate:rate completionHandler:^(BOOL finished){

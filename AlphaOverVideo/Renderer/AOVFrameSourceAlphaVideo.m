@@ -624,6 +624,10 @@ static int cachedFeatureSet = -1;
   // to avoid a glitching issue on A7 devices. This is not a problem
   // on A8 and newer devices.
   
+  if ((self.loopMaxCount != 0) && (self.loopCount >= self.loopMaxCount)) {
+    return;
+  }
+  
 #if TARGET_OS_IOS
   if ([self isMetalDeviceA8OrNewer]) {
     [self.alphaSource lastSecond];

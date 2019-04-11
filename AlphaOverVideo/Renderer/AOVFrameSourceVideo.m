@@ -425,6 +425,8 @@
   self.lastSecondFrameBlock = ^{
     [weakSelf lastSecond];
   };
+  
+  self.loopCount = 1;
 
   return TRUE;
 }
@@ -629,7 +631,10 @@
   NSLog(@"restart %@", self.uid);
 #endif // DEBUG
   
-  self.loopCount += 1;
+  if ((self.loopMaxCount != 0) && (self.loopCount >= self.loopMaxCount)) {
+    // A restart is a nop when all loops (including 1) have completed
+    return;
+  }
   
   // Halt playback of current item
   
@@ -717,12 +722,16 @@
   self.lastSecondFrameBlockInvoked = FALSE;
 }
 
-// Invoked a second before the end of the clip
+// Invoked at the "last second" before the end of the clip
 
 - (void) lastSecond {
 #if defined(DEBUG)
   NSLog(@"lastSecond %@", self.uid);
 #endif // DEBUG
+  
+  if ((self.loopMaxCount != 0) && (self.loopCount >= self.loopMaxCount)) {
+    return;
+  }
   
   // Advance to next item, this preloading logic will
   // kick off an async asset ready to play notification.

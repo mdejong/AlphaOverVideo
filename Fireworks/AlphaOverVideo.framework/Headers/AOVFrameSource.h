@@ -21,6 +21,7 @@
 @property (nonatomic, copy, nullable) void (^loadedBlock)(BOOL success);
 
 @property (nonatomic, readonly) int loopCount;
+@property (nonatomic, assign) int loopMaxCount;
 
 @property (nonatomic, assign) float FPS;
 @property (nonatomic, assign) float frameDuration;

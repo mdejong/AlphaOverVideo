@@ -75,7 +75,22 @@
   return TRUE;
 }
 
+// Create player with a single asset, at the
+// end of the clip, playback is stopped.
+
++ (AOVPlayer*) playerWithClip:(NSURL*)assetURLs
+{
+  return [self playerWithLoopedClipsPrivate:@[assetURLs] looped:FALSE loopMaxCount:1];
+}
+
 + (AOVPlayer*) playerWithLoopedClips:(NSArray*)assetURLs
+{
+  return [self playerWithLoopedClipsPrivate:assetURLs looped:TRUE loopMaxCount:0];
+}
+
++ (AOVPlayer*) playerWithLoopedClipsPrivate:(NSArray*)assetURLs
+                                     looped:(BOOL)looped
+                               loopMaxCount:(int)loopMaxCount
 {
   int subCount;
   BOOL valid = [self validateClips:assetURLs clipSubCountPtr:&subCount];
@@ -89,7 +104,7 @@
   
   // Note that (num == 0) is handled above
   
-  if (num == 1) {
+  if (num == 1 && looped) {
     // One clip will be initialized as using 2 copies of the url
     id url = assetURLs[0];
     [mURLs addObject:url];
@@ -138,6 +153,8 @@
       return nil;
     }
   }
+  
+  frameSource.loopMaxCount = loopMaxCount;
   
   // Define source for frames in terms of generic interface ref
   

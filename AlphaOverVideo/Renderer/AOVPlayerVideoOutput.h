@@ -18,12 +18,6 @@
 @property (nonatomic, assign) CFTimeInterval syncTime;
 @property (nonatomic, assign) float playRate;
 
-// The integer count of the number of times the video has looped.
-// This value starts out as zero, it then increases each time
-// the active item changes.
-
-@property (nonatomic, readonly) int loopCount;
-
 @property (nonatomic, assign) float FPS;
 @property (nonatomic, assign) float frameDuration;
 

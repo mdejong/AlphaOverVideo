@@ -42,12 +42,12 @@
 
 @property (nonatomic, assign) MetalBT709Gamma decodeGamma;
 
-/*
-
 // Create player with a single asset, at the
-// end of the clip playback is stopped.
+// end of the clip, playback is stopped.
 
 + (AOVPlayer*) playerWithClip:(NSURL*)assetURL;
+
+/*
 
 // Create player with multiple assets, the clips
 // are played with seamless transitions between

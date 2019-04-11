@@ -86,11 +86,12 @@
   
   NSURL *redURL = mediaManager.redURL;
 
-  // FIXME: play red just 1 time then stop red player
-  self.redPlayer = [AOVPlayer playerWithLoopedClips:@[redURL]];
+  // Red firework animated 1 time
+  self.redPlayer = [AOVPlayer playerWithClip:redURL];
+  // Wheel does seamless looping forever
   self.wheelPlayer = [AOVPlayer playerWithLoopedClips:@[wheelURL]];
 
-  // Defaults to sRGB, so set BT.709
+  // Defaults to sRGB, so set BT.709 flag
   self.redPlayer.decodeGamma = MetalBT709GammaApple;
   self.wheelPlayer.decodeGamma = MetalBT709GammaApple;
   

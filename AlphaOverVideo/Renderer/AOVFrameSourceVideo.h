@@ -31,6 +31,12 @@
 
 @property (nonatomic, readonly) int loopCount;
 
+// The maximum number of times a clip or a collection of clips will
+// be looped. When zero this indicates that playback will be stopped
+// after loop N completes.
+
+@property (nonatomic, assign) int loopMaxCount;
+
 @property (nonatomic, assign) float FPS;
 @property (nonatomic, assign) float frameDuration;
 
