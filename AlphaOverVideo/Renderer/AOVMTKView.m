@@ -257,7 +257,24 @@ void validate_storage_mode(id<MTLTexture> texture)
   }
 #endif // TARGET_OS_IOS
 }
- 
+
+- (int) queryScreenScale
+{
+  NSAssert([NSThread isMainThread], @"queryScreenScale must be invoked from main thread");
+  
+  int screenScale;
+  
+  if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+    screenScale = (int) [UIScreen mainScreen].scale;
+  } else {
+    // Would only get invoked on old iPad 1 with iOS 3.2
+    screenScale = 1;
+  }
+  
+  NSAssert(screenScale == 1 || screenScale == 2 || screenScale == 3, @"bad screenScale %d", screenScale);
+  return screenScale;
+}
+
 // Attach a player to connect the output of the player to the input of the view.
 // Note that attaching a player is an expensive operation because it can
 // result in internal buffers being allocated.
@@ -319,10 +336,20 @@ void validate_storage_mode(id<MTLTexture> texture)
       
       // Allocate scaling texture
       
-      int width = weakFrameSourceVideo.width;
-      int height = weakFrameSourceVideo.height;
+      int pixelWidth = weakFrameSourceVideo.width;
+      int pixelHeight = weakFrameSourceVideo.height;
+      CGSize pixelSize = CGSizeMake(pixelWidth, pixelHeight);
       
-      [weakSelf makeInternalMetalTexture:CGSizeMake(width, height)];
+      [weakSelf makeInternalMetalTexture:pixelSize];
+      
+      // Invoke block on player once video pixel size is known
+      
+      if (self.player.videoSizeReadyBlock != nil)
+      {
+        int screenScale = [self queryScreenScale];
+        CGSize pointSize = CGSizeMake(pixelWidth / screenScale, pixelHeight / screenScale);
+        self.player.videoSizeReadyBlock(pixelSize, pointSize);
+      }
       
       float FPS = weakFrameSourceVideo.FPS;
       float frameDuration = weakFrameSourceVideo.frameDuration;

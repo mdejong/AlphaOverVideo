@@ -820,6 +820,16 @@
   }
 }
 
+- (BOOL) isReadyToPlay
+{
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+  
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  return pvo.isReadyToPlay;
+}
+
 - (BOOL) isPlaying
 {
 #if defined(DEBUG)

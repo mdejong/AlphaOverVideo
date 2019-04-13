@@ -10,15 +10,6 @@
 
 #import "AutoTimer.h"
 
-//#import "AVFileUtil.h"
-//#import "AVMvidFrameDecoder.h"
-//#import "AVAnimatorMedia.h"
-
-// Specific kind of resource to mvid converter to use
-
-//#import "AVAsset2MvidResourceLoader.h"
-//#import "AVAssetJoinAlphaResourceLoader.h"
-
 @interface MediaManager ()
 
 @end
@@ -110,6 +101,14 @@
   }
 
   return;
+}
+
+
+// Return array of all alpha channel fireworks media URLs.
+
+- (NSArray*) getFireworkURLs
+{
+  return @[self.L12URL, self.L22URL, self.L32URL, self.L42URL, self.L52URL, self.L62URL, self.L92URL, self.L112URL];
 }
 
 @end

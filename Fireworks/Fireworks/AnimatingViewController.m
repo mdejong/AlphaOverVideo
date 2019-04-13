@@ -16,13 +16,6 @@
 
 @import AlphaOverVideo;
 
-//#import "AVAnimatorView.h"
-//#import "AVAnimatorMedia.h"
-//#import "AVAsset2MvidResourceLoader.h"
-//#import "AVAssetJoinAlphaResourceLoader.h"
-//#import "AVMvidFrameDecoder.h"
-//#import "AVAnimatorMediaPrivate.h"
-
 #include <stdlib.h>
 
 @interface AnimatingViewController ()
@@ -45,6 +38,10 @@
 
 // Seamless looping player always running in BG
 @property (nonatomic, retain) AOVPlayer *wheelPlayer;
+
+// Active players for each firework video
+
+@property (nonatomic, retain) NSMutableArray *players;
 
 // The field is the extents of the (X,Y,W,H) where fireworks
 // can explode. The upper right corner is (0.0, 0.0) and the
@@ -198,25 +195,24 @@
   
   NSLog(@"fieldContainer (X,Y): (%d, %d)", fieldContainerX, fieldContainerY);
   
-  /*
-  
   // Detemine rough (0.0, 0.0) -> (1.0, 1.0) coordinates
   
-  AVAnimatorView *fieldSubview;
-
-  fieldSubview = [AVAnimatorView aVAnimatorViewWithFrame:bounds];
+  AOVMTKView *fieldSubview = [[AOVMTKView alloc] initWithFrame:bounds];
 
   [self.fieldContainer addSubview:fieldSubview];
-  
+
+  if (self.fieldSubviews == nil) {
+    self.fieldSubviews = [NSMutableArray array];
+  }
   [self.fieldSubviews addObject:fieldSubview];
   
   AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
   MediaManager *mediaManager = appDelegate.mediaManager;
 
-  NSAssert(mediaManager.L42Media, @"L42Media");
-  NSAssert(mediaManager.L112Media, @"L112Media");
+  NSAssert(mediaManager.L42URL, @"L42URL");
+  NSAssert(mediaManager.L112URL, @"L112URL");
   
-  AVAnimatorMedia *media = nil;
+//  AVAnimatorMedia *media = nil;
   
 //  if (event.allTouches.count > 1) {
 //    // More than 1 finger down on the touch
@@ -227,39 +223,61 @@
   
   // Randomly choose a firework to display
   
-  NSArray *arr = [mediaManager getFireworkMedia];
+  NSArray *arr = [mediaManager getFireworkURLs];
   int off = (int) arc4random_uniform((u_int32_t)arr.count);
-  media = arr[off];
+  NSArray *urlTuple = arr[off];
   
-  NSAssert(media, @"selected media");
+  //[self stopMediaAndRemoveView:media];
   
-  [self stopMediaAndRemoveView:media];
+  AOVPlayer *player = [AOVPlayer playerWithClip:urlTuple];
   
-  // FIXME: adjust view bounds to 1:1 size video
+  // Note that each player must be retained in an array, since the window
+  // does not hold a ref to the player.
   
-  int mediaWidth = (int)media.frameDecoder.width;
-  int mediaHeight = (int)media.frameDecoder.height;
+  if (self.players == nil) {
+    self.players = [NSMutableArray array];
+  }
+  [self.players addObject:player];
   
-  int hW = mediaWidth / 2;
-  int hH = mediaHeight / 2;
+  // Define a configuration block that is executed when the movie
+  // dimensions are available. Before the movie file is parsed,
+  // the width and height dimensions are not available.
   
-  int originX = fieldContainerX - hW;
-  int originY = fieldContainerY - hH;
+  player.videoSizeReadyBlock = ^(CGSize pixelSize, CGSize pointSize){
+    //int w = (int) pointSize.width;
+    //int h = (int) pointSize.height;
+
+    // Normally, one would use pointSize dimensions to get a 1 to 1
+    // scaling from pixels to screen, but the original videos are
+    // a little small, so scale them up to 2x size by using the
+    // pixel size for the view points values.
+    
+    int w = (int) pixelSize.width;
+    int h = (int) pixelSize.height;
+    
+    int hW = w / 2;
+    int hH = h / 2;
+    
+    int originX = fieldContainerX - hW;
+    int originY = fieldContainerY - hH;
+    
+    fieldSubview.frame = CGRectMake(originX, originY, w, h);
+    
+    NSLog(@"subview (X,Y): (%f, %f) and W x H : (%f, %f)", fieldSubview.frame.origin.x, fieldSubview.frame.origin.y, fieldSubview.frame.size.width, fieldSubview.frame.size.width);
+  };
   
-  fieldSubview.frame = CGRectMake(originX, originY, mediaWidth, mediaHeight);
+  fieldSubview.device = self.device;
   
-  NSLog(@"subview (X,Y): (%f, %f) and W x H : (%f, %f)", fieldSubview.frame.origin.x, fieldSubview.frame.origin.y, fieldSubview.frame.size.width, fieldSubview.frame.size.width);
+  [fieldSubview attachPlayer:player];
   
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(animatorDoneNotification:)
-                                               name:AVAnimatorDoneNotification
-                                             object:media];
-  
-  [fieldSubview attachMedia:media];
-  
-  [media startAnimator];
-  
-  */
+//  [[NSNotificationCenter defaultCenter] addObserver:self
+//                                           selector:@selector(animatorDoneNotification:)
+//                                               name:AVAnimatorDoneNotification
+//                                             object:media];
+//
+//  [fieldSubview attachMedia:media];
+//
+//  [media startAnimator];
   
   return;
 }

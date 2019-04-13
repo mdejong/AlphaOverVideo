@@ -77,10 +77,12 @@
 
 // Create player with a single asset, at the
 // end of the clip, playback is stopped.
+// This method accepts either a NSURL*
+// or a NSArray tuple that contains two NSURLs.
 
-+ (AOVPlayer*) playerWithClip:(NSURL*)assetURLs
++ (AOVPlayer*) playerWithClip:(id)assetURLOrPair
 {
-  return [self playerWithLoopedClipsPrivate:@[assetURLs] looped:FALSE loopMaxCount:1];
+  return [self playerWithLoopedClipsPrivate:@[assetURLOrPair] looped:FALSE loopMaxCount:1];
 }
 
 + (AOVPlayer*) playerWithLoopedClips:(NSArray*)assetURLs

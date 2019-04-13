@@ -44,13 +44,9 @@
 
 - (BOOL) allLoadersReady;
 
-// Return array of all active media objects
+// Return array of all alpha channel fireworks media URLs.
 
-- (NSArray*) getAllMedia;
-
-// Return array of all alpha channel fireworks media
-
-- (NSArray*) getFireworkMedia;
+- (NSArray*) getFireworkURLs;
 
 @end
 

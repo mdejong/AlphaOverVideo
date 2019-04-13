@@ -487,7 +487,9 @@ static int cachedFeatureSet = -1;
   
   // FIXME: validate that FPS, width x height are the same for both videos
   
-  self.loadedBlock(TRUE);
+  if (self.loadedBlock != nil) {
+    self.loadedBlock(TRUE);
+  }
   self.loadedBlock = nil;
 }
 
@@ -720,6 +722,11 @@ static int cachedFeatureSet = -1;
 - (void) setLoopMaxCount:(int)value {
   self.rgbSource.loopMaxCount = value;
   self.alphaSource.loopMaxCount = value;
+}
+
+- (BOOL) isReadyToPlay
+{
+  return self.rgbSource.isReadyToPlay;
 }
 
 - (BOOL) isPlaying

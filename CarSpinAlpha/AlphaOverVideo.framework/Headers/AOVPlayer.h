@@ -42,10 +42,17 @@
 
 @property (nonatomic, assign) MetalBT709Gamma decodeGamma;
 
+// This block will be invoked on the main thread when the
+// dimensions of the video become available.
+
+@property (nonatomic, copy, nullable) void (^videoSizeReadyBlock)(CGSize pixelSize, CGSize pointSize);
+
 // Create player with a single asset, at the
 // end of the clip, playback is stopped.
+// This method accepts either a NSURL*
+// or a NSArray tuple that contains two NSURLs.
 
-+ (AOVPlayer*) playerWithClip:(NSURL*)assetURL;
++ (AOVPlayer*) playerWithClip:(id)assetURLOrPair;
 
 /*
 
