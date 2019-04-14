@@ -243,6 +243,9 @@
   // dimensions are available. Before the movie file is parsed,
   // the width and height dimensions are not available.
   
+  __weak typeof(fieldSubview) weakFieldSubview = fieldSubview;
+  __weak typeof(player) weakPlayer = player;
+  
   player.videoSizeReadyBlock = ^(CGSize pixelSize, CGSize pointSize){
     //int w = (int) pointSize.width;
     //int h = (int) pointSize.height;
@@ -261,9 +264,15 @@
     int originX = fieldContainerX - hW;
     int originY = fieldContainerY - hH;
     
-    fieldSubview.frame = CGRectMake(originX, originY, w, h);
+    weakFieldSubview.frame = CGRectMake(originX, originY, w, h);
     
-    NSLog(@"subview (X,Y): (%f, %f) and W x H : (%f, %f)", fieldSubview.frame.origin.x, fieldSubview.frame.origin.y, fieldSubview.frame.size.width, fieldSubview.frame.size.width);
+    NSLog(@"subview (X,Y): (%f, %f) and W x H : (%f, %f)", weakFieldSubview.frame.origin.x, weakFieldSubview.frame.origin.y, weakFieldSubview.frame.size.width, weakFieldSubview.frame.size.width);
+  };
+  
+  // This callback block is invoked when the video is finished playing
+  
+  player.videoPlaybackFinishedBlock = ^{
+    [self cleanupViewAfterStopping:weakFieldSubview player:weakPlayer];
   };
   
   fieldSubview.device = self.device;
@@ -306,40 +315,15 @@
   return CGPointMake(0, 0);
 }
 
-/*
 
-- (void) stopMediaAndRemoveView:(AVAnimatorMedia*)media
+- (void) cleanupViewAfterStopping:(AOVMTKView*)subview player:(AOVPlayer*)player
 {
-  id<AVAnimatorMediaRendererProtocol> renderer = media.renderer;
-  AVAnimatorView *aVAnimatorView = (AVAnimatorView*) renderer;
+  // Query player, then detach, then remove from superview and deallocate
+  [subview detachPlayer:player];
+  [subview removeFromSuperview];
   
-  [media stopAnimator];
-
-  [aVAnimatorView attachMedia:nil];
-  
-  [aVAnimatorView removeFromSuperview];
-  
-  int numBefore = (int) self.fieldSubviews.count;
-  [self.fieldSubviews removeObject:aVAnimatorView];
-  int numAfter = (int) self.fieldSubviews.count;
-  NSAssert(numBefore == numAfter, @"numBefore == numAfter");
+  [self.fieldSubviews removeObject:subview];
+  [self.players removeObject:player];
 }
-
-// Invoked when a specific firework media completes the animation cycle
-
-- (void)animatorDoneNotification:(NSNotification*)notification {
-  AVAnimatorMedia *media = notification.object;
-  NSAssert(media, @"*media");
-  
-  NSLog(@"animatorDoneNotification with media object %p", media);
-  
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:AVAnimatorDoneNotification object:media];
-  
-  [self stopMediaAndRemoveView:media];
-  
-  return;
-}
- 
-*/
 
 @end

@@ -60,6 +60,13 @@
 
 @property (nonatomic, copy, nullable) void (^asyncReadyToPlayBlock)(void);
 
+// This block will be invoked on the main thread when video playback
+// is finished. For a single video, this is at the end of the video.
+// For a set of clips, the finished callback is invoked after all
+// clips are finished (including a set number of loops)
+
+@property (nonatomic, copy, nullable) void (^videoPlaybackFinishedBlock)(void);
+
 - (NSString*) description;
 
 - (void) registerForItemNotificaitons;

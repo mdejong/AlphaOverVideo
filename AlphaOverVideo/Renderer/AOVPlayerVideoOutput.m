@@ -463,6 +463,12 @@ static void *AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
   self.playerItemVideoOutput = nil;
   
   [self.player setRate:0.0];
+
+  // FIXME: invoke async
+
+  if (self.videoPlaybackFinishedBlock != nil) {
+    self.videoPlaybackFinishedBlock();
+  }
 }
 
 // Initiate playback by preloading for a specific rate (typically 1.0)

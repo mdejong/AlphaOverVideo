@@ -739,4 +739,9 @@ static int cachedFeatureSet = -1;
   return self.rgbSource.isFinishedPlaying;
 }
 
+- (void) setVideoPlaybackFinishedBlock:(void (^)(void))videoPlaybackFinishedBlock
+{
+  self.rgbSource.videoPlaybackFinishedBlock = videoPlaybackFinishedBlock;
+}
+
 @end

@@ -47,6 +47,13 @@
 
 @property (nonatomic, copy, nullable) void (^videoSizeReadyBlock)(CGSize pixelSize, CGSize pointSize);
 
+// This block will be invoked on the main thread when video playback
+// is finished. For a single video, this is at the end of the video.
+// For a set of clips, the finished callback is invoked after all
+// clips are finished (including a set number of loops)
+
+@property (nonatomic, copy, nullable) void (^videoPlaybackFinishedBlock)(void);
+
 // Create player with a single asset, at the
 // end of the clip, playback is stopped.
 // This method accepts either a NSURL*

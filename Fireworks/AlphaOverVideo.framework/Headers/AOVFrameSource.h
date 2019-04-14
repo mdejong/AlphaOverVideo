@@ -33,6 +33,13 @@
 @property (nonatomic, readonly) BOOL isPlaying;
 @property (nonatomic, readonly) BOOL isFinishedPlaying;
 
+// This block will be invoked on the main thread when video playback
+// is finished. For a single video, this is at the end of the video.
+// For a set of clips, the finished callback is invoked after all
+// clips are finished (including a set number of loops)
+
+@property (nonatomic, copy, nullable) void (^videoPlaybackFinishedBlock)(void);
+
 // Given a host time offset, return a AOVVFrame that corresponds
 // to the given host time. If no new frame is avilable for the
 // given host time then nil is returned.

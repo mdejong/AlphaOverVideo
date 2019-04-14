@@ -190,4 +190,10 @@
   return assetURL;
 }
 
+
+- (void) setVideoPlaybackFinishedBlock:(void (^)(void))videoPlaybackFinishedBlock
+{
+  self.frameSource.videoPlaybackFinishedBlock = videoPlaybackFinishedBlock;
+}
+
 @end

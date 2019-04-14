@@ -850,4 +850,15 @@
   return pvo.isFinishedPlaying;
 }
 
+- (void) setVideoPlaybackFinishedBlock:(void (^)(void))videoPlaybackFinishedBlock
+{
+#if defined(DEBUG)
+  NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
+#endif // DEBUG
+  
+  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  pvo.videoPlaybackFinishedBlock = videoPlaybackFinishedBlock;
+}
+
+
 @end

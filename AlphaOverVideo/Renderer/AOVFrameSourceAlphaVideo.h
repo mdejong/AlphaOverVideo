@@ -54,6 +54,10 @@
 
 @property (nonatomic, copy, nullable) void (^loadedBlock)(BOOL success);
 
+// Callback when stop has been invoked at end of clip(s) or loops
+
+@property (nonatomic, copy, nullable) void (^videoPlaybackFinishedBlock)(void);
+
 // Returns TRUE when video is playing
 @property (nonatomic, readonly) BOOL isPlaying;
 
