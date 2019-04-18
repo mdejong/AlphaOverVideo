@@ -26,8 +26,6 @@ Fireworks : Example iOS app, display multiple alpha channel fireworks videos at 
 
 AlphaOverVideo : Framework Implementation source code, example iOS and MacOSX app, tests
 
-Fireworks
-
 ## Encoding
 
 To encode your own video, compile the srgb_to_bt709 command line target and use it to convert a series of PNG images to a .y4m file.
