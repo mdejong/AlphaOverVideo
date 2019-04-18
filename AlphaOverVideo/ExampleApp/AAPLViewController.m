@@ -107,7 +107,8 @@ Implementation of our cross-platform view controller
   NSArray *clips = @[
                      //@[ [AOVPlayer urlFromAsset:@"CarSpin.m4v"], [AOVPlayer urlFromAsset:@"CarSpin_alpha.m4v"] ]
                      //@[ [AOVPlayer urlFromAsset:@"CountToTenA.m4v"], [AOVPlayer urlFromAsset:@"CountToTenA_alpha.m4v"] ]
-                     @[ [AOVPlayer urlFromAsset:@"Field.m4v"], [AOVPlayer urlFromAsset:@"Field_alpha.m4v"] ]
+                     @[ [AOVPlayer urlFromAsset:@"GlobeLEDAlpha.m4v"], [AOVPlayer urlFromAsset:@"GlobeLEDAlpha_alpha.m4v"] ]
+                     //@[ [AOVPlayer urlFromAsset:@"Field.m4v"], [AOVPlayer urlFromAsset:@"Field_alpha.m4v"] ]
                      ];
 #else
   NSArray *clips = @[
