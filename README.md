@@ -19,8 +19,11 @@ The Metal implementation renders YCbCr data as RGB pixels and is able to execute
 See examples for source code that creates player objects with 24 BPP or 32 BPP videos.
 
 CarSpinAlpha : Example iOS app, displays seamless looping car over changing backgrounds (Swift)
+
 AlienEscape :  Example iOS app, displays alpha channel video over starfield background. (Swift)
+
 Fireworks : Example iOS app, display multiple alpha channel fireworks videos at the same time. (Objc)
+
 AlphaOverVideo : Framework Implementation source code, example iOS and MacOSX app, tests
 
 Fireworks
