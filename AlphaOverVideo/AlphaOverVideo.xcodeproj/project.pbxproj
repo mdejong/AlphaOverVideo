@@ -446,15 +446,14 @@
 		3AF7E9B71EB64A46003BB06D = {
 			isa = PBXGroup;
 			children = (
-				3AF7E9BC1EB64A46003BB06D /* Renderer */,
+				3C0551C82256C068000A4BA4 /* AlphaOverVideo */,
 				3AFD65411F71A6D00008A125 /* Application */,
+				2584CCE02584A3B000000001 /* Configuration */,
 				3C4A770B21D892BA0041ACE3 /* EmptyiOS */,
 				3C4A772421D892C00041ACE3 /* EmptyiOSTests */,
-				3C4A775221DACE890041ACE3 /* srgb_to_bt709 */,
-				3C0551C82256C068000A4BA4 /* AlphaOverVideo */,
 				3ABBE2751F73196D0080C72C /* Frameworks */,
 				3AF7E9C91EB64A46003BB06D /* Products */,
-				2584CCE02584A3B000000001 /* Configuration */,
+				3C4A775221DACE890041ACE3 /* srgb_to_bt709 */,
 			);
 			sourceTree = "<group>";
 		};
@@ -592,6 +591,7 @@
 		3C0551C82256C068000A4BA4 /* AlphaOverVideo */ = {
 			isa = PBXGroup;
 			children = (
+				3AF7E9BC1EB64A46003BB06D /* Renderer */,
 				3C0551C92256C068000A4BA4 /* AlphaOverVideo.h */,
 				3C0551CA2256C068000A4BA4 /* Info.plist */,
 			);
@@ -834,6 +834,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
