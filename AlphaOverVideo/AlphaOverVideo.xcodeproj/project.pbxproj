@@ -1033,6 +1033,20 @@
 						DevelopmentTeam = 9F74CLHA49;
 						ProvisioningStyle = Automatic;
 					};
+					666259F422742EF4006F8FCA = {
+						CreatedOnToolsVersion = 10.2.1;
+						ProvisioningStyle = Automatic;
+					};
+					666259FC22742EF4006F8FCA = {
+						CreatedOnToolsVersion = 10.2.1;
+						DevelopmentTeam = 9F74CLHA49;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 3AF7E9F71EB64A46003BB06D;
+					};
+					66625A1722742F74006F8FCA = {
+						CreatedOnToolsVersion = 10.2.1;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 3AF7E9BB1EB64A46003BB06D /* Build configuration list for PBXProject "AlphaOverVideo" */;
@@ -1962,7 +1976,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = H9EZHJZX4M;
+				DEVELOPMENT_TEAM = 9F74CLHA49;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AlphaOverVideomTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
@@ -1985,7 +1999,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = H9EZHJZX4M;
+				DEVELOPMENT_TEAM = 9F74CLHA49;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AlphaOverVideomTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
