@@ -12,8 +12,6 @@
 
 //#define STORE_TIMES
 
-static int cachedFeatureSet = -1;
-
 // Private API
 
 @interface AOVFrameSourceVideo ()
@@ -675,6 +673,8 @@ static int cachedFeatureSet = -1;
 }
 
 #if TARGET_OS_IPHONE
+
+static int cachedFeatureSet = -1;
 
 - (NSUInteger)highestSupportedFeatureSet
 {

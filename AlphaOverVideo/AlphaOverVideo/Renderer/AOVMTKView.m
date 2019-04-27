@@ -261,15 +261,18 @@ void validate_storage_mode(id<MTLTexture> texture)
 - (int) queryScreenScale
 {
   NSAssert([NSThread isMainThread], @"queryScreenScale must be invoked from main thread");
-  
+
+#if defined(TARGET_IOS) || defined(target_TVOS)
   int screenScale;
-  
   if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
     screenScale = (int) [UIScreen mainScreen].scale;
   } else {
     // Would only get invoked on old iPad 1 with iOS 3.2
     screenScale = 1;
   }
+#else
+    int screenScale = 1;
+#endif
   
   NSAssert(screenScale == 1 || screenScale == 2 || screenScale == 3, @"bad screenScale %d", screenScale);
   return screenScale;
