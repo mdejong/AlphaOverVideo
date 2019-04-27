@@ -258,7 +258,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		25849E602584CC8000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		3A1857EF1EB7AF9E007D4F50 /* Image.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = Image.tga; sourceTree = "<group>"; };
 		3ABBE2761F7319760080C72C /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		3ABBE2771F7319760080C72C /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
@@ -425,14 +424,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2584CCE02584A3B000000001 /* Configuration */ = {
-			isa = PBXGroup;
-			children = (
-				25849E602584CC8000000001 /* SampleCode.xcconfig */,
-			);
-			name = Configuration;
-			sourceTree = "<group>";
-		};
 		3ABBE2751F73196D0080C72C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -448,7 +439,6 @@
 			children = (
 				3C0551C82256C068000A4BA4 /* AlphaOverVideo */,
 				3AFD65411F71A6D00008A125 /* Application */,
-				2584CCE02584A3B000000001 /* Configuration */,
 				3C4A770B21D892BA0041ACE3 /* EmptyiOS */,
 				3C4A772421D892C00041ACE3 /* EmptyiOSTests */,
 				3ABBE2751F73196D0080C72C /* Frameworks */,
@@ -1218,7 +1208,6 @@
 /* Begin XCBuildConfiguration section */
 		3AF7EA191EB64A46003BB06D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 25849E602584CC8000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1272,7 +1261,6 @@
 		};
 		3AF7EA1A1EB64A46003BB06D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 25849E602584CC8000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1319,7 +1307,6 @@
 		};
 		3AF7EA1C1EB64A46003BB06D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 25849E602584CC8000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -1341,7 +1328,6 @@
 		};
 		3AF7EA1D1EB64A46003BB06D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 25849E602584CC8000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -1361,7 +1347,6 @@
 		};
 		3AF7EA1F1EB64A46003BB06D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 25849E602584CC8000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9F74CLHA49;
@@ -1382,7 +1367,6 @@
 		};
 		3AF7EA201EB64A46003BB06D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 25849E602584CC8000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9F74CLHA49;
@@ -1401,7 +1385,6 @@
 		};
 		3AF7EA221EB64A46003BB06D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 25849E602584CC8000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -1423,7 +1406,6 @@
 		};
 		3AF7EA231EB64A46003BB06D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 25849E602584CC8000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
