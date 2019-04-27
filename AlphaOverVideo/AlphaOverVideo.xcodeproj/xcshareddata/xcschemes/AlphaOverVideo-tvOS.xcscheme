@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "66625A1722742F74006F8FCA"
-               BuildableName = "AlphaOverVideo_tvOS.framework"
+               BuildableName = "AlphaOverVideo.framework"
                BlueprintName = "AlphaOverVideo-tvOS"
                ReferencedContainer = "container:AlphaOverVideo.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66625A1722742F74006F8FCA"
-            BuildableName = "AlphaOverVideo_tvOS.framework"
+            BuildableName = "AlphaOverVideo.framework"
             BlueprintName = "AlphaOverVideo-tvOS"
             ReferencedContainer = "container:AlphaOverVideo.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66625A1722742F74006F8FCA"
-            BuildableName = "AlphaOverVideo_tvOS.framework"
+            BuildableName = "AlphaOverVideo.framework"
             BlueprintName = "AlphaOverVideo-tvOS"
             ReferencedContainer = "container:AlphaOverVideo.xcodeproj">
          </BuildableReference>

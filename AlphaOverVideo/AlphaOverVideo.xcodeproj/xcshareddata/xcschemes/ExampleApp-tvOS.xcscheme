@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AF7E9E11EB64A46003BB06D"
-               BuildableName = "AlphaOverVideo.app"
+               BuildableName = "ExampleApp-tvOS.app"
                BlueprintName = "ExampleApp-tvOS"
                ReferencedContainer = "container:AlphaOverVideo.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AF7E9E11EB64A46003BB06D"
-            BuildableName = "AlphaOverVideo.app"
+            BuildableName = "ExampleApp-tvOS.app"
             BlueprintName = "ExampleApp-tvOS"
             ReferencedContainer = "container:AlphaOverVideo.xcodeproj">
          </BuildableReference>
@@ -56,7 +56,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AF7E9E11EB64A46003BB06D"
-            BuildableName = "AlphaOverVideo.app"
+            BuildableName = "ExampleApp-tvOS.app"
             BlueprintName = "ExampleApp-tvOS"
             ReferencedContainer = "container:AlphaOverVideo.xcodeproj">
          </BuildableReference>
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AF7E9E11EB64A46003BB06D"
-            BuildableName = "AlphaOverVideo.app"
+            BuildableName = "ExampleApp-tvOS.app"
             BlueprintName = "ExampleApp-tvOS"
             ReferencedContainer = "container:AlphaOverVideo.xcodeproj">
          </BuildableReference>
