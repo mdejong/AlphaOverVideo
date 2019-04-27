@@ -18,9 +18,11 @@
 
 #import "AOVFrameSource.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface AOVFrameSourceVideo : NSObject <AOVFrameSource>
 
-@property (nonatomic, copy) NSString *uid;
+@property (nonatomic, copy, nullable) NSString *uid;
 
 @property (nonatomic, assign) CFTimeInterval syncTime;
 @property (nonatomic, assign) float playRate;
@@ -155,9 +157,9 @@
 // DTS (display time stamp) of the decoded frame in the H.264 stream.
 // Note that presentationTimePtr can be NULL.
 
-- (AOVFrame*) frameForHostTime:(CFTimeInterval)hostTime
-           hostPresentationTime:(CFTimeInterval)hostPresentationTime
-            presentationTimePtr:(float*)presentationTimePtr;
+- (nullable AOVFrame*) frameForHostTime:(CFTimeInterval)hostTime
+                   hostPresentationTime:(CFTimeInterval)hostPresentationTime
+                    presentationTimePtr:(nullable float*)presentationTimePtr;
 
 // Map host time to item time for the current item.
 // Note that kCMTimeInvalid is returned if the host
@@ -170,9 +172,11 @@
 // (0.0, (N * frameDuration))
 // Note that hostTime is used only for debug output here
 
-- (AOVFrame*) frameForItemTime:(CMTime)itemTime
-                       hostTime:(CFTimeInterval)hostTime
-           hostPresentationTime:(CFTimeInterval)hostPresentationTime
-            presentationTimePtr:(float*)presentationTimePtr;
+- (nullable AOVFrame*) frameForItemTime:(CMTime)itemTime
+                               hostTime:(CFTimeInterval)hostTime
+                   hostPresentationTime:(CFTimeInterval)hostPresentationTime
+                    presentationTimePtr:(nullable float*)presentationTimePtr;
 
 @end
+
+NS_ASSUME_NONNULL_END

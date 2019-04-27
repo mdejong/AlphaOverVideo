@@ -16,8 +16,12 @@
 @import CoreMedia;
 @import VideoToolbox;
 
+
+
 #import "AOVFrameSource.h"
 #import "AOVFrameSourceVideo.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface AOVFrameSourceAlphaVideo : NSObject <AOVFrameSource>
 
@@ -103,3 +107,5 @@
 
 
 @end
+
+NS_ASSUME_NONNULL_END

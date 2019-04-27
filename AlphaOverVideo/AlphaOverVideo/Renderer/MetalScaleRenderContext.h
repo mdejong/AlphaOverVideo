@@ -14,11 +14,13 @@
 
 @class MetalRenderContext;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface MetalScaleRenderContext : NSObject
 
 // Name of fragment shader function
 
-@property (nonatomic, copy) NSString *fragmentFunction;
+@property (nonatomic, copy, nullable) NSString *fragmentFunction;
 
 // fragment pipeline
 
@@ -32,7 +34,7 @@
 // Render into MTKView with 2D scale operation
 
 - (BOOL) renderScaled:(MetalRenderContext*)mrc
-              mtkView:(nonnull MTKView *)mtkView
+              mtkView:(MTKView *)mtkView
           renderWidth:(int)renderWidth
          renderHeight:(int)renderHeight
         commandBuffer:(id<MTLCommandBuffer>)commandBuffer
@@ -40,3 +42,5 @@
           bgraTexture:(id<MTLTexture>)bgraTexture;
 
 @end
+
+NS_ASSUME_NONNULL_END
