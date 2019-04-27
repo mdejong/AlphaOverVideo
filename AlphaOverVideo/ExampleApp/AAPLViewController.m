@@ -10,7 +10,6 @@ Implementation of our cross-platform view controller
 #import <QuartzCore/QuartzCore.h>
 
 #import "AOVMTKView.h"
-
 #import "AOVPlayer.h"
 
 #define LOAD_ALPHA_VIDEO
