@@ -6,6 +6,12 @@
 //  Copyright © 2019 Apple. All rights reserved.
 //
 
+#if defined(TARGET_IOS) || defined(TARGET_TVOS)
+#if TARGET_OS_SIMULATOR
+#error No simulator support for Metal API. Must build for a device
+#endif
+#endif
+
 @import MetalKit;
 
 //! Project version number for AlphaOverVideo.

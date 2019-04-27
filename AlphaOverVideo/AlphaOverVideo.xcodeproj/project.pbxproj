@@ -61,10 +61,6 @@
 		3C0551F42256C0C3000A4BA4 /* AAPLShaderTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7E9C01EB64A46003BB06D /* AAPLShaderTypes.h */; };
 		3C0551F52256C0C3000A4BA4 /* AAPLShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7E9C11EB64A46003BB06D /* AAPLShaders.metal */; };
 		3C0C3F1021FA642D00C498D3 /* AppleEncodeDecodeBT709Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0C3F0F21FA642C00C498D3 /* AppleEncodeDecodeBT709Tests.m */; };
-		3C1310CC2220D493000C4972 /* AOVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310CB2220D493000C4972 /* AOVFrame.m */; };
-		3C1310CE2220D899000C4972 /* AOVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310CB2220D493000C4972 /* AOVFrame.m */; };
-		3C1310D1222214FE000C4972 /* AOVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310D0222214FE000C4972 /* AOVMTKView.m */; };
-		3C1310D3222214FF000C4972 /* AOVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310D0222214FE000C4972 /* AOVMTKView.m */; };
 		3C18D3D0221D432F005DAF85 /* CarSpinAF10.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C18D3CE221D432E005DAF85 /* CarSpinAF10.m4v */; };
 		3C18D3D1221D432F005DAF85 /* CarSpinAF10.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C18D3CE221D432E005DAF85 /* CarSpinAF10.m4v */; };
 		3C18D3D2221D432F005DAF85 /* CarSpinAF10.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C18D3CE221D432E005DAF85 /* CarSpinAF10.m4v */; };
@@ -89,8 +85,6 @@
 		3C483FFD22098AE600AC51AC /* big_buck_bunny_HD_apple.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C483FFA22098ADC00AC51AC /* big_buck_bunny_HD_apple.m4v */; };
 		3C483FFE22098AE600AC51AC /* big_buck_bunny_HD_srgb.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C483FFB22098ADE00AC51AC /* big_buck_bunny_HD_srgb.m4v */; };
 		3C483FFF22098AE600AC51AC /* big_buck_bunny_HD_srgb.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C483FFB22098ADE00AC51AC /* big_buck_bunny_HD_srgb.m4v */; };
-		3C4A770321D8498E0041ACE3 /* MetalRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A770121D8498E0041ACE3 /* MetalRenderContext.m */; };
-		3C4A770521D8498E0041ACE3 /* MetalRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A770121D8498E0041ACE3 /* MetalRenderContext.m */; };
 		3C4A770E21D892BA0041ACE3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A770D21D892BA0041ACE3 /* AppDelegate.m */; };
 		3C4A771121D892BA0041ACE3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A771021D892BA0041ACE3 /* ViewController.m */; };
 		3C4A771421D892BA0041ACE3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A771221D892BA0041ACE3 /* Main.storyboard */; };
@@ -99,8 +93,6 @@
 		3C4A771C21D892BF0041ACE3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A771B21D892BF0041ACE3 /* main.m */; };
 		3C4A772621D892C00041ACE3 /* EmptyiOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A772521D892C00041ACE3 /* EmptyiOSTests.m */; };
 		3C4A772F21D893290041ACE3 /* MetalBT709DecoderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A772E21D893290041ACE3 /* MetalBT709DecoderTests.m */; };
-		3C4A773221D894720041ACE3 /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */; };
-		3C4A773421D894720041ACE3 /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */; };
 		3C4A774221D898BE0041ACE3 /* MetalBT709Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80021D6C62A005424E6 /* MetalBT709Decoder.m */; };
 		3C4A774321D898BE0041ACE3 /* MetalRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A770121D8498E0041ACE3 /* MetalRenderContext.m */; };
 		3C4A774521D898BE0041ACE3 /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */; };
@@ -121,16 +113,12 @@
 		3C4A77B721DD87DA0041ACE3 /* QuickTime_Test_Pattern_HD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */; };
 		3C4A77B821DD87DA0041ACE3 /* QuickTime_Test_Pattern_HD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */; };
 		3C4A77B921DD87DA0041ACE3 /* QuickTime_Test_Pattern_HD.mov in Resources */ = {isa = PBXBuildFile; fileRef = 3C4A77B321DD87D60041ACE3 /* QuickTime_Test_Pattern_HD.mov */; };
-		3C51D8922253FA2C001B0BFF /* AOVPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C51D8912253FA2B001B0BFF /* AOVPlayer.m */; };
-		3C51D8942253FA2C001B0BFF /* AOVPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C51D8912253FA2B001B0BFF /* AOVPlayer.m */; };
 		3C5A49AB22528A6200D559B4 /* Field.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C5A49A922528A6100D559B4 /* Field.m4v */; };
 		3C5A49AC22528A6200D559B4 /* Field.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C5A49A922528A6100D559B4 /* Field.m4v */; };
 		3C5A49AD22528A6200D559B4 /* Field.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C5A49A922528A6100D559B4 /* Field.m4v */; };
 		3C5A49AE22528A6200D559B4 /* Field_alpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C5A49AA22528A6100D559B4 /* Field_alpha.m4v */; };
 		3C5A49AF22528A6200D559B4 /* Field_alpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C5A49AA22528A6100D559B4 /* Field_alpha.m4v */; };
 		3C5A49B022528A6200D559B4 /* Field_alpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C5A49AA22528A6100D559B4 /* Field_alpha.m4v */; };
-		3C7631A622495ABB00D92C5B /* AOVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* AOVDisplayLink.m */; };
-		3C7631A822495ABB00D92C5B /* AOVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* AOVDisplayLink.m */; };
 		3C76939422308A81000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
 		3C76939522308A84000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
 		3C76939622308A84000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
@@ -176,28 +164,15 @@
 		3C9779312216024E003721FD /* RedFadeAlpha256.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C97792D2216024C003721FD /* RedFadeAlpha256.m4v */; };
 		3C9779322216024E003721FD /* RedFadeAlpha256.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C97792D2216024C003721FD /* RedFadeAlpha256.m4v */; };
 		3C9779332216024E003721FD /* RedFadeAlpha256.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C97792D2216024C003721FD /* RedFadeAlpha256.m4v */; };
-		3C97793722161CF3003721FD /* MetalScaleRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C97793622161CF3003721FD /* MetalScaleRenderContext.m */; };
-		3C97793922161CF4003721FD /* MetalScaleRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C97793622161CF3003721FD /* MetalScaleRenderContext.m */; };
-		3CA8B6C521E1682600D2B853 /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8B6C421E1682600D2B853 /* H264Encoder.m */; };
-		3CA8B6C721E1682600D2B853 /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8B6C421E1682600D2B853 /* H264Encoder.m */; };
 		3CA8B6C821E1682600D2B853 /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8B6C421E1682600D2B853 /* H264Encoder.m */; };
 		3CA8B6C921E1682600D2B853 /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8B6C421E1682600D2B853 /* H264Encoder.m */; };
 		3CA8B6CA21E1682600D2B853 /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8B6C421E1682600D2B853 /* H264Encoder.m */; };
-		3CB6E80221D6C62A005424E6 /* MetalBT709Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80021D6C62A005424E6 /* MetalBT709Decoder.m */; };
 		3CB6E80521D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
 		3CB6E80621D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
 		3CB6E80721D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
-		3CB6E81421D73BB5005424E6 /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */; };
-		3CB6E81621D73BB5005424E6 /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */; };
 		3CC9ECB3222C7A1000C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
 		3CC9ECB4222C7A1200C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
 		3CC9ECB5222C7A1300C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
-		3CE0B329222728C800E2BE82 /* AOVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* AOVFrameSourceAlphaVideo.m */; };
-		3CE0B32B222728C800E2BE82 /* AOVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* AOVFrameSourceAlphaVideo.m */; };
-		3CE3B8B2223C2F54005B11C4 /* AOVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B8B0223C2F53005B11C4 /* AOVPlayerVideoOutput.m */; };
-		3CE3B8B4223C2F54005B11C4 /* AOVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B8B0223C2F53005B11C4 /* AOVPlayerVideoOutput.m */; };
-		3CE62FD022233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* AOVFrameSourceVideo.m */; };
-		3CE62FD222233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* AOVFrameSourceVideo.m */; };
 		3CF086C0221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
 		3CF086C1221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
 		3CF086C2221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
@@ -215,6 +190,56 @@
 		666259EB2274291F006F8FCA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666259EA2274291F006F8FCA /* MetalKit.framework */; };
 		666259ED2274292B006F8FCA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666259EC2274292A006F8FCA /* MetalKit.framework */; };
 		666259EF22742936006F8FCA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666259EE22742936006F8FCA /* MetalKit.framework */; };
+		666259FE22742EF4006F8FCA /* AlphaOverVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666259F522742EF4006F8FCA /* AlphaOverVideo.framework */; };
+		66625A0522742EF4006F8FCA /* AlphaOverVideo-Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66625A0422742EF4006F8FCA /* AlphaOverVideo-Tests.m */; };
+		66625A0A22742EF4006F8FCA /* AlphaOverVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666259F522742EF4006F8FCA /* AlphaOverVideo.framework */; };
+		66625A0B22742EF4006F8FCA /* AlphaOverVideo.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 666259F522742EF4006F8FCA /* AlphaOverVideo.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		66625A1F22742F75006F8FCA /* AlphaOverVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66625A1822742F74006F8FCA /* AlphaOverVideo.framework */; };
+		66625A2022742F75006F8FCA /* AlphaOverVideo.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 66625A1822742F74006F8FCA /* AlphaOverVideo.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		66625A2522743060006F8FCA /* AOVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310CB2220D493000C4972 /* AOVFrame.m */; };
+		66625A2622743060006F8FCA /* AOVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B8B0223C2F53005B11C4 /* AOVPlayerVideoOutput.m */; };
+		66625A2722743060006F8FCA /* AOVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* AOVFrameSourceVideo.m */; };
+		66625A2822743060006F8FCA /* AOVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* AOVFrameSourceAlphaVideo.m */; };
+		66625A2922743060006F8FCA /* AOVPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C51D8912253FA2B001B0BFF /* AOVPlayer.m */; };
+		66625A2A22743060006F8FCA /* AOVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310D0222214FE000C4972 /* AOVMTKView.m */; };
+		66625A2B22743060006F8FCA /* AOVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* AOVDisplayLink.m */; };
+		66625A2C22743060006F8FCA /* MetalScaleRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C97793622161CF3003721FD /* MetalScaleRenderContext.m */; };
+		66625A2D22743060006F8FCA /* MetalBT709Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80021D6C62A005424E6 /* MetalBT709Decoder.m */; };
+		66625A2E22743060006F8FCA /* MetalRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A770121D8498E0041ACE3 /* MetalRenderContext.m */; };
+		66625A2F22743060006F8FCA /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */; };
+		66625A3022743060006F8FCA /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */; };
+		66625A3122743060006F8FCA /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8B6C421E1682600D2B853 /* H264Encoder.m */; };
+		66625A32227430A9006F8FCA /* AOVFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C1310CA2220D492000C4972 /* AOVFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A33227430A9006F8FCA /* AOVFrameSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE62FC922233B850003EA70 /* AOVFrameSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A34227430A9006F8FCA /* AOVPlayerVideoOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE3B8B1223C2F54005B11C4 /* AOVPlayerVideoOutput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A35227430AE006F8FCA /* AOVFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C1310CA2220D492000C4972 /* AOVFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A36227430AE006F8FCA /* AOVFrameSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE62FC922233B850003EA70 /* AOVFrameSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A37227430AE006F8FCA /* AOVPlayerVideoOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE3B8B1223C2F54005B11C4 /* AOVPlayerVideoOutput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A38227430BA006F8FCA /* AOVFrameSourceVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE62FCE22233DBA0003EA70 /* AOVFrameSourceVideo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A39227430BA006F8FCA /* AOVFrameSourceAlphaVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE0B327222728C700E2BE82 /* AOVFrameSourceAlphaVideo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A3A227430BA006F8FCA /* AOVPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C51D8902253FA2B001B0BFF /* AOVPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A3B227430BA006F8FCA /* AOVMTKView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C1310CF222214FE000C4972 /* AOVMTKView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A3C227430BA006F8FCA /* AOVDisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C7631A422495ABA00D92C5B /* AOVDisplayLink.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A3D227430BB006F8FCA /* AOVFrameSourceVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE62FCE22233DBA0003EA70 /* AOVFrameSourceVideo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A3E227430BB006F8FCA /* AOVFrameSourceAlphaVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CE0B327222728C700E2BE82 /* AOVFrameSourceAlphaVideo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A3F227430BB006F8FCA /* AOVPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C51D8902253FA2B001B0BFF /* AOVPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A40227430BB006F8FCA /* AOVMTKView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C1310CF222214FE000C4972 /* AOVMTKView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A41227430BB006F8FCA /* AOVDisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C7631A422495ABA00D92C5B /* AOVDisplayLink.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A42227430C9006F8FCA /* H264Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA8B6C321E1682500D2B853 /* H264Encoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A43227430C9006F8FCA /* H264Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA8B6C321E1682500D2B853 /* H264Encoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66625A4522743139006F8FCA /* AOVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310CB2220D493000C4972 /* AOVFrame.m */; };
+		66625A4622743139006F8FCA /* AOVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE3B8B0223C2F53005B11C4 /* AOVPlayerVideoOutput.m */; };
+		66625A4722743139006F8FCA /* AOVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE62FCF22233DBB0003EA70 /* AOVFrameSourceVideo.m */; };
+		66625A4822743139006F8FCA /* AOVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE0B328222728C700E2BE82 /* AOVFrameSourceAlphaVideo.m */; };
+		66625A4922743139006F8FCA /* AOVPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C51D8912253FA2B001B0BFF /* AOVPlayer.m */; };
+		66625A4A22743139006F8FCA /* AOVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1310D0222214FE000C4972 /* AOVMTKView.m */; };
+		66625A4B22743139006F8FCA /* AOVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7631A522495ABA00D92C5B /* AOVDisplayLink.m */; };
+		66625A4C22743139006F8FCA /* MetalScaleRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C97793622161CF3003721FD /* MetalScaleRenderContext.m */; };
+		66625A4D22743139006F8FCA /* MetalRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A770121D8498E0041ACE3 /* MetalRenderContext.m */; };
+		66625A4E22743139006F8FCA /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E81321D73BB4005424E6 /* CGFrameBuffer.m */; };
+		66625A4F22743141006F8FCA /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8B6C421E1682600D2B853 /* H264Encoder.m */; };
+		66625A502274314F006F8FCA /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4A773121D894720041ACE3 /* BGRAToBT709Converter.m */; };
+		66625A512274316E006F8FCA /* MetalBT709Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CB6E80021D6C62A005424E6 /* MetalBT709Decoder.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -231,6 +256,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3C4A770921D892BA0041ACE3;
 			remoteInfo = EmptyiOS;
+		};
+		666259FF22742EF4006F8FCA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3AF7E9B81EB64A46003BB06D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 666259F422742EF4006F8FCA;
+			remoteInfo = AlphaOverVideom;
+		};
+		66625A0122742EF4006F8FCA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3AF7E9B81EB64A46003BB06D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3AF7E9F71EB64A46003BB06D;
+			remoteInfo = "ExampleApp-macOS";
+		};
+		66625A0822742EF4006F8FCA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3AF7E9B81EB64A46003BB06D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 666259F422742EF4006F8FCA;
+			remoteInfo = AlphaOverVideom;
+		};
+		66625A1D22742F75006F8FCA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3AF7E9B81EB64A46003BB06D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 66625A1722742F74006F8FCA;
+			remoteInfo = AlphaOverVideot;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -255,15 +308,37 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		66625A0F22742EF4006F8FCA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				66625A0B22742EF4006F8FCA /* AlphaOverVideo.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66625A2422742F75006F8FCA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				66625A2022742F75006F8FCA /* AlphaOverVideo.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3A1857EF1EB7AF9E007D4F50 /* Image.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = Image.tga; sourceTree = "<group>"; };
 		3AF7E9C01EB64A46003BB06D /* AAPLShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLShaderTypes.h; sourceTree = "<group>"; };
 		3AF7E9C11EB64A46003BB06D /* AAPLShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = AAPLShaders.metal; sourceTree = "<group>"; };
-		3AF7E9C81EB64A46003BB06D /* AlphaOverVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlphaOverVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AF7E9E21EB64A46003BB06D /* AlphaOverVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlphaOverVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AF7E9F81EB64A46003BB06D /* AlphaOverVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlphaOverVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AF7E9C81EB64A46003BB06D /* ExampleApp-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ExampleApp-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AF7E9E21EB64A46003BB06D /* ExampleApp-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ExampleApp-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AF7E9F81EB64A46003BB06D /* ExampleApp-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ExampleApp-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AFD65481F71A7070008A125 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3AFD654A1F71A7070008A125 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3AFD654B1F71A7070008A125 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -365,6 +440,11 @@
 		666259EA2274291F006F8FCA /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		666259EC2274292A006F8FCA /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		666259EE22742936006F8FCA /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
+		666259F522742EF4006F8FCA /* AlphaOverVideo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AlphaOverVideo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		666259FD22742EF4006F8FCA /* AlphaOverVideoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AlphaOverVideoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		66625A0422742EF4006F8FCA /* AlphaOverVideo-Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AlphaOverVideo-Tests.m"; sourceTree = "<group>"; };
+		66625A0622742EF4006F8FCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		66625A1822742F74006F8FCA /* AlphaOverVideo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AlphaOverVideo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -381,6 +461,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66625A1F22742F75006F8FCA /* AlphaOverVideo.framework in Frameworks */,
 				666259EF22742936006F8FCA /* MetalKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -390,6 +471,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				666259EB2274291F006F8FCA /* MetalKit.framework in Frameworks */,
+				66625A0A22742EF4006F8FCA /* AlphaOverVideo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -421,6 +503,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		666259F222742EF4006F8FCA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		666259FA22742EF4006F8FCA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				666259FE22742EF4006F8FCA /* AlphaOverVideo.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66625A1522742F74006F8FCA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -428,7 +532,8 @@
 			isa = PBXGroup;
 			children = (
 				3C0551C82256C068000A4BA4 /* AlphaOverVideo */,
-				3AFD65411F71A6D00008A125 /* Application */,
+				66625A0322742EF4006F8FCA /* AlphaOverVideo-Tests */,
+				3AFD65411F71A6D00008A125 /* ExampleApp */,
 				3C4A775221DACE890041ACE3 /* srgb_to_bt709 */,
 				3C4A770B21D892BA0041ACE3 /* EmptyiOS */,
 				3C4A772421D892C00041ACE3 /* EmptyiOSTests */,
@@ -481,18 +586,21 @@
 		3AF7E9C91EB64A46003BB06D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3AF7E9C81EB64A46003BB06D /* AlphaOverVideo.app */,
-				3AF7E9E21EB64A46003BB06D /* AlphaOverVideo.app */,
-				3AF7E9F81EB64A46003BB06D /* AlphaOverVideo.app */,
+				3AF7E9C81EB64A46003BB06D /* ExampleApp-iOS.app */,
+				3AF7E9E21EB64A46003BB06D /* ExampleApp-tvOS.app */,
+				3AF7E9F81EB64A46003BB06D /* ExampleApp-macOS.app */,
 				3C4A770A21D892BA0041ACE3 /* EmptyiOS.app */,
 				3C4A772121D892C00041ACE3 /* EmptyiOSTests.xctest */,
 				3C4A775121DACE880041ACE3 /* srgb_to_bt709 */,
 				3C0551C72256C068000A4BA4 /* AlphaOverVideo.framework */,
+				666259F522742EF4006F8FCA /* AlphaOverVideo.framework */,
+				666259FD22742EF4006F8FCA /* AlphaOverVideoTests.xctest */,
+				66625A1822742F74006F8FCA /* AlphaOverVideo.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3AFD65411F71A6D00008A125 /* Application */ = {
+		3AFD65411F71A6D00008A125 /* ExampleApp */ = {
 			isa = PBXGroup;
 			children = (
 				666259E822742685006F8FCA /* Resources */,
@@ -505,7 +613,7 @@
 				3AFD65421F71A7070008A125 /* iOS */,
 				3AFD654D1F71A7070008A125 /* tvOS */,
 			);
-			path = Application;
+			path = ExampleApp;
 			sourceTree = "<group>";
 		};
 		3AFD65421F71A7070008A125 /* iOS */ = {
@@ -633,6 +741,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		66625A0322742EF4006F8FCA /* AlphaOverVideo-Tests */ = {
+			isa = PBXGroup;
+			children = (
+				66625A0422742EF4006F8FCA /* AlphaOverVideo-Tests.m */,
+				66625A0622742EF4006F8FCA /* Info.plist */,
+			);
+			path = "AlphaOverVideo-Tests";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -654,12 +771,44 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		666259F022742EF4006F8FCA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66625A42227430C9006F8FCA /* H264Encoder.h in Headers */,
+				66625A3C227430BA006F8FCA /* AOVDisplayLink.h in Headers */,
+				66625A39227430BA006F8FCA /* AOVFrameSourceAlphaVideo.h in Headers */,
+				66625A38227430BA006F8FCA /* AOVFrameSourceVideo.h in Headers */,
+				66625A3B227430BA006F8FCA /* AOVMTKView.h in Headers */,
+				66625A33227430A9006F8FCA /* AOVFrameSource.h in Headers */,
+				66625A34227430A9006F8FCA /* AOVPlayerVideoOutput.h in Headers */,
+				66625A3A227430BA006F8FCA /* AOVPlayer.h in Headers */,
+				66625A32227430A9006F8FCA /* AOVFrame.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66625A1322742F74006F8FCA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66625A43227430C9006F8FCA /* H264Encoder.h in Headers */,
+				66625A41227430BB006F8FCA /* AOVDisplayLink.h in Headers */,
+				66625A3E227430BB006F8FCA /* AOVFrameSourceAlphaVideo.h in Headers */,
+				66625A3D227430BB006F8FCA /* AOVFrameSourceVideo.h in Headers */,
+				66625A40227430BB006F8FCA /* AOVMTKView.h in Headers */,
+				66625A36227430AE006F8FCA /* AOVFrameSource.h in Headers */,
+				66625A37227430AE006F8FCA /* AOVPlayerVideoOutput.h in Headers */,
+				66625A3F227430BB006F8FCA /* AOVPlayer.h in Headers */,
+				66625A35227430AE006F8FCA /* AOVFrame.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		3AF7E9C71EB64A46003BB06D /* AlphaOverVideo-iOS */ = {
+		3AF7E9C71EB64A46003BB06D /* ExampleApp-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3AF7EA1B1EB64A46003BB06D /* Build configuration list for PBXNativeTarget "AlphaOverVideo-iOS" */;
+			buildConfigurationList = 3AF7EA1B1EB64A46003BB06D /* Build configuration list for PBXNativeTarget "ExampleApp-iOS" */;
 			buildPhases = (
 				3AF7E9C41EB64A46003BB06D /* Sources */,
 				3AF7E9C51EB64A46003BB06D /* Frameworks */,
@@ -671,48 +820,52 @@
 			dependencies = (
 				3C0551CD2256C068000A4BA4 /* PBXTargetDependency */,
 			);
-			name = "AlphaOverVideo-iOS";
+			name = "ExampleApp-iOS";
 			productName = iOS;
-			productReference = 3AF7E9C81EB64A46003BB06D /* AlphaOverVideo.app */;
+			productReference = 3AF7E9C81EB64A46003BB06D /* ExampleApp-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3AF7E9E11EB64A46003BB06D /* AlphaOverVideo-tvOS */ = {
+		3AF7E9E11EB64A46003BB06D /* ExampleApp-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3AF7EA1E1EB64A46003BB06D /* Build configuration list for PBXNativeTarget "AlphaOverVideo-tvOS" */;
+			buildConfigurationList = 3AF7EA1E1EB64A46003BB06D /* Build configuration list for PBXNativeTarget "ExampleApp-tvOS" */;
 			buildPhases = (
 				3AF7E9DE1EB64A46003BB06D /* Sources */,
 				3AF7E9DF1EB64A46003BB06D /* Frameworks */,
 				3AF7E9E01EB64A46003BB06D /* Resources */,
+				66625A2422742F75006F8FCA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				66625A1E22742F75006F8FCA /* PBXTargetDependency */,
 			);
-			name = "AlphaOverVideo-tvOS";
+			name = "ExampleApp-tvOS";
 			productName = tvOS;
-			productReference = 3AF7E9E21EB64A46003BB06D /* AlphaOverVideo.app */;
+			productReference = 3AF7E9E21EB64A46003BB06D /* ExampleApp-tvOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3AF7E9F71EB64A46003BB06D /* AlphaOverVideo-macOS */ = {
+		3AF7E9F71EB64A46003BB06D /* ExampleApp-macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3AF7EA211EB64A46003BB06D /* Build configuration list for PBXNativeTarget "AlphaOverVideo-macOS" */;
+			buildConfigurationList = 3AF7EA211EB64A46003BB06D /* Build configuration list for PBXNativeTarget "ExampleApp-macOS" */;
 			buildPhases = (
 				3AF7E9F41EB64A46003BB06D /* Sources */,
 				3AF7E9F51EB64A46003BB06D /* Frameworks */,
 				3AF7E9F61EB64A46003BB06D /* Resources */,
+				66625A0F22742EF4006F8FCA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				66625A0922742EF4006F8FCA /* PBXTargetDependency */,
 			);
-			name = "AlphaOverVideo-macOS";
+			name = "ExampleApp-macOS";
 			productName = macOS;
-			productReference = 3AF7E9F81EB64A46003BB06D /* AlphaOverVideo.app */;
+			productReference = 3AF7E9F81EB64A46003BB06D /* ExampleApp-macOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3C0551C62256C068000A4BA4 /* AlphaOverVideo */ = {
+		3C0551C62256C068000A4BA4 /* AlphaOverVideo-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3C0551D02256C068000A4BA4 /* Build configuration list for PBXNativeTarget "AlphaOverVideo" */;
+			buildConfigurationList = 3C0551D02256C068000A4BA4 /* Build configuration list for PBXNativeTarget "AlphaOverVideo-iOS" */;
 			buildPhases = (
 				3C0551C22256C068000A4BA4 /* Headers */,
 				3C0551C32256C068000A4BA4 /* Sources */,
@@ -723,7 +876,7 @@
 			);
 			dependencies = (
 			);
-			name = AlphaOverVideo;
+			name = "AlphaOverVideo-iOS";
 			productName = AlphaOverVideo;
 			productReference = 3C0551C72256C068000A4BA4 /* AlphaOverVideo.framework */;
 			productType = "com.apple.product-type.framework";
@@ -779,6 +932,61 @@
 			productName = srgb_to_bt709;
 			productReference = 3C4A775121DACE880041ACE3 /* srgb_to_bt709 */;
 			productType = "com.apple.product-type.tool";
+		};
+		666259F422742EF4006F8FCA /* AlphaOverVideo-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 66625A0C22742EF4006F8FCA /* Build configuration list for PBXNativeTarget "AlphaOverVideo-macOS" */;
+			buildPhases = (
+				666259F022742EF4006F8FCA /* Headers */,
+				666259F122742EF4006F8FCA /* Sources */,
+				666259F222742EF4006F8FCA /* Frameworks */,
+				666259F322742EF4006F8FCA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "AlphaOverVideo-macOS";
+			productName = AlphaOverVideom;
+			productReference = 666259F522742EF4006F8FCA /* AlphaOverVideo.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		666259FC22742EF4006F8FCA /* AlphaOverVideoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 66625A1022742EF4006F8FCA /* Build configuration list for PBXNativeTarget "AlphaOverVideoTests" */;
+			buildPhases = (
+				666259F922742EF4006F8FCA /* Sources */,
+				666259FA22742EF4006F8FCA /* Frameworks */,
+				666259FB22742EF4006F8FCA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				66625A0022742EF4006F8FCA /* PBXTargetDependency */,
+				66625A0222742EF4006F8FCA /* PBXTargetDependency */,
+			);
+			name = AlphaOverVideoTests;
+			productName = AlphaOverVideomTests;
+			productReference = 666259FD22742EF4006F8FCA /* AlphaOverVideoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		66625A1722742F74006F8FCA /* AlphaOverVideo-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 66625A2122742F75006F8FCA /* Build configuration list for PBXNativeTarget "AlphaOverVideo-tvOS" */;
+			buildPhases = (
+				66625A1322742F74006F8FCA /* Headers */,
+				66625A1422742F74006F8FCA /* Sources */,
+				66625A1522742F74006F8FCA /* Frameworks */,
+				66625A1622742F74006F8FCA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "AlphaOverVideo-tvOS";
+			productName = AlphaOverVideot;
+			productReference = 66625A1822742F74006F8FCA /* AlphaOverVideo.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -841,13 +1049,16 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3AF7E9F71EB64A46003BB06D /* AlphaOverVideo-macOS */,
-				3AF7E9C71EB64A46003BB06D /* AlphaOverVideo-iOS */,
-				3AF7E9E11EB64A46003BB06D /* AlphaOverVideo-tvOS */,
+				3C0551C62256C068000A4BA4 /* AlphaOverVideo-iOS */,
+				666259F422742EF4006F8FCA /* AlphaOverVideo-macOS */,
+				66625A1722742F74006F8FCA /* AlphaOverVideo-tvOS */,
+				666259FC22742EF4006F8FCA /* AlphaOverVideoTests */,
+				3AF7E9C71EB64A46003BB06D /* ExampleApp-iOS */,
+				3AF7E9F71EB64A46003BB06D /* ExampleApp-macOS */,
+				3AF7E9E11EB64A46003BB06D /* ExampleApp-tvOS */,
 				3C4A770921D892BA0041ACE3 /* EmptyiOS */,
 				3C4A772021D892C00041ACE3 /* EmptyiOSTests */,
 				3C4A775021DACE880041ACE3 /* srgb_to_bt709 */,
-				3C0551C62256C068000A4BA4 /* AlphaOverVideo */,
 			);
 		};
 /* End PBXProject section */
@@ -999,6 +1210,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		666259F322742EF4006F8FCA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		666259FB22742EF4006F8FCA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66625A1622742F74006F8FCA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1016,22 +1248,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C4A770521D8498E0041ACE3 /* MetalRenderContext.m in Sources */,
-				3CB6E81621D73BB5005424E6 /* CGFrameBuffer.m in Sources */,
-				3CA8B6C721E1682600D2B853 /* H264Encoder.m in Sources */,
-				3C1310D3222214FF000C4972 /* AOVMTKView.m in Sources */,
-				3C97793922161CF4003721FD /* MetalScaleRenderContext.m in Sources */,
-				3C1310CE2220D899000C4972 /* AOVFrame.m in Sources */,
-				3C7E37D12218D02F00116145 /* AAPLViewController.m in Sources */,
-				63B42F171ED2063800859D09 /* AAPLShaders.metal in Sources */,
-				3CE0B32B222728C800E2BE82 /* AOVFrameSourceAlphaVideo.m in Sources */,
-				3CE3B8B4223C2F54005B11C4 /* AOVPlayerVideoOutput.m in Sources */,
-				3AFD656D1F71A8980008A125 /* AAPLAppDelegate.m in Sources */,
-				3C4A773421D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
 				3AFD65731F71A8A10008A125 /* main.m in Sources */,
-				3C51D8942253FA2C001B0BFF /* AOVPlayer.m in Sources */,
-				3C7631A822495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
-				3CE62FD222233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */,
+				63B42F171ED2063800859D09 /* AAPLShaders.metal in Sources */,
+				3AFD656D1F71A8980008A125 /* AAPLAppDelegate.m in Sources */,
+				3C7E37D12218D02F00116145 /* AAPLViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1039,22 +1259,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C4A770321D8498E0041ACE3 /* MetalRenderContext.m in Sources */,
 				3AFD65711F71A8A00008A125 /* main.m in Sources */,
-				3CB6E81421D73BB5005424E6 /* CGFrameBuffer.m in Sources */,
-				3C1310D1222214FE000C4972 /* AOVMTKView.m in Sources */,
-				3CA8B6C521E1682600D2B853 /* H264Encoder.m in Sources */,
-				3C1310CC2220D493000C4972 /* AOVFrame.m in Sources */,
-				3C7E37D32218D03000116145 /* AAPLViewController.m in Sources */,
-				3C97793722161CF3003721FD /* MetalScaleRenderContext.m in Sources */,
-				3CE0B329222728C800E2BE82 /* AOVFrameSourceAlphaVideo.m in Sources */,
-				3CE3B8B2223C2F54005B11C4 /* AOVPlayerVideoOutput.m in Sources */,
 				63B42F181ED2063C00859D09 /* AAPLShaders.metal in Sources */,
-				3CB6E80221D6C62A005424E6 /* MetalBT709Decoder.m in Sources */,
-				3C4A773221D894720041ACE3 /* BGRAToBT709Converter.m in Sources */,
-				3C51D8922253FA2C001B0BFF /* AOVPlayer.m in Sources */,
-				3C7631A622495ABB00D92C5B /* AOVDisplayLink.m in Sources */,
-				3CE62FD022233DBB0003EA70 /* AOVFrameSourceVideo.m in Sources */,
+				3C7E37D32218D03000116145 /* AAPLViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1139,18 +1346,86 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		666259F122742EF4006F8FCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66625A2D22743060006F8FCA /* MetalBT709Decoder.m in Sources */,
+				66625A2A22743060006F8FCA /* AOVMTKView.m in Sources */,
+				66625A2822743060006F8FCA /* AOVFrameSourceAlphaVideo.m in Sources */,
+				66625A2922743060006F8FCA /* AOVPlayer.m in Sources */,
+				66625A2622743060006F8FCA /* AOVPlayerVideoOutput.m in Sources */,
+				66625A2C22743060006F8FCA /* MetalScaleRenderContext.m in Sources */,
+				66625A3022743060006F8FCA /* BGRAToBT709Converter.m in Sources */,
+				66625A3122743060006F8FCA /* H264Encoder.m in Sources */,
+				66625A2522743060006F8FCA /* AOVFrame.m in Sources */,
+				66625A2F22743060006F8FCA /* CGFrameBuffer.m in Sources */,
+				66625A2722743060006F8FCA /* AOVFrameSourceVideo.m in Sources */,
+				66625A2B22743060006F8FCA /* AOVDisplayLink.m in Sources */,
+				66625A2E22743060006F8FCA /* MetalRenderContext.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		666259F922742EF4006F8FCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66625A0522742EF4006F8FCA /* AlphaOverVideo-Tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66625A1422742F74006F8FCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66625A4D22743139006F8FCA /* MetalRenderContext.m in Sources */,
+				66625A4A22743139006F8FCA /* AOVMTKView.m in Sources */,
+				66625A4822743139006F8FCA /* AOVFrameSourceAlphaVideo.m in Sources */,
+				66625A4F22743141006F8FCA /* H264Encoder.m in Sources */,
+				66625A4922743139006F8FCA /* AOVPlayer.m in Sources */,
+				66625A4622743139006F8FCA /* AOVPlayerVideoOutput.m in Sources */,
+				66625A512274316E006F8FCA /* MetalBT709Decoder.m in Sources */,
+				66625A502274314F006F8FCA /* BGRAToBT709Converter.m in Sources */,
+				66625A4E22743139006F8FCA /* CGFrameBuffer.m in Sources */,
+				66625A4C22743139006F8FCA /* MetalScaleRenderContext.m in Sources */,
+				66625A4522743139006F8FCA /* AOVFrame.m in Sources */,
+				66625A4722743139006F8FCA /* AOVFrameSourceVideo.m in Sources */,
+				66625A4B22743139006F8FCA /* AOVDisplayLink.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		3C0551CD2256C068000A4BA4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3C0551C62256C068000A4BA4 /* AlphaOverVideo */;
+			target = 3C0551C62256C068000A4BA4 /* AlphaOverVideo-iOS */;
 			targetProxy = 3C0551CC2256C068000A4BA4 /* PBXContainerItemProxy */;
 		};
 		3C4A772321D892C00041ACE3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3C4A770921D892BA0041ACE3 /* EmptyiOS */;
 			targetProxy = 3C4A772221D892C00041ACE3 /* PBXContainerItemProxy */;
+		};
+		66625A0022742EF4006F8FCA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 666259F422742EF4006F8FCA /* AlphaOverVideo-macOS */;
+			targetProxy = 666259FF22742EF4006F8FCA /* PBXContainerItemProxy */;
+		};
+		66625A0222742EF4006F8FCA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3AF7E9F71EB64A46003BB06D /* ExampleApp-macOS */;
+			targetProxy = 66625A0122742EF4006F8FCA /* PBXContainerItemProxy */;
+		};
+		66625A0922742EF4006F8FCA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 666259F422742EF4006F8FCA /* AlphaOverVideo-macOS */;
+			targetProxy = 66625A0822742EF4006F8FCA /* PBXContainerItemProxy */;
+		};
+		66625A1E22742F75006F8FCA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 66625A1722742F74006F8FCA /* AlphaOverVideo-tvOS */;
+			targetProxy = 66625A1D22742F75006F8FCA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1315,11 +1590,11 @@
 					TARGET_IOS,
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = Application/iOS/Info.plist;
+				INFOPLIST_FILE = ExampleApp/iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideoEx;
-				PRODUCT_NAME = AlphaOverVideo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1333,11 +1608,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9F74CLHA49;
 				GCC_PREPROCESSOR_DEFINITIONS = TARGET_IOS;
-				INFOPLIST_FILE = Application/iOS/Info.plist;
+				INFOPLIST_FILE = ExampleApp/iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideoEx;
-				PRODUCT_NAME = AlphaOverVideo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1354,10 +1629,10 @@
 					TARGET_TVOS,
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = Application/tvOS/Info.plist;
+				INFOPLIST_FILE = ExampleApp/tvOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideoEx;
-				PRODUCT_NAME = AlphaOverVideo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -1371,10 +1646,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9F74CLHA49;
 				GCC_PREPROCESSOR_DEFINITIONS = TARGET_TVOS;
-				INFOPLIST_FILE = Application/tvOS/Info.plist;
+				INFOPLIST_FILE = ExampleApp/tvOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideoEx;
-				PRODUCT_NAME = AlphaOverVideo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -1394,11 +1669,11 @@
 					TARGET_MACOS,
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = Application/macOS/Info.plist;
+				INFOPLIST_FILE = ExampleApp/macOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideoEx;
-				PRODUCT_NAME = AlphaOverVideo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
@@ -1412,11 +1687,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 9F74CLHA49;
 				GCC_PREPROCESSOR_DEFINITIONS = TARGET_MACOS;
-				INFOPLIST_FILE = Application/macOS/Info.plist;
+				INFOPLIST_FILE = ExampleApp/macOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideoEx;
-				PRODUCT_NAME = AlphaOverVideo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
@@ -1445,7 +1720,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideo;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = AlphaOverVideo;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1476,7 +1751,7 @@
 				MACH_O_TYPE = mh_dylib;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideo;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = AlphaOverVideo;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1615,6 +1890,176 @@
 			};
 			name = Release;
 		};
+		66625A0D22742EF4006F8FCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AlphaOverVideo/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.quentinfasquel.AlphaOverVideom;
+				PRODUCT_NAME = AlphaOverVideo;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		66625A0E22742EF4006F8FCA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AlphaOverVideo/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.quentinfasquel.AlphaOverVideom;
+				PRODUCT_NAME = AlphaOverVideo;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		66625A1122742EF4006F8FCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = H9EZHJZX4M;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AlphaOverVideomTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.quentinfasquel.AlphaOverVideomTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AlphaOverVideo.app/Contents/MacOS/AlphaOverVideo";
+			};
+			name = Debug;
+		};
+		66625A1222742EF4006F8FCA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = H9EZHJZX4M;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AlphaOverVideomTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.quentinfasquel.AlphaOverVideomTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AlphaOverVideo.app/Contents/MacOS/AlphaOverVideo";
+			};
+			name = Release;
+		};
+		66625A2222742F75006F8FCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AlphaOverVideo/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.quentinfasquel.AlphaOverVideot;
+				PRODUCT_NAME = AlphaOverVideo;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.2;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		66625A2322742F75006F8FCA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AlphaOverVideo/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.quentinfasquel.AlphaOverVideot;
+				PRODUCT_NAME = AlphaOverVideo;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.2;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1627,7 +2072,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3AF7EA1B1EB64A46003BB06D /* Build configuration list for PBXNativeTarget "AlphaOverVideo-iOS" */ = {
+		3AF7EA1B1EB64A46003BB06D /* Build configuration list for PBXNativeTarget "ExampleApp-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3AF7EA1C1EB64A46003BB06D /* Debug */,
@@ -1636,7 +2081,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3AF7EA1E1EB64A46003BB06D /* Build configuration list for PBXNativeTarget "AlphaOverVideo-tvOS" */ = {
+		3AF7EA1E1EB64A46003BB06D /* Build configuration list for PBXNativeTarget "ExampleApp-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3AF7EA1F1EB64A46003BB06D /* Debug */,
@@ -1645,7 +2090,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3AF7EA211EB64A46003BB06D /* Build configuration list for PBXNativeTarget "AlphaOverVideo-macOS" */ = {
+		3AF7EA211EB64A46003BB06D /* Build configuration list for PBXNativeTarget "ExampleApp-macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3AF7EA221EB64A46003BB06D /* Debug */,
@@ -1654,7 +2099,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3C0551D02256C068000A4BA4 /* Build configuration list for PBXNativeTarget "AlphaOverVideo" */ = {
+		3C0551D02256C068000A4BA4 /* Build configuration list for PBXNativeTarget "AlphaOverVideo-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3C0551D12256C068000A4BA4 /* Debug */,
@@ -1686,6 +2131,33 @@
 			buildConfigurations = (
 				3C4A775621DACE890041ACE3 /* Debug */,
 				3C4A775721DACE890041ACE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		66625A0C22742EF4006F8FCA /* Build configuration list for PBXNativeTarget "AlphaOverVideo-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				66625A0D22742EF4006F8FCA /* Debug */,
+				66625A0E22742EF4006F8FCA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		66625A1022742EF4006F8FCA /* Build configuration list for PBXNativeTarget "AlphaOverVideoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				66625A1122742EF4006F8FCA /* Debug */,
+				66625A1222742EF4006F8FCA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		66625A2122742F75006F8FCA /* Build configuration list for PBXNativeTarget "AlphaOverVideo-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				66625A2222742F75006F8FCA /* Debug */,
+				66625A2322742F75006F8FCA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
