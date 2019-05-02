@@ -15,6 +15,8 @@
 #import <Metal/Metal.h>
 #import <CoreVideo/CoreVideo.h>
 
+#import "BT709.h"
+
 @import Accelerate;
 
 @class CGFrameBuffer;
@@ -74,7 +76,8 @@ typedef enum {
 
 + (BOOL) convertIntoCoreVideoBuffer:(CGImageRef)inputImageRef
                       cvPixelBuffer:(CVPixelBufferRef)cvPixelBuffer
-                          bufferPtr:(vImage_Buffer*)bufferPtr;
+                         inputGamma:(BT709Gamma)inputGamma
+                        outputGamma:(BT709Gamma)outputGamma;
 
 // Convert the contents of a CoreVideo pixel buffer and write the results
 // into the indicated destination vImage buffer.
