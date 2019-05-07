@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:AlienEscape/AlienEscape.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:AlphaOverVideo/AlphaOverVideo.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:CarSpinAlpha/CarSpinAlpha.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Fireworks/Fireworks.xcodeproj">
+   </FileRef>
+</Workspace>
