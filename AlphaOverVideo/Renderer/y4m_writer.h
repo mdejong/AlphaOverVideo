@@ -19,6 +19,7 @@ typedef enum {
   Y4MHeaderFPS_2,
   Y4MHeaderFPS_15,
   Y4MHeaderFPS_24,
+  Y4MHeaderFPS_25,
   Y4MHeaderFPS_29_97,
   Y4MHeaderFPS_30,
   Y4MHeaderFPS_60
@@ -115,6 +116,10 @@ int y4m_write_header(FILE *outFile, Y4MHeaderStruct *hsPtr) {
       }
       case Y4MHeaderFPS_24: {
         segment = "F24:1 ";
+        break;
+      }
+      case Y4MHeaderFPS_25: {
+        segment = "F25:1 ";
         break;
       }
       case Y4MHeaderFPS_29_97: {
