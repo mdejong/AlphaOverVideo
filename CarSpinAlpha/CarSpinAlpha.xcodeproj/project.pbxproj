@@ -42,7 +42,7 @@
 		3C05520C2257191A000A4BA4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3C05520E2257191A000A4BA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C176331225811EB001C8CCF /* AlphaBGHalf.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AlphaBGHalf.png; sourceTree = "<group>"; };
-		3C299DB022571D2E00A6D5B7 /* AlphaOverVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AlphaOverVideo.framework; sourceTree = "<group>"; };
+		3C299DB022571D2E00A6D5B7 /* AlphaOverVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AlphaOverVideo.framework; path = "../build/Debug-iphoneos/AlphaOverVideo.framework"; sourceTree = "<group>"; };
 		3C299DBD22572E4600A6D5B7 /* CarSpin_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CarSpin_alpha.m4v; sourceTree = "<group>"; };
 		3C299DBE22572E4600A6D5B7 /* CarSpin.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CarSpin.m4v; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -62,9 +62,9 @@
 		3C0551F622571914000A4BA4 = {
 			isa = PBXGroup;
 			children = (
-				3C299DB022571D2E00A6D5B7 /* AlphaOverVideo.framework */,
 				3C05520122571914000A4BA4 /* CarSpinAlpha */,
 				3C05520022571914000A4BA4 /* Products */,
+				6655D1262281636D00E5F41B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -90,6 +90,14 @@
 				3C176331225811EB001C8CCF /* AlphaBGHalf.png */,
 			);
 			path = CarSpinAlpha;
+			sourceTree = "<group>";
+		};
+		6655D1262281636D00E5F41B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3C299DB022571D2E00A6D5B7 /* AlphaOverVideo.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

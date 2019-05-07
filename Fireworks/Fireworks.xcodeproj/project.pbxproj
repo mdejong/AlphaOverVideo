@@ -89,7 +89,7 @@
 		3C5DE8521BC361A400518DCC /* 6_2_rgb_CRF_30_24BPP.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = 6_2_rgb_CRF_30_24BPP.m4v; sourceTree = "<group>"; };
 		3C5DE8531BC361A400518DCC /* 9_2_alpha_CRF_30_24BPP.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = 9_2_alpha_CRF_30_24BPP.m4v; sourceTree = "<group>"; };
 		3C5DE8541BC361A400518DCC /* 9_2_rgb_CRF_30_24BPP.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = 9_2_rgb_CRF_30_24BPP.m4v; sourceTree = "<group>"; };
-		3C8AE72B225D69B400BBDC8B /* AlphaOverVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AlphaOverVideo.framework; sourceTree = SOURCE_ROOT; };
+		3C8AE72B225D69B400BBDC8B /* AlphaOverVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AlphaOverVideo.framework; path = "../build/Debug-iphoneos/AlphaOverVideo.framework"; sourceTree = SOURCE_ROOT; };
 		3C9EEEBE1BC23139002AB516 /* Moon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Moon.png; sourceTree = "<group>"; };
 		3C9EEEC01BC27198002AB516 /* 11_2_alpha_CRF_30_24BPP.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = 11_2_alpha_CRF_30_24BPP.m4v; sourceTree = "<group>"; };
 		3C9EEEC11BC27198002AB516 /* 11_2_rgb_CRF_30_24BPP.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = 11_2_rgb_CRF_30_24BPP.m4v; sourceTree = "<group>"; };
@@ -116,6 +116,7 @@
 			children = (
 				3C4CF8D01BC0B7D100B8BEB3 /* Fireworks */,
 				3C4CF8CF1BC0B7D100B8BEB3 /* Products */,
+				6655D1272281637D00E5F41B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -130,7 +131,6 @@
 		3C4CF8D01BC0B7D100B8BEB3 /* Fireworks */ = {
 			isa = PBXGroup;
 			children = (
-				3C8AE72B225D69B400BBDC8B /* AlphaOverVideo.framework */,
 				3C4CF9061BC0D77F00B8BEB3 /* Classes */,
 				3C4CF8D41BC0B7D100B8BEB3 /* AppDelegate.h */,
 				3C4CF8D51BC0B7D100B8BEB3 /* AppDelegate.m */,
@@ -188,6 +188,14 @@
 			path = Classes;
 			sourceTree = "<group>";
 		};
+		6655D1272281637D00E5F41B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3C8AE72B225D69B400BBDC8B /* AlphaOverVideo.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -230,6 +238,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
