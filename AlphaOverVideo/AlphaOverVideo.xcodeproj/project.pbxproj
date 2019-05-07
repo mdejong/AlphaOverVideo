@@ -193,6 +193,7 @@
 		63B42F181ED2063C00859D09 /* AAPLShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7E9C11EB64A46003BB06D /* AAPLShaders.metal */; };
 		6655D10822815A7C00E5F41B /* DalaiLamaGray_bt709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C628D20227B92D900BF3498 /* DalaiLamaGray_bt709.m4v */; };
 		6655D10922815A7C00E5F41B /* DalaiLamaGray_srgb.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C628D21227B92DA00BF3498 /* DalaiLamaGray_srgb.m4v */; };
+		6655D1242281626900E5F41B /* AlphaOverVideo.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3C0551C72256C068000A4BA4 /* AlphaOverVideo.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		666259EB2274291F006F8FCA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666259EA2274291F006F8FCA /* MetalKit.framework */; };
 		666259ED2274292B006F8FCA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666259EC2274292A006F8FCA /* MetalKit.framework */; };
 		666259EF22742936006F8FCA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666259EE22742936006F8FCA /* MetalKit.framework */; };
@@ -313,6 +314,16 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		6655D1232281626100E5F41B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(PROJECT_DIR)/../build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+			dstSubfolderSpec = 0;
+			files = (
+				6655D1242281626900E5F41B /* AlphaOverVideo.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		66625A0F22742EF4006F8FCA /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -881,6 +892,7 @@
 				3C0551C32256C068000A4BA4 /* Sources */,
 				3C0551C42256C068000A4BA4 /* Frameworks */,
 				3C0551C52256C068000A4BA4 /* Resources */,
+				6655D1232281626100E5F41B /* CopyFiles */,
 			);
 			buildRules = (
 			);
