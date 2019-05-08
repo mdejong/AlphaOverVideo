@@ -30,7 +30,9 @@ class IntroViewController: UIViewController {
 
     let url1 = AOVPlayer.url(fromAsset:"Intro.m4v")
     assert(url1 != nil)
-    let clips = [ url1 ]
+    let url2 = AOVPlayer.url(fromAsset:"ClipAChoiceFrostiesOrPuffs.m4v")
+    assert(url2 != nil)
+    let clips = [ url1, url2 ] as [Any]
     
     let player = AOVPlayer.init(loopedClips:clips)
     self.player = player
