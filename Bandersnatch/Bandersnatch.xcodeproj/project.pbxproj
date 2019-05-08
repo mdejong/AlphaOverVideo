@@ -14,6 +14,7 @@
 		3C2E85AD228259EA0040DA0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C2E85AB228259EA0040DA0E /* Main.storyboard */; };
 		3C2E85AF228259F00040DA0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C2E85AE228259F00040DA0E /* Assets.xcassets */; };
 		3C2E85B2228259F00040DA0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C2E85B0228259F00040DA0E /* LaunchScreen.storyboard */; };
+		3C8D540C22826EEA006E6356 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8D540B22826EEA006E6356 /* IntroViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -39,6 +40,7 @@
 		3C2E85AE228259F00040DA0E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3C2E85B1228259F00040DA0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3C2E85B3228259F00040DA0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3C8D540B22826EEA006E6356 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +77,7 @@
 			children = (
 				3C2E85A7228259EA0040DA0E /* AppDelegate.swift */,
 				3C2E85A9228259EA0040DA0E /* SplashViewController.swift */,
+				3C8D540B22826EEA006E6356 /* IntroViewController.swift */,
 				3C2E85AB228259EA0040DA0E /* Main.storyboard */,
 				3C2E85AE228259F00040DA0E /* Assets.xcassets */,
 				3C2E85B0228259F00040DA0E /* LaunchScreen.storyboard */,
@@ -156,6 +159,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C2E85AA228259EA0040DA0E /* SplashViewController.swift in Sources */,
+				3C8D540C22826EEA006E6356 /* IntroViewController.swift in Sources */,
 				3C2E85A8228259EA0040DA0E /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -11,7 +11,6 @@ class SplashViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    // Do any additional setup after loading the view.
     
     let delaySeconds = 4.0
     DispatchQueue.main.asyncAfter(deadline: .now() + delaySeconds) {
@@ -21,6 +20,7 @@ class SplashViewController: UIViewController {
 
   func launchIntroVideo() {
     print("launchIntroVideo")
+    self.performSegue(withIdentifier:"launchIntroVideo", sender:nil)
   }
 }
 
