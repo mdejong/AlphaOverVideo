@@ -45,11 +45,12 @@
                         </constraints>
                     </view>
                     <connections>
-                        <segue destination="72y-xs-0ij" kind="show" identifier="launchIntroVideo" id="jMB-CP-5bb"/>
+                        <segue destination="72y-xs-0ij" kind="presentation" identifier="launchIntroVideo" id="jMB-CP-5bb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="131" y="126.00000000000001"/>
         </scene>
         <!--Intro View Controller-->
         <scene sceneID="Npz-34-tYe">
@@ -62,12 +63,27 @@
                     <view key="view" contentMode="scaleToFill" id="aqs-R8-UWH">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="f3P-nJ-BLW" userLabel="mtkView" customClass="AOVMTKView">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                                <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="f3P-nJ-BLW" firstAttribute="centerY" secondItem="aqs-R8-UWH" secondAttribute="centerY" id="aYl-M2-lyt"/>
+                            <constraint firstItem="f3P-nJ-BLW" firstAttribute="centerX" secondItem="aqs-R8-UWH" secondAttribute="centerX" id="cUJ-Ud-5fa"/>
+                            <constraint firstItem="f3P-nJ-BLW" firstAttribute="width" secondItem="aqs-R8-UWH" secondAttribute="width" id="eti-oq-d3f"/>
+                            <constraint firstItem="f3P-nJ-BLW" firstAttribute="height" secondItem="aqs-R8-UWH" secondAttribute="height" id="oF9-Ya-JNO"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="mtkView" destination="f3P-nJ-BLW" id="Hd7-YG-3lc"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="90l-9e-tFE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="939" y="683"/>
+            <point key="canvasLocation" x="928" y="125"/>
         </scene>
     </scenes>
     <resources>
