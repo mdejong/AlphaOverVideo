@@ -26,13 +26,9 @@
 
 @property (nonatomic, retain) AutoTimer *fireworksLabelTimer;
 
-//@property (nonatomic, retain) IBOutlet UIView *redContainer;
-
 @property (nonatomic, retain) IBOutlet AOVMTKView *redMTKView;
 
 @property (nonatomic, retain) AOVPlayer *redPlayer;
-
-//@property (nonatomic, retain) IBOutlet UIView *wheelContainer;
 
 @property (nonatomic, retain) IBOutlet AOVMTKView *wheelMTKView;
 
@@ -158,11 +154,11 @@
   [self.redMTKView removeFromSuperview];
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
   [super touchesEnded:touches withEvent:event];
   
-  NSLog(@"Touches Ended");
+  //NSLog(@"Touches Began");
   
   if (self.fireworksLabel.hidden == FALSE) {
     // Do not allow until label is hidden
