@@ -7,17 +7,34 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C0D3D0822826C4600B1E685 /* AlphaOverVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0D3D0622826A8200B1E685 /* AlphaOverVideo.framework */; };
+		3C0D3D0922826C4600B1E685 /* AlphaOverVideo.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C0D3D0622826A8200B1E685 /* AlphaOverVideo.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C2E85A8228259EA0040DA0E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2E85A7228259EA0040DA0E /* AppDelegate.swift */; };
-		3C2E85AA228259EA0040DA0E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2E85A9228259EA0040DA0E /* ViewController.swift */; };
+		3C2E85AA228259EA0040DA0E /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2E85A9228259EA0040DA0E /* SplashViewController.swift */; };
 		3C2E85AD228259EA0040DA0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C2E85AB228259EA0040DA0E /* Main.storyboard */; };
 		3C2E85AF228259F00040DA0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C2E85AE228259F00040DA0E /* Assets.xcassets */; };
 		3C2E85B2228259F00040DA0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C2E85B0228259F00040DA0E /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		3C0D3D0A22826C4700B1E685 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3C0D3D0922826C4600B1E685 /* AlphaOverVideo.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		3C0D3D0622826A8200B1E685 /* AlphaOverVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AlphaOverVideo.framework; sourceTree = "<group>"; };
 		3C2E85A4228259EA0040DA0E /* Bandersnatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bandersnatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C2E85A7228259EA0040DA0E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		3C2E85A9228259EA0040DA0E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		3C2E85A9228259EA0040DA0E /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		3C2E85AC228259EA0040DA0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3C2E85AE228259F00040DA0E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3C2E85B1228259F00040DA0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -29,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C0D3D0822826C4600B1E685 /* AlphaOverVideo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +56,7 @@
 		3C2E859B228259EA0040DA0E = {
 			isa = PBXGroup;
 			children = (
+				3C0D3D0622826A8200B1E685 /* AlphaOverVideo.framework */,
 				3C2E85A6228259EA0040DA0E /* Bandersnatch */,
 				3C2E85A5228259EA0040DA0E /* Products */,
 			);
@@ -55,7 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				3C2E85A7228259EA0040DA0E /* AppDelegate.swift */,
-				3C2E85A9228259EA0040DA0E /* ViewController.swift */,
+				3C2E85A9228259EA0040DA0E /* SplashViewController.swift */,
 				3C2E85AB228259EA0040DA0E /* Main.storyboard */,
 				3C2E85AE228259F00040DA0E /* Assets.xcassets */,
 				3C2E85B0228259F00040DA0E /* LaunchScreen.storyboard */,
@@ -74,6 +93,7 @@
 				3C2E85A0228259EA0040DA0E /* Sources */,
 				3C2E85A1228259EA0040DA0E /* Frameworks */,
 				3C2E85A2228259EA0040DA0E /* Resources */,
+				3C0D3D0A22826C4700B1E685 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -135,7 +155,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C2E85AA228259EA0040DA0E /* ViewController.swift in Sources */,
+				3C2E85AA228259EA0040DA0E /* SplashViewController.swift in Sources */,
 				3C2E85A8228259EA0040DA0E /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -284,6 +304,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9F74CLHA49;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Bandersnatch/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -303,6 +327,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9F74CLHA49;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Bandersnatch/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
