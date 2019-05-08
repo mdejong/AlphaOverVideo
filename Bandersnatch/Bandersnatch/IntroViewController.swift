@@ -28,7 +28,7 @@ class IntroViewController: UIViewController {
       return;
     }
 
-    let url1 = AOVPlayer.url(fromAsset:"ClipIntro")
+    let url1 = AOVPlayer.url(fromAsset:"Intro.m4v")
     assert(url1 != nil)
     let clips = [ url1 ]
     
