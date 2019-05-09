@@ -62,6 +62,5 @@ class IntroViewController: UIViewController {
     print("launchChooseVideo")
     self.performSegue(withIdentifier:"launchChooseVideo", sender:nil)
   }
-  
 }
 
