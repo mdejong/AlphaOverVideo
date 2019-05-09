@@ -59,39 +59,33 @@
 // This method accepts either a NSURL*
 // or a NSArray tuple that contains two NSURLs.
 
-+ (AOVPlayer*) playerWithClip:(id)assetURLOrPair;
-
-/*
++ (AOVPlayer* _Nullable) playerWithClip:(id _Nonnull)assetURLOrPair;
 
 // Create player with multiple assets, the clips
-// are played with seamless transitions between
-// each clip. Playback is stopped after each
+// are played one after another with seamless transtions
+// between each clip. Playback is stopped after each
 // clip has been played.
 
-+ (AOVPlayer*) playerWithClips:(NSArray*)assetURLs;
++ (AOVPlayer* _Nullable) playerWithClips:(NSArray* _Nonnull)assetURLs;
 
-// Create player with a single asset, this asset
-// is played with seamless looping, over and over.
+// Create player with a single asset that is looped
+// over and over.
 
-+ (AOVPlayer*) playerWithLoopedClip:(NSURL*)assetURL;
++ (AOVPlayer* _Nullable) playerWithLoopedClip:(id _Nonnull)assetURLOrPair;
 
 // Create player with multiple assets, seamless looping
 // is used from clip to clip and the entire set of
 // clips is looped at the end.
 
-+ (AOVPlayer*) playerWithLoopedClips:(NSArray*)assetURLs;
- 
-*/
-
-+ (AOVPlayer*) playerWithLoopedClips:(NSArray*)assetURLs;
++ (AOVPlayer* _Nullable) playerWithLoopedClips:(NSArray* _Nonnull)assetURLs;
 
 // Create player with a single asset, at the
 // end of the clip playback is stopped.
 
-- (NSString*) description;
+- (NSString* _Nonnull) description;
 
 // Create NSURL given an asset filename.
 
-+ (NSURL*) urlFromAsset:(NSString*)resFilename;
++ (NSURL* _Nullable) urlFromAsset:(NSString* _Nonnull)resFilename;
 
 @end

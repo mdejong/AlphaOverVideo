@@ -536,32 +536,35 @@ void validate_storage_mode(id<MTLTexture> texture)
 //    return;
 //  }
   
-  if (self.currentFrame == nil) {
-    NSLog(@"currentFrame is nil in displayFrame");
-    return;
-  }
-  
   // Input to sRGB texture render comes from H.264 source
   
+  AOVFrame *currentFrame;
   CVPixelBufferRef rgbPixelBuffer = NULL;
   CVPixelBufferRef alphaPixelBuffer = NULL;
   
   // Get most recently extracted frame from the video output source
   
+  currentFrame = self.currentFrame;
+  
+  if (currentFrame == nil) {
+    NSLog(@"currentFrame is nil in displayFrame");
+    return;
+  }
+  
   // FIXME: add "ready" flag to determine if pixel buffer data is valid?
   
 #if defined(DEBUG)
-  assert(self.currentFrame != nil);
+  assert(currentFrame != nil);
 #endif // DEBUG
   
-  rgbPixelBuffer = self.currentFrame.yCbCrPixelBuffer;
+  rgbPixelBuffer = currentFrame.yCbCrPixelBuffer;
   
 #if defined(DEBUG)
   assert(rgbPixelBuffer != NULL);
 #endif // DEBUG
   
-  if (self.currentFrame.alphaPixelBuffer != nil) {
-    alphaPixelBuffer = self.currentFrame.alphaPixelBuffer;
+  if (currentFrame.alphaPixelBuffer != nil) {
+    alphaPixelBuffer = currentFrame.alphaPixelBuffer;
   }
   
   // This should never happen

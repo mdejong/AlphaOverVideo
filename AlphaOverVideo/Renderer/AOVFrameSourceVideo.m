@@ -628,7 +628,11 @@
 
 - (void) restart {
 #if defined(DEBUG)
-  NSLog(@"restart %@", self.uid);
+  if (self.loopMaxCount == 0) {
+    NSLog(@"restart %@", self.uid);
+  } else {
+    NSLog(@"restart %@ with loopCount %3d and loopMaxCount %d", self.uid, self.loopCount, self.loopMaxCount);
+  }
 #endif // DEBUG
   
   if ((self.loopMaxCount != 0) && (self.loopCount >= self.loopMaxCount)) {
@@ -638,6 +642,8 @@
     [self stop];
     return;
   }
+  
+  self.loopCount = self.loopCount + 1;
   
   // Halt playback of current item
   
@@ -856,8 +862,12 @@
   NSAssert([NSThread isMainThread] == TRUE, @"isMainThread");
 #endif // DEBUG
   
-  AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
-  pvo.videoPlaybackFinishedBlock = videoPlaybackFinishedBlock;
+  //AOVPlayerVideoOutput *pvo = [self getCurrentPlayerVideoOutput];
+  //pvo.videoPlaybackFinishedBlock = videoPlaybackFinishedBlock;
+  
+  for (AOVPlayerVideoOutput *pvo in @[self.playerVideoOutput1, self.playerVideoOutput2]) {
+    pvo.videoPlaybackFinishedBlock = videoPlaybackFinishedBlock;
+  }
 }
 
 

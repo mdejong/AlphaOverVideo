@@ -69,7 +69,7 @@
                                 <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="f3P-nJ-BLW" firstAttribute="centerY" secondItem="aqs-R8-UWH" secondAttribute="centerY" id="aYl-M2-lyt"/>
                             <constraint firstItem="f3P-nJ-BLW" firstAttribute="centerX" secondItem="aqs-R8-UWH" secondAttribute="centerX" id="cUJ-Ud-5fa"/>
@@ -79,11 +79,45 @@
                     </view>
                     <connections>
                         <outlet property="mtkView" destination="f3P-nJ-BLW" id="Hd7-YG-3lc"/>
+                        <segue destination="pAv-Um-qXp" kind="show" identifier="launchChooseVideo" animates="NO" id="0lm-Ej-mNk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="90l-9e-tFE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="928" y="125"/>
+        </scene>
+        <!--Choose View Controller-->
+        <scene sceneID="PGa-pW-Jaq">
+            <objects>
+                <viewController id="pAv-Um-qXp" customClass="ChooseViewController" customModule="Bandersnatch" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="yVl-8t-QPq"/>
+                        <viewControllerLayoutGuide type="bottom" id="rM3-Uf-uUY"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Ito-zl-SbK">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bby-nN-eQr" userLabel="mtkView" customClass="AOVMTKView">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                                <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Bby-nN-eQr" firstAttribute="centerY" secondItem="Ito-zl-SbK" secondAttribute="centerY" id="DmQ-Pp-AAQ"/>
+                            <constraint firstItem="Bby-nN-eQr" firstAttribute="width" secondItem="Ito-zl-SbK" secondAttribute="width" id="HPD-9t-T7m"/>
+                            <constraint firstItem="Bby-nN-eQr" firstAttribute="centerX" secondItem="Ito-zl-SbK" secondAttribute="centerX" id="k0Q-6b-dPT"/>
+                            <constraint firstItem="Bby-nN-eQr" firstAttribute="height" secondItem="Ito-zl-SbK" secondAttribute="height" id="sC3-lh-1Sq"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="mtkView" destination="Bby-nN-eQr" id="blX-JD-29o"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="LvF-9O-47B" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1716" y="125"/>
         </scene>
     </scenes>
     <resources>

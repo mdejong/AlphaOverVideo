@@ -32,13 +32,23 @@ class IntroViewController: UIViewController {
     assert(url1 != nil)
     let url2 = AOVPlayer.url(fromAsset:"ClipAChoiceFrostiesOrPuffs.m4v")
     assert(url2 != nil)
-    let clips = [ url1, url2 ] as [Any]
+
+    // Configure for 2 opaque clips
+    let clips = [ url1 as Any, url2 as Any ]
     
-    let player = AOVPlayer.init(loopedClips:clips)
+    let player = AOVPlayer.init(clips:clips)
     self.player = player
+    
+    assert(player?.hasAlphaChannel == false)
     
     // Defaults to sRGB, so set BT.709 flag to indicate video encoding
     player?.decodeGamma = MetalBT709GammaApple;
+    
+    // Transition to choose vc after first 2 clips have finished playing
+    
+    player?.videoPlaybackFinishedBlock = {
+      self.launchChooseVideo()
+    }
     
     let worked = mtkView.attach(player)
     if (worked == false)
@@ -46,8 +56,12 @@ class IntroViewController: UIViewController {
       NSLog("attach failed for AOVMTKView");
       return;
     }
-
   }
 
+  func launchChooseVideo() {
+    print("launchChooseVideo")
+    self.performSegue(withIdentifier:"launchChooseVideo", sender:nil)
+  }
+  
 }
 

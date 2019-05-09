@@ -85,6 +85,18 @@
   return [self playerWithLoopedClipsPrivate:@[assetURLOrPair] looped:FALSE loopMaxCount:1];
 }
 
++ (AOVPlayer*) playerWithClips:(NSArray*)assetURLs
+{
+  // Seamless loop the number of times needed to play each clip once
+  int loopMaxCount = (int) assetURLs.count;
+  return [self playerWithLoopedClipsPrivate:assetURLs looped:FALSE loopMaxCount:loopMaxCount];
+}
+
++ (AOVPlayer*) playerWithLoopedClip:(id)assetURLOrPair
+{
+  return [self playerWithLoopedClipsPrivate:@[assetURLOrPair] looped:TRUE loopMaxCount:1];
+}
+
 + (AOVPlayer*) playerWithLoopedClips:(NSArray*)assetURLs
 {
   return [self playerWithLoopedClipsPrivate:assetURLs looped:TRUE loopMaxCount:0];

@@ -17,6 +17,8 @@
 		3C56567C2282757900019DA4 /* Intro.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C56567B2282757800019DA4 /* Intro.m4v */; };
 		3C8D540C22826EEA006E6356 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8D540B22826EEA006E6356 /* IntroViewController.swift */; };
 		3CCC791322835DE700B2DD71 /* ClipAChoiceFrostiesOrPuffs.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CCC791222835DE700B2DD71 /* ClipAChoiceFrostiesOrPuffs.m4v */; };
+		3CCC79172283614300B2DD71 /* ClipBChoiceFrostiesOrPuffs.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CCC79162283614300B2DD71 /* ClipBChoiceFrostiesOrPuffs.m4v */; };
+		3CCC7919228361CC00B2DD71 /* ChooseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCC7918228361CC00B2DD71 /* ChooseViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,6 +47,8 @@
 		3C56567B2282757800019DA4 /* Intro.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = Intro.m4v; sourceTree = "<group>"; };
 		3C8D540B22826EEA006E6356 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		3CCC791222835DE700B2DD71 /* ClipAChoiceFrostiesOrPuffs.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = ClipAChoiceFrostiesOrPuffs.m4v; sourceTree = "<group>"; };
+		3CCC79162283614300B2DD71 /* ClipBChoiceFrostiesOrPuffs.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = ClipBChoiceFrostiesOrPuffs.m4v; sourceTree = "<group>"; };
+		3CCC7918228361CC00B2DD71 /* ChooseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,9 +85,11 @@
 			children = (
 				3C56567B2282757800019DA4 /* Intro.m4v */,
 				3CCC791222835DE700B2DD71 /* ClipAChoiceFrostiesOrPuffs.m4v */,
+				3CCC79162283614300B2DD71 /* ClipBChoiceFrostiesOrPuffs.m4v */,
 				3C2E85A7228259EA0040DA0E /* AppDelegate.swift */,
 				3C2E85A9228259EA0040DA0E /* SplashViewController.swift */,
 				3C8D540B22826EEA006E6356 /* IntroViewController.swift */,
+				3CCC7918228361CC00B2DD71 /* ChooseViewController.swift */,
 				3C2E85AB228259EA0040DA0E /* Main.storyboard */,
 				3C2E85AE228259F00040DA0E /* Assets.xcassets */,
 				3C2E85B0228259F00040DA0E /* LaunchScreen.storyboard */,
@@ -151,6 +157,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CCC79172283614300B2DD71 /* ClipBChoiceFrostiesOrPuffs.m4v in Resources */,
 				3CCC791322835DE700B2DD71 /* ClipAChoiceFrostiesOrPuffs.m4v in Resources */,
 				3C2E85B2228259F00040DA0E /* LaunchScreen.storyboard in Resources */,
 				3C2E85AF228259F00040DA0E /* Assets.xcassets in Resources */,
@@ -167,6 +174,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C2E85AA228259EA0040DA0E /* SplashViewController.swift in Sources */,
+				3CCC7919228361CC00B2DD71 /* ChooseViewController.swift in Sources */,
 				3C8D540C22826EEA006E6356 /* IntroViewController.swift in Sources */,
 				3C2E85A8228259EA0040DA0E /* AppDelegate.swift in Sources */,
 			);
