@@ -36,11 +36,10 @@ class ChooseViewController: UIViewController {
       return;
     }
     
-    let url1 = AOVPlayer.url(fromAsset:"ClipBChoiceFrostiesOrPuffs.m4v")
-    assert(url1 != nil)
-    let clips = [ url1 as Any ]
+    let url = AOVPlayer.url(fromAsset:"ClipBChoiceFrostiesOrPuffs.m4v")
+    assert(url != nil)
     
-    let player = AOVPlayer.init(loopedClips:clips)
+    let player = AOVPlayer.init(loopedClip:url)
     self.player = player
     
     // Defaults to sRGB, so set BT.709 flag to indicate video encoding
@@ -53,14 +52,14 @@ class ChooseViewController: UIViewController {
       return;
     }
     
-    self.buttonContainer.alpha = 0.0    
+    self.buttonContainer.alpha = 0.0
     self.buttonContainer.backgroundColor = UIColor.clear
   }
   
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
 
-    let delaySeconds = 0.25
+    let delaySeconds = 0.5
     DispatchQueue.main.asyncAfter(deadline: .now() + delaySeconds) {
       self.animateShowButtons()
     }
@@ -74,7 +73,7 @@ class ChooseViewController: UIViewController {
     // Change size of view to 85% of original height with same origin and show buttons
     // with a fade in effect
     
-    UIView.animate(withDuration: 4.0, delay: 0.0, options: .curveLinear, animations: {
+    UIView.animate(withDuration: 3.0, delay: 0.0, options: .curveEaseIn, animations: {
       let view = self.mtkView!
       
       let rect = view.frame
@@ -104,7 +103,7 @@ class ChooseViewController: UIViewController {
     
     self.buttonContainer.alpha = 1.0
     
-    UIView.animate(withDuration: 4.0, delay: 0.0, options: .curveLinear, animations: {
+    UIView.animate(withDuration: 3.0, delay: 0.0, options: .curveEaseOut, animations: {
       let view = self.mtkView!
       
       let rect = view.frame
@@ -129,6 +128,7 @@ class ChooseViewController: UIViewController {
     self.leftButton.isEnabled = false
     self.rightButton.isEnabled = false
     self.animateHideButtons()
+    self.launchOutroVideo()
   }
   
   @IBAction func rightButton(sender: UIButton) {
@@ -136,6 +136,12 @@ class ChooseViewController: UIViewController {
     self.leftButton.isEnabled = false
     self.rightButton.isEnabled = false
     self.animateHideButtons()
+    self.launchOutroVideo()
   }
 
+  func launchOutroVideo() {
+    print("launchOutroVideo")
+    self.performSegue(withIdentifier:"launchOutroVideo", sender:nil)
+  }
+  
 }

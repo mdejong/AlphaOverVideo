@@ -179,11 +179,61 @@
                         <outlet property="leftButton" destination="KEG-Fn-h1A" id="X7w-f7-YSa"/>
                         <outlet property="mtkView" destination="Bby-nN-eQr" id="blX-JD-29o"/>
                         <outlet property="rightButton" destination="DLZ-Jn-uBH" id="PhP-fe-tzB"/>
+                        <segue destination="Sdk-Z6-YhA" kind="show" identifier="launchOutroVideo" animates="NO" id="3Dh-UF-rzK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LvF-9O-47B" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1715" y="123.75"/>
+        </scene>
+        <!--Outro View Controller-->
+        <scene sceneID="9cY-nL-W5y">
+            <objects>
+                <viewController id="Sdk-Z6-YhA" customClass="OutroViewController" customModule="Bandersnatch" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="vQx-vT-EKE"/>
+                        <viewControllerLayoutGuide type="bottom" id="vhG-S7-1Pt"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="XHq-kZ-3nT">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pg8-nI-3RV" userLabel="mtkView" customClass="AOVMTKView">
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <textView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d04-5S-fSR">
+                                <rect key="frame" x="120" y="192" width="240" height="128"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <string key="text">Line1
+Line2
+Line3
+</string>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="pg8-nI-3RV" firstAttribute="width" secondItem="XHq-kZ-3nT" secondAttribute="width" id="BMF-Nz-lVR"/>
+                            <constraint firstItem="d04-5S-fSR" firstAttribute="centerY" secondItem="XHq-kZ-3nT" secondAttribute="centerY" id="ELc-pG-Uqh"/>
+                            <constraint firstItem="vhG-S7-1Pt" firstAttribute="top" secondItem="d04-5S-fSR" secondAttribute="bottom" id="Sgu-zT-Lah"/>
+                            <constraint firstItem="pg8-nI-3RV" firstAttribute="centerX" secondItem="XHq-kZ-3nT" secondAttribute="centerX" id="krR-5B-aTm"/>
+                            <constraint firstItem="d04-5S-fSR" firstAttribute="centerX" secondItem="XHq-kZ-3nT" secondAttribute="centerX" id="nsp-cE-Oom"/>
+                            <constraint firstItem="pg8-nI-3RV" firstAttribute="height" secondItem="XHq-kZ-3nT" secondAttribute="height" id="rpa-CM-Oie"/>
+                            <constraint firstItem="d04-5S-fSR" firstAttribute="width" secondItem="XHq-kZ-3nT" secondAttribute="width" multiplier="0.5" id="xlm-Z1-zxr"/>
+                            <constraint firstItem="d04-5S-fSR" firstAttribute="height" secondItem="XHq-kZ-3nT" secondAttribute="height" multiplier="0.4" id="xx4-EL-WPI"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="mtkView" destination="pg8-nI-3RV" id="ecC-FS-AXH"/>
+                        <outlet property="textOverlay" destination="d04-5S-fSR" id="1dl-YY-kVN"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="muZ-I7-qVL" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2535" y="126"/>
         </scene>
     </scenes>
     <resources>

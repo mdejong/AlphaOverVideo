@@ -94,7 +94,7 @@
 
 + (AOVPlayer*) playerWithLoopedClip:(id)assetURLOrPair
 {
-  return [self playerWithLoopedClipsPrivate:@[assetURLOrPair] looped:TRUE loopMaxCount:1];
+  return [self playerWithLoopedClipsPrivate:@[assetURLOrPair] looped:TRUE loopMaxCount:0];
 }
 
 + (AOVPlayer*) playerWithLoopedClips:(NSArray*)assetURLs
