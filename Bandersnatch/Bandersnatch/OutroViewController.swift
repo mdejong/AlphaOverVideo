@@ -52,17 +52,6 @@ class OutroViewController: UIViewController {
     }
     
     setDadText1()
-    
-    let delaySeconds1 = 3.0
-    DispatchQueue.main.asyncAfter(deadline: .now() + delaySeconds1) {
-      self.setDadText2()
-    }
-    
-    let delaySeconds2 = 6.0
-    DispatchQueue.main.asyncAfter(deadline: .now() + delaySeconds2) {
-      self.setDadText3()
-    }
-
   }
 
   func setDadText1() {
@@ -77,5 +66,30 @@ class OutroViewController: UIViewController {
     self.textOverlay.text = "A few days later ...\nYou killed your Dad!\nEnjoy prision, crazy pants."
   }
 
+  // Fade in animation
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    self.view.alpha = 0.0
+    let fadeInTime = 2.0
+    
+    UIView.animate(withDuration: fadeInTime, delay: 0.0, options: .curveEaseIn, animations: {
+      self.view.alpha = 1.0
+    }, completion: { finished in
+      print("Animation Completed!")
+      
+      let delaySeconds1 = 3.0
+      DispatchQueue.main.asyncAfter(deadline: .now() + delaySeconds1) {
+        self.setDadText2()
+      }
+      
+      let delaySeconds2 = 6.0
+      DispatchQueue.main.asyncAfter(deadline: .now() + delaySeconds2) {
+        self.setDadText3()
+      }
+    })
+
+  }
 }
 

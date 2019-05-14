@@ -45,51 +45,17 @@
                         </constraints>
                     </view>
                     <connections>
-                        <segue destination="72y-xs-0ij" kind="presentation" identifier="launchIntroVideo" id="jMB-CP-5bb"/>
+                        <segue destination="pAv-Um-qXp" kind="show" identifier="launchIntroVideo" id="kuA-qv-Vwg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="131" y="126.00000000000001"/>
         </scene>
-        <!--Intro View Controller-->
-        <scene sceneID="Npz-34-tYe">
-            <objects>
-                <viewController id="72y-xs-0ij" customClass="IntroViewController" customModule="Bandersnatch" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="kuN-kw-IlX"/>
-                        <viewControllerLayoutGuide type="bottom" id="epe-US-K5d"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="aqs-R8-UWH">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="f3P-nJ-BLW" userLabel="mtkView" customClass="AOVMTKView">
-                                <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
-                                <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </view>
-                        </subviews>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="f3P-nJ-BLW" firstAttribute="centerY" secondItem="aqs-R8-UWH" secondAttribute="centerY" id="aYl-M2-lyt"/>
-                            <constraint firstItem="f3P-nJ-BLW" firstAttribute="centerX" secondItem="aqs-R8-UWH" secondAttribute="centerX" id="cUJ-Ud-5fa"/>
-                            <constraint firstItem="f3P-nJ-BLW" firstAttribute="width" secondItem="aqs-R8-UWH" secondAttribute="width" id="eti-oq-d3f"/>
-                            <constraint firstItem="f3P-nJ-BLW" firstAttribute="height" secondItem="aqs-R8-UWH" secondAttribute="height" id="oF9-Ya-JNO"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="mtkView" destination="f3P-nJ-BLW" id="Hd7-YG-3lc"/>
-                        <segue destination="pAv-Um-qXp" kind="show" identifier="launchChooseVideo" animates="NO" id="0lm-Ej-mNk"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="90l-9e-tFE" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="928" y="125"/>
-        </scene>
-        <!--Choose View Controller-->
+        <!--Bandersnatch View Controller-->
         <scene sceneID="PGa-pW-Jaq">
             <objects>
-                <viewController id="pAv-Um-qXp" customClass="ChooseViewController" customModule="Bandersnatch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="pAv-Um-qXp" customClass="BandersnatchViewController" customModule="Bandersnatch" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="yVl-8t-QPq"/>
                         <viewControllerLayoutGuide type="bottom" id="rM3-Uf-uUY"/>
@@ -194,7 +160,7 @@
                         <viewControllerLayoutGuide type="top" id="vQx-vT-EKE"/>
                         <viewControllerLayoutGuide type="bottom" id="vhG-S7-1Pt"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="XHq-kZ-3nT">
+                    <view key="view" alpha="0.0" contentMode="scaleToFill" id="XHq-kZ-3nT">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -202,7 +168,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <textView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d04-5S-fSR">
+                            <textView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d04-5S-fSR">
                                 <rect key="frame" x="120" y="192" width="240" height="128"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <string key="text">Line1
@@ -214,7 +180,7 @@ Line3
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="pg8-nI-3RV" firstAttribute="width" secondItem="XHq-kZ-3nT" secondAttribute="width" id="BMF-Nz-lVR"/>
                             <constraint firstItem="d04-5S-fSR" firstAttribute="centerY" secondItem="XHq-kZ-3nT" secondAttribute="centerY" id="ELc-pG-Uqh"/>
