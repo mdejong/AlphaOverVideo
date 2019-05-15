@@ -13,7 +13,7 @@
 
 // Header shared between C code here, which executes Metal API commands, and .metal files, which
 //   uses these types as inpute to the shaders
-#import "AAPLShaderTypes.h"
+#import "AlphaOverVideoShaderTypes.h"
 
 #import "MetalRenderContext.h"
 

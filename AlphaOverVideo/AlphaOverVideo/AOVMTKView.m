@@ -264,12 +264,17 @@ void validate_storage_mode(id<MTLTexture> texture)
   
   int screenScale;
   
+#if TARGET_OS_IOS
   if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
     screenScale = (int) [UIScreen mainScreen].scale;
   } else {
     // Would only get invoked on old iPad 1 with iOS 3.2
     screenScale = 1;
   }
+#else
+  // MacOSX defaults to scale=1
+  screenScale = 1;
+#endif // TARGET_OS_IOS
   
   NSAssert(screenScale == 1 || screenScale == 2 || screenScale == 3, @"bad screenScale %d", screenScale);
   return screenScale;

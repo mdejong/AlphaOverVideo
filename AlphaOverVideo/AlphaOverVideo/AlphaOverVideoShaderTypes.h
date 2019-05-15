@@ -1,12 +1,12 @@
-/*
-See LICENSE folder for this sample’s licensing information.
+//
+//  AlphaOverVideoShaderTypes.h
+//
+//  See license.txt for license terms.
+//
+//  This header contains symbols shared between C and Metal shaders.
 
-Abstract:
-Header containing types and enum constants shared between Metal shaders and C/ObjC source
-*/
-
-#ifndef AAPLShaderTypes_h
-#define AAPLShaderTypes_h
+#ifndef AlphaOverVideoShaderTypes_h
+#define AlphaOverVideoShaderTypes_h
 
 #include <simd/simd.h>
 
@@ -44,4 +44,4 @@ typedef struct
     vector_float2 textureCoordinate;
 } AAPLVertex;
 
-#endif /* AAPLShaderTypes_h */
+#endif // AlphaOverVideoShaderTypes_h

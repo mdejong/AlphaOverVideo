@@ -3,7 +3,6 @@
 //  AlphaOverVideo
 //
 //  Created by Mo DeJong on 4/4/19.
-//  Copyright © 2019 Apple. All rights reserved.
 //
 
 @import MetalKit;
