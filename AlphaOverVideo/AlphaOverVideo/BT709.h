@@ -12,10 +12,10 @@
 //
 //  See license.txt for license terms.
 
-#include "sRGB.h"
-
 #if !defined(_BT709_H)
 #define _BT709_H
+
+#include "sRGB.h"
 
 typedef enum
 {

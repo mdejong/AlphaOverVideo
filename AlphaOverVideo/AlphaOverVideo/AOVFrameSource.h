@@ -49,9 +49,9 @@
 // DTS (display time stamp) of the decoded frame in the H.264 stream.
 // Note that presentationTimePtr can be NULL.
 
-- (AOVFrame*) frameForHostTime:(CFTimeInterval)hostTime
-           hostPresentationTime:(CFTimeInterval)hostPresentationTime
-            presentationTimePtr:(float*)presentationTimePtr;
+- (nullable AOVFrame*) frameForHostTime:(CFTimeInterval)hostTime
+                   hostPresentationTime:(CFTimeInterval)hostPresentationTime
+                    presentationTimePtr:(nullable float*)presentationTimePtr;
 
 // Return TRUE if more frames can be returned by this frame source,
 // returning FALSE means that all frames have been decoded.
@@ -60,12 +60,12 @@
 
 // Display a descriptive string that indicates frame source state
 
-- (NSString*) description;
+- (nullable NSString*) description;
 
 // Initiate playback by preloading for a specific rate (typically 1.0)
 // and invoke block callback.
 
-- (void) playWithPreroll:(float)rate block:(void (^)(void))block;
+- (void) playWithPreroll:(float)rate block:(void (^ _Nonnull)(void))block;
 
 // Sync start will seek to the given time and then invoke
 // a sync sync method to play at the given rate after

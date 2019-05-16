@@ -11,9 +11,11 @@
 
 #import "AOVFrame.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface AOVPlayerVideoOutput : NSObject <AVPlayerItemOutputPullDelegate>
 
-@property (nonatomic, copy) NSString *uid;
+@property (nonatomic, copy, nullable) NSString *uid;
 
 @property (nonatomic, assign) CFTimeInterval syncTime;
 @property (nonatomic, assign) float playRate;
@@ -33,10 +35,10 @@
 @property (nonatomic, assign) CFTimeInterval lastSecondFrameTime;
 @property (nonatomic, assign) float lastSecondFrameDelta;
 
-@property (nonatomic, retain) AVPlayer *player;
-@property (nonatomic, retain) AVPlayerItem *playerItem;
-@property (nonatomic, retain) AVPlayerItemVideoOutput *playerItemVideoOutput;
-@property (nonatomic, retain) dispatch_queue_t playerQueue;
+@property (nonatomic, retain, null_unspecified) AVPlayer *player;
+@property (nonatomic, retain, null_unspecified) AVPlayerItem *playerItem;
+@property (nonatomic, retain, null_unspecified) AVPlayerItemVideoOutput *playerItemVideoOutput;
+@property (nonatomic, retain, null_unspecified) dispatch_queue_t playerQueue;
 
 @property (nonatomic, readonly) BOOL isReadyToPlay;
 @property (nonatomic, readonly) BOOL isPlaying;
@@ -108,3 +110,6 @@
 - (void) setRate:(float)rate atHostTime:(CFTimeInterval)atHostTime;
 
 @end
+
+NS_ASSUME_NONNULL_END
+

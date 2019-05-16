@@ -186,6 +186,9 @@
 		3C9779312216024E003721FD /* RedFadeAlpha256.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C97792D2216024C003721FD /* RedFadeAlpha256.m4v */; };
 		3C9779322216024E003721FD /* RedFadeAlpha256.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C97792D2216024C003721FD /* RedFadeAlpha256.m4v */; };
 		3C9779332216024E003721FD /* RedFadeAlpha256.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C97792D2216024C003721FD /* RedFadeAlpha256.m4v */; };
+		3CAA16CF228D0F720056436E /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DD228B819600B6FEE9 /* BGRAToBT709Converter.m */; };
+		3CAA16D0228D0F890056436E /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DE228B819600B6FEE9 /* CGFrameBuffer.m */; };
+		3CAA16D1228D0F9B0056436E /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304CE228B819300B6FEE9 /* H264Encoder.m */; };
 		3CB6E80521D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
 		3CB6E80621D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
 		3CB6E80721D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
@@ -1107,6 +1110,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CAA16D1228D0F9B0056436E /* H264Encoder.m in Sources */,
+				3CAA16D0228D0F890056436E /* CGFrameBuffer.m in Sources */,
+				3CAA16CF228D0F720056436E /* BGRAToBT709Converter.m in Sources */,
 				3C4A775421DACE890041ACE3 /* srgb_to_bt709.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

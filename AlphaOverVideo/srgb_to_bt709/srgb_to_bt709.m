@@ -13,7 +13,6 @@
 #import "CGFrameBuffer.h"
 #import "BGRAToBT709Converter.h"
 
-#import "sRGB.h"
 #import "BT709.h"
 
 #import "y4m_writer.h"

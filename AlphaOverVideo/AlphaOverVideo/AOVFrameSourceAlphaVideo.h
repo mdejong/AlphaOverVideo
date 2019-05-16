@@ -19,6 +19,8 @@
 #import "AOVFrameSource.h"
 #import "AOVFrameSourceVideo.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface AOVFrameSourceAlphaVideo : NSObject <AOVFrameSource>
 
 @property (nonatomic, assign) CFTimeInterval syncTime;
@@ -101,5 +103,6 @@
 
 - (void) useMasterClock:(CMClockRef)masterClock;
 
-
 @end
+
+NS_ASSUME_NONNULL_END

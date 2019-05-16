@@ -19,6 +19,8 @@
 #import "AOVFrameSource.h"
 #import "MetalBT709Gamma.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 // AOVFrame class
 
 @interface AOVPlayer : NSObject
@@ -89,3 +91,6 @@
 + (NSURL* _Nullable) urlFromAsset:(NSString* _Nonnull)resFilename;
 
 @end
+
+NS_ASSUME_NONNULL_END
+
