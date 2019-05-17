@@ -12,7 +12,9 @@
 
 //#define STORE_TIMES
 
+#if TARGET_OS_IPHONE
 static int cachedFeatureSet = -1;
+#endif // TARGET_OS_IPHONE
 
 // Private API
 

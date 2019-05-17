@@ -106,41 +106,6 @@
 		3C628D23227B92DA00BF3498 /* DalaiLamaGray_bt709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C628D20227B92D900BF3498 /* DalaiLamaGray_bt709.m4v */; };
 		3C628D24227B92DA00BF3498 /* DalaiLamaGray_srgb.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C628D21227B92DA00BF3498 /* DalaiLamaGray_srgb.m4v */; };
 		3C628D25227B92DA00BF3498 /* DalaiLamaGray_srgb.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C628D21227B92DA00BF3498 /* DalaiLamaGray_srgb.m4v */; };
-		3C6565F4228BB4EB006DB0B3 /* AlphaOverVideo.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C0551C92256C068000A4BA4 /* AlphaOverVideo.h */; };
-		3C6565F5228BB4EB006DB0B3 /* AlphaOverVideo.metal in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D4228B819400B6FEE9 /* AlphaOverVideo.metal */; };
-		3C6565F6228BB4EB006DB0B3 /* AlphaOverVideoShaderTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304EF228B819D00B6FEE9 /* AlphaOverVideoShaderTypes.h */; };
-		3C6565F7228BB4EB006DB0B3 /* AOVDisplayLink.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D9228B819500B6FEE9 /* AOVDisplayLink.h */; };
-		3C6565F8228BB4EB006DB0B3 /* AOVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304EA228B819B00B6FEE9 /* AOVDisplayLink.m */; };
-		3C6565F9228BB4EC006DB0B3 /* AOVFrame.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E3228B819800B6FEE9 /* AOVFrame.h */; };
-		3C6565FA228BB4EC006DB0B3 /* AOVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DC228B819600B6FEE9 /* AOVFrame.m */; };
-		3C6565FB228BB4EC006DB0B3 /* AOVFrameSource.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D2228B819300B6FEE9 /* AOVFrameSource.h */; };
-		3C6565FC228BB4EC006DB0B3 /* AOVFrameSourceAlphaVideo.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304EE228B819C00B6FEE9 /* AOVFrameSourceAlphaVideo.h */; };
-		3C6565FD228BB4EC006DB0B3 /* AOVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DF228B819600B6FEE9 /* AOVFrameSourceAlphaVideo.m */; };
-		3C6565FE228BB4EC006DB0B3 /* AOVFrameSourceVideo.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D1228B819300B6FEE9 /* AOVFrameSourceVideo.h */; };
-		3C6565FF228BB4EC006DB0B3 /* AOVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304EB228B819B00B6FEE9 /* AOVFrameSourceVideo.m */; };
-		3C656600228BB4EC006DB0B3 /* AOVMTKView.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E7228B819A00B6FEE9 /* AOVMTKView.h */; };
-		3C656601228BB4EC006DB0B3 /* AOVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D3228B819400B6FEE9 /* AOVMTKView.m */; };
-		3C656602228BB4EC006DB0B3 /* AOVPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D0228B819300B6FEE9 /* AOVPlayer.h */; };
-		3C656603228BB4EC006DB0B3 /* AOVPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E8228B819A00B6FEE9 /* AOVPlayer.m */; };
-		3C656604228BB4EC006DB0B3 /* AOVPlayerVideoOutput.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E9228B819B00B6FEE9 /* AOVPlayerVideoOutput.h */; };
-		3C656605228BB4EC006DB0B3 /* AOVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D5228B819400B6FEE9 /* AOVPlayerVideoOutput.m */; };
-		3C656606228BB4EC006DB0B3 /* BGRAToBT709Converter.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E4228B819800B6FEE9 /* BGRAToBT709Converter.h */; };
-		3C656607228BB4EC006DB0B3 /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DD228B819600B6FEE9 /* BGRAToBT709Converter.m */; };
-		3C656608228BB4EC006DB0B3 /* BT709.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304CF228B819300B6FEE9 /* BT709.h */; };
-		3C656609228BB4EC006DB0B3 /* CGFrameBuffer.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E2228B819700B6FEE9 /* CGFrameBuffer.h */; };
-		3C65660A228BB4EC006DB0B3 /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DE228B819600B6FEE9 /* CGFrameBuffer.m */; };
-		3C65660B228BB4EC006DB0B3 /* CVPixelBufferUtils.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304EC228B819C00B6FEE9 /* CVPixelBufferUtils.h */; };
-		3C65660C228BB4EC006DB0B3 /* H264Encoder.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D7228B819400B6FEE9 /* H264Encoder.h */; };
-		3C65660D228BB4EC006DB0B3 /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304CE228B819300B6FEE9 /* H264Encoder.m */; };
-		3C65660E228BB4EC006DB0B3 /* MetalBT709Decoder.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E0228B819700B6FEE9 /* MetalBT709Decoder.h */; };
-		3C65660F228BB4EC006DB0B3 /* MetalBT709Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E5228B819900B6FEE9 /* MetalBT709Decoder.m */; };
-		3C656610228BB4EC006DB0B3 /* MetalBT709Gamma.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D6228B819400B6FEE9 /* MetalBT709Gamma.h */; };
-		3C656611228BB4EC006DB0B3 /* MetalRenderContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E1228B819700B6FEE9 /* MetalRenderContext.h */; };
-		3C656612228BB4EC006DB0B3 /* MetalRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D8228B819500B6FEE9 /* MetalRenderContext.m */; };
-		3C656613228BB4EC006DB0B3 /* MetalScaleRenderContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DB228B819500B6FEE9 /* MetalScaleRenderContext.h */; };
-		3C656614228BB4EC006DB0B3 /* MetalScaleRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304ED228B819C00B6FEE9 /* MetalScaleRenderContext.m */; };
-		3C656615228BB4EC006DB0B3 /* sRGB.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DA228B819500B6FEE9 /* sRGB.h */; };
-		3C656616228BB4EC006DB0B3 /* y4m_writer.h in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E6228B819900B6FEE9 /* y4m_writer.h */; };
 		3C76939422308A81000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
 		3C76939522308A84000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
 		3C76939622308A84000D03CE /* CountToTenA.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C76939222308A7B000D03CE /* CountToTenA.m4v */; };
@@ -192,9 +157,46 @@
 		3CB6E80521D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
 		3CB6E80621D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
 		3CB6E80721D6CFC4005424E6 /* osxcolor_test_image_24bit_BT709.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */; };
+		3CC54C15228DFC060004FD81 /* AlphaOverVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC54C0E228DFC060004FD81 /* AlphaOverVideo.framework */; };
+		3CC54C16228DFC060004FD81 /* AlphaOverVideo.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC54C0E228DFC060004FD81 /* AlphaOverVideo.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CC54C1B228DFCB30004FD81 /* AlphaOverVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C0551C92256C068000A4BA4 /* AlphaOverVideo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CC9ECB3222C7A1000C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
 		3CC9ECB4222C7A1200C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
 		3CC9ECB5222C7A1300C1CA09 /* CountToTen.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */; };
+		3CEE628E228E323200E5F07C /* AlphaOverVideo.metal in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D4228B819400B6FEE9 /* AlphaOverVideo.metal */; };
+		3CEE628F228E323200E5F07C /* AOVDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304EA228B819B00B6FEE9 /* AOVDisplayLink.m */; };
+		3CEE6290228E323200E5F07C /* AOVFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DC228B819600B6FEE9 /* AOVFrame.m */; };
+		3CEE6291228E323200E5F07C /* AOVFrameSourceAlphaVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DF228B819600B6FEE9 /* AOVFrameSourceAlphaVideo.m */; };
+		3CEE6292228E323200E5F07C /* AOVFrameSourceVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304EB228B819B00B6FEE9 /* AOVFrameSourceVideo.m */; };
+		3CEE6293228E323200E5F07C /* AOVMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D3228B819400B6FEE9 /* AOVMTKView.m */; };
+		3CEE6294228E323200E5F07C /* AOVPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E8228B819A00B6FEE9 /* AOVPlayer.m */; };
+		3CEE6295228E323200E5F07C /* AOVPlayerVideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D5228B819400B6FEE9 /* AOVPlayerVideoOutput.m */; };
+		3CEE6296228E323200E5F07C /* BGRAToBT709Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DD228B819600B6FEE9 /* BGRAToBT709Converter.m */; };
+		3CEE6297228E323200E5F07C /* CGFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304DE228B819600B6FEE9 /* CGFrameBuffer.m */; };
+		3CEE6298228E323200E5F07C /* H264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304CE228B819300B6FEE9 /* H264Encoder.m */; };
+		3CEE6299228E323200E5F07C /* MetalBT709Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304E5228B819900B6FEE9 /* MetalBT709Decoder.m */; };
+		3CEE629A228E323200E5F07C /* MetalRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304D8228B819500B6FEE9 /* MetalRenderContext.m */; };
+		3CEE629B228E323200E5F07C /* MetalScaleRenderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3304ED228B819C00B6FEE9 /* MetalScaleRenderContext.m */; };
+		3CEE629C228E328400E5F07C /* AlphaOverVideoShaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304EF228B819D00B6FEE9 /* AlphaOverVideoShaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE629D228E328400E5F07C /* AOVDisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304D9228B819500B6FEE9 /* AOVDisplayLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE629E228E328400E5F07C /* AOVFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304E3228B819800B6FEE9 /* AOVFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE629F228E328400E5F07C /* AOVFrameSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304D2228B819300B6FEE9 /* AOVFrameSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62A0228E328400E5F07C /* AOVFrameSourceAlphaVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304EE228B819C00B6FEE9 /* AOVFrameSourceAlphaVideo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62A1228E328400E5F07C /* AOVFrameSourceVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304D1228B819300B6FEE9 /* AOVFrameSourceVideo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62A2228E328400E5F07C /* AOVMTKView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304E7228B819A00B6FEE9 /* AOVMTKView.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62A3228E328400E5F07C /* AOVPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304D0228B819300B6FEE9 /* AOVPlayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62A4228E328400E5F07C /* AOVPlayerVideoOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304E9228B819B00B6FEE9 /* AOVPlayerVideoOutput.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62A5228E328400E5F07C /* BGRAToBT709Converter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304E4228B819800B6FEE9 /* BGRAToBT709Converter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62A6228E328400E5F07C /* BT709.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304CF228B819300B6FEE9 /* BT709.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62A7228E328400E5F07C /* CGFrameBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304E2228B819700B6FEE9 /* CGFrameBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62A8228E328400E5F07C /* CVPixelBufferUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304EC228B819C00B6FEE9 /* CVPixelBufferUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62A9228E328400E5F07C /* H264Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304D7228B819400B6FEE9 /* H264Encoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62AA228E328400E5F07C /* MetalBT709Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304E0228B819700B6FEE9 /* MetalBT709Decoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62AB228E328400E5F07C /* MetalBT709Gamma.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304D6228B819400B6FEE9 /* MetalBT709Gamma.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62AC228E328400E5F07C /* MetalRenderContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304E1228B819700B6FEE9 /* MetalRenderContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62AD228E328400E5F07C /* MetalScaleRenderContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304DB228B819500B6FEE9 /* MetalScaleRenderContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62AE228E328400E5F07C /* sRGB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304DA228B819500B6FEE9 /* sRGB.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3CEE62AF228E328400E5F07C /* y4m_writer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3304E6228B819900B6FEE9 /* y4m_writer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CF086C0221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
 		3CF086C1221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
 		3CF086C2221773C000FD7802 /* GlobeLEDAlpha.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */; };
@@ -224,6 +226,13 @@
 			remoteGlobalIDString = 3C4A770921D892BA0041ACE3;
 			remoteInfo = EmptyiOS;
 		};
+		3CC54C13228DFC060004FD81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3AF7E9B81EB64A46003BB06D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CC54C0D228DFC060004FD81;
+			remoteInfo = AlphaOverVideoMacOS;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -246,6 +255,17 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		3CC54C1A228DFC060004FD81 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3CC54C16228DFC060004FD81 /* AlphaOverVideo.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -272,7 +292,8 @@
 		3C02732C220B715C005FB416 /* QuickTime_Test_Pattern_HD_grayscale.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = QuickTime_Test_Pattern_HD_grayscale.m4v; sourceTree = "<group>"; };
 		3C0551C72256C068000A4BA4 /* AlphaOverVideo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AlphaOverVideo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C0551C92256C068000A4BA4 /* AlphaOverVideo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlphaOverVideo.h; sourceTree = "<group>"; };
-		3C0551CA2256C068000A4BA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3C0551CA2256C068000A4BA4 /* AlphaOverVideoiOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AlphaOverVideoiOS.plist; sourceTree = "<group>"; };
+		3C09FE6B228E29F200E73993 /* AlphaOverVideoMacOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AlphaOverVideoMacOS.plist; sourceTree = "<group>"; };
 		3C0C3F0F21FA642C00C498D3 /* AppleEncodeDecodeBT709Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppleEncodeDecodeBT709Tests.m; sourceTree = "<group>"; };
 		3C18D3CE221D432E005DAF85 /* CarSpinAF10.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CarSpinAF10.m4v; sourceTree = "<group>"; };
 		3C18D3CF221D432E005DAF85 /* CarSpinAF10_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CarSpinAF10_alpha.m4v; sourceTree = "<group>"; };
@@ -353,6 +374,7 @@
 		3C97792C2216024B003721FD /* RedFadeAlpha256_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = RedFadeAlpha256_alpha.m4v; sourceTree = "<group>"; };
 		3C97792D2216024C003721FD /* RedFadeAlpha256.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = RedFadeAlpha256.m4v; sourceTree = "<group>"; };
 		3CB6E80421D6CFC3005424E6 /* osxcolor_test_image_24bit_BT709.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = osxcolor_test_image_24bit_BT709.m4v; sourceTree = "<group>"; };
+		3CC54C0E228DFC060004FD81 /* AlphaOverVideo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AlphaOverVideo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CC9ECB2222C7A0E00C1CA09 /* CountToTen.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = CountToTen.m4v; sourceTree = "<group>"; };
 		3CF086BE221773BF00FD7802 /* GlobeLEDAlpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = GlobeLEDAlpha.m4v; sourceTree = "<group>"; };
 		3CF086BF221773C000FD7802 /* GlobeLEDAlpha_alpha.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = GlobeLEDAlpha_alpha.m4v; sourceTree = "<group>"; };
@@ -383,6 +405,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3ABBE27C1F7319950080C72C /* MetalKit.framework in Frameworks */,
+				3CC54C15228DFC060004FD81 /* AlphaOverVideo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +431,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		3C4A774E21DACE880041ACE3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3CC54C0B228DFC060004FD81 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -492,6 +522,7 @@
 				3C4A772121D892C00041ACE3 /* EmptyiOSTests.xctest */,
 				3C4A775121DACE880041ACE3 /* srgb_to_bt709 */,
 				3C0551C72256C068000A4BA4 /* AlphaOverVideo.framework */,
+				3CC54C0E228DFC060004FD81 /* AlphaOverVideo.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -542,7 +573,8 @@
 		3C0551C82256C068000A4BA4 /* AlphaOverVideo */ = {
 			isa = PBXGroup;
 			children = (
-				3C0551CA2256C068000A4BA4 /* Info.plist */,
+				3C0551CA2256C068000A4BA4 /* AlphaOverVideoiOS.plist */,
+				3C09FE6B228E29F200E73993 /* AlphaOverVideoMacOS.plist */,
 				3C0551C92256C068000A4BA4 /* AlphaOverVideo.h */,
 				3C3304D4228B819400B6FEE9 /* AlphaOverVideo.metal */,
 				3C3304EF228B819D00B6FEE9 /* AlphaOverVideoShaderTypes.h */,
@@ -650,6 +682,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3CC54C09228DFC060004FD81 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3CC54C1B228DFCB30004FD81 /* AlphaOverVideo.h in Headers */,
+				3CEE62AF228E328400E5F07C /* y4m_writer.h in Headers */,
+				3CEE629C228E328400E5F07C /* AlphaOverVideoShaderTypes.h in Headers */,
+				3CEE629D228E328400E5F07C /* AOVDisplayLink.h in Headers */,
+				3CEE629E228E328400E5F07C /* AOVFrame.h in Headers */,
+				3CEE629F228E328400E5F07C /* AOVFrameSource.h in Headers */,
+				3CEE62A0228E328400E5F07C /* AOVFrameSourceAlphaVideo.h in Headers */,
+				3CEE62A1228E328400E5F07C /* AOVFrameSourceVideo.h in Headers */,
+				3CEE62A2228E328400E5F07C /* AOVMTKView.h in Headers */,
+				3CEE62A3228E328400E5F07C /* AOVPlayer.h in Headers */,
+				3CEE62A4228E328400E5F07C /* AOVPlayerVideoOutput.h in Headers */,
+				3CEE62A5228E328400E5F07C /* BGRAToBT709Converter.h in Headers */,
+				3CEE62A6228E328400E5F07C /* BT709.h in Headers */,
+				3CEE62A7228E328400E5F07C /* CGFrameBuffer.h in Headers */,
+				3CEE62A8228E328400E5F07C /* CVPixelBufferUtils.h in Headers */,
+				3CEE62A9228E328400E5F07C /* H264Encoder.h in Headers */,
+				3CEE62AA228E328400E5F07C /* MetalBT709Decoder.h in Headers */,
+				3CEE62AB228E328400E5F07C /* MetalBT709Gamma.h in Headers */,
+				3CEE62AC228E328400E5F07C /* MetalRenderContext.h in Headers */,
+				3CEE62AD228E328400E5F07C /* MetalScaleRenderContext.h in Headers */,
+				3CEE62AE228E328400E5F07C /* sRGB.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -696,10 +756,12 @@
 				3AF7E9F41EB64A46003BB06D /* Sources */,
 				3AF7E9F51EB64A46003BB06D /* Frameworks */,
 				3AF7E9F61EB64A46003BB06D /* Resources */,
+				3CC54C1A228DFC060004FD81 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				3CC54C14228DFC060004FD81 /* PBXTargetDependency */,
 			);
 			name = "AlphaOverVideo-macOS";
 			productName = macOS;
@@ -776,6 +838,24 @@
 			productReference = 3C4A775121DACE880041ACE3 /* srgb_to_bt709 */;
 			productType = "com.apple.product-type.tool";
 		};
+		3CC54C0D228DFC060004FD81 /* AlphaOverVideoMacOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3CC54C17228DFC060004FD81 /* Build configuration list for PBXNativeTarget "AlphaOverVideoMacOS" */;
+			buildPhases = (
+				3CC54C09228DFC060004FD81 /* Headers */,
+				3CC54C0A228DFC060004FD81 /* Sources */,
+				3CC54C0B228DFC060004FD81 /* Frameworks */,
+				3CC54C0C228DFC060004FD81 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AlphaOverVideoMacOS;
+			productName = AlphaOverVideoMacOS;
+			productReference = 3CC54C0E228DFC060004FD81 /* AlphaOverVideo.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -821,6 +901,10 @@
 						DevelopmentTeam = 9F74CLHA49;
 						ProvisioningStyle = Automatic;
 					};
+					3CC54C0D228DFC060004FD81 = {
+						CreatedOnToolsVersion = 10.2.1;
+						ProvisioningStyle = Manual;
+					};
 				};
 			};
 			buildConfigurationList = 3AF7E9BB1EB64A46003BB06D /* Build configuration list for PBXProject "AlphaOverVideo" */;
@@ -844,6 +928,7 @@
 				3C4A772021D892C00041ACE3 /* EmptyiOSTests */,
 				3C4A775021DACE880041ACE3 /* srgb_to_bt709 */,
 				3C0551C62256C068000A4BA4 /* AlphaOverVideo */,
+				3CC54C0D228DFC060004FD81 /* AlphaOverVideoMacOS */,
 			);
 		};
 /* End PBXProject section */
@@ -996,6 +1081,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3CC54C0C228DFC060004FD81 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1023,41 +1115,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C6565F4228BB4EB006DB0B3 /* AlphaOverVideo.h in Sources */,
-				3C6565F5228BB4EB006DB0B3 /* AlphaOverVideo.metal in Sources */,
-				3C6565F6228BB4EB006DB0B3 /* AlphaOverVideoShaderTypes.h in Sources */,
-				3C6565F7228BB4EB006DB0B3 /* AOVDisplayLink.h in Sources */,
-				3C6565F8228BB4EB006DB0B3 /* AOVDisplayLink.m in Sources */,
-				3C6565F9228BB4EC006DB0B3 /* AOVFrame.h in Sources */,
-				3C6565FA228BB4EC006DB0B3 /* AOVFrame.m in Sources */,
-				3C6565FB228BB4EC006DB0B3 /* AOVFrameSource.h in Sources */,
-				3C6565FC228BB4EC006DB0B3 /* AOVFrameSourceAlphaVideo.h in Sources */,
-				3C6565FD228BB4EC006DB0B3 /* AOVFrameSourceAlphaVideo.m in Sources */,
-				3C6565FE228BB4EC006DB0B3 /* AOVFrameSourceVideo.h in Sources */,
-				3C6565FF228BB4EC006DB0B3 /* AOVFrameSourceVideo.m in Sources */,
-				3C656600228BB4EC006DB0B3 /* AOVMTKView.h in Sources */,
-				3C656601228BB4EC006DB0B3 /* AOVMTKView.m in Sources */,
-				3C656602228BB4EC006DB0B3 /* AOVPlayer.h in Sources */,
-				3C656603228BB4EC006DB0B3 /* AOVPlayer.m in Sources */,
-				3C656604228BB4EC006DB0B3 /* AOVPlayerVideoOutput.h in Sources */,
-				3C656605228BB4EC006DB0B3 /* AOVPlayerVideoOutput.m in Sources */,
-				3C656606228BB4EC006DB0B3 /* BGRAToBT709Converter.h in Sources */,
-				3C656607228BB4EC006DB0B3 /* BGRAToBT709Converter.m in Sources */,
-				3C656608228BB4EC006DB0B3 /* BT709.h in Sources */,
-				3C656609228BB4EC006DB0B3 /* CGFrameBuffer.h in Sources */,
-				3C65660A228BB4EC006DB0B3 /* CGFrameBuffer.m in Sources */,
-				3C65660B228BB4EC006DB0B3 /* CVPixelBufferUtils.h in Sources */,
-				3C65660C228BB4EC006DB0B3 /* H264Encoder.h in Sources */,
-				3C65660D228BB4EC006DB0B3 /* H264Encoder.m in Sources */,
-				3C65660E228BB4EC006DB0B3 /* MetalBT709Decoder.h in Sources */,
-				3C65660F228BB4EC006DB0B3 /* MetalBT709Decoder.m in Sources */,
-				3C656610228BB4EC006DB0B3 /* MetalBT709Gamma.h in Sources */,
-				3C656611228BB4EC006DB0B3 /* MetalRenderContext.h in Sources */,
-				3C656612228BB4EC006DB0B3 /* MetalRenderContext.m in Sources */,
-				3C656613228BB4EC006DB0B3 /* MetalScaleRenderContext.h in Sources */,
-				3C656614228BB4EC006DB0B3 /* MetalScaleRenderContext.m in Sources */,
-				3C656615228BB4EC006DB0B3 /* sRGB.h in Sources */,
-				3C656616228BB4EC006DB0B3 /* y4m_writer.h in Sources */,
 				3AFD65711F71A8A00008A125 /* main.m in Sources */,
 				3C7E37D32218D03000116145 /* AAPLViewController.m in Sources */,
 			);
@@ -1117,6 +1174,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3CC54C0A228DFC060004FD81 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3CEE628E228E323200E5F07C /* AlphaOverVideo.metal in Sources */,
+				3CEE628F228E323200E5F07C /* AOVDisplayLink.m in Sources */,
+				3CEE6290228E323200E5F07C /* AOVFrame.m in Sources */,
+				3CEE6291228E323200E5F07C /* AOVFrameSourceAlphaVideo.m in Sources */,
+				3CEE6292228E323200E5F07C /* AOVFrameSourceVideo.m in Sources */,
+				3CEE6293228E323200E5F07C /* AOVMTKView.m in Sources */,
+				3CEE6294228E323200E5F07C /* AOVPlayer.m in Sources */,
+				3CEE6295228E323200E5F07C /* AOVPlayerVideoOutput.m in Sources */,
+				3CEE6296228E323200E5F07C /* BGRAToBT709Converter.m in Sources */,
+				3CEE6297228E323200E5F07C /* CGFrameBuffer.m in Sources */,
+				3CEE6298228E323200E5F07C /* H264Encoder.m in Sources */,
+				3CEE6299228E323200E5F07C /* MetalBT709Decoder.m in Sources */,
+				3CEE629A228E323200E5F07C /* MetalRenderContext.m in Sources */,
+				3CEE629B228E323200E5F07C /* MetalScaleRenderContext.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1129,6 +1207,11 @@
 			isa = PBXTargetDependency;
 			target = 3C4A770921D892BA0041ACE3 /* EmptyiOS */;
 			targetProxy = 3C4A772221D892C00041ACE3 /* PBXContainerItemProxy */;
+		};
+		3CC54C14228DFC060004FD81 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3CC54C0D228DFC060004FD81 /* AlphaOverVideoMacOS */;
+			targetProxy = 3CC54C13228DFC060004FD81 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1415,7 +1498,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = AlphaOverVideo/Info.plist;
+				INFOPLIST_FILE = AlphaOverVideo/AlphaOverVideoiOS.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1447,7 +1530,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = AlphaOverVideo/Info.plist;
+				INFOPLIST_FILE = AlphaOverVideo/AlphaOverVideoiOS.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1593,6 +1676,76 @@
 			};
 			name = Release;
 		};
+		3CC54C18228DFC060004FD81 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AlphaOverVideo/AlphaOverVideoMacOS.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideo;
+				PRODUCT_NAME = AlphaOverVideo;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VALID_ARCHS = x86_64;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		3CC54C19228DFC060004FD81 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AlphaOverVideo/AlphaOverVideoMacOS.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helpurock.AlphaOverVideo;
+				PRODUCT_NAME = AlphaOverVideo;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VALID_ARCHS = x86_64;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1664,6 +1817,15 @@
 			buildConfigurations = (
 				3C4A775621DACE890041ACE3 /* Debug */,
 				3C4A775721DACE890041ACE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3CC54C17228DFC060004FD81 /* Build configuration list for PBXNativeTarget "AlphaOverVideoMacOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3CC54C18228DFC060004FD81 /* Debug */,
+				3CC54C19228DFC060004FD81 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -220,9 +220,19 @@ void validate_storage_mode(id<MTLTexture> texture)
   NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
   NSString *metalLibraryPath = bundlePath;
   
+#if TARGET_OS_IOS
   metalLibraryPath = [metalLibraryPath stringByAppendingPathComponent:@"Frameworks"];
   metalLibraryPath = [metalLibraryPath stringByAppendingPathComponent:@"AlphaOverVideo.framework"];
   metalLibraryPath = [metalLibraryPath stringByAppendingPathComponent:@"default.metallib"];
+#else
+  // MacOSX shared library bundle path
+  metalLibraryPath = [metalLibraryPath stringByAppendingPathComponent:@"Contents"];
+  metalLibraryPath = [metalLibraryPath stringByAppendingPathComponent:@"Frameworks"];
+  metalLibraryPath = [metalLibraryPath stringByAppendingPathComponent:@"AlphaOverVideo.framework"];
+  metalLibraryPath = [metalLibraryPath stringByAppendingPathComponent:@"Resources"];
+  metalLibraryPath = [metalLibraryPath stringByAppendingPathComponent:@"default.metallib"];
+#endif // TARGET_OS_IOS
+
   NSError *bundleError = nil;
   
   id<MTLLibrary> defaultLibrary = nil;
