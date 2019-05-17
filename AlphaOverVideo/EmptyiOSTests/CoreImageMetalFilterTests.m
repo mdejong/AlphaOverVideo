@@ -3,7 +3,7 @@
 //  CoreImageMetalFilterTests
 //
 //  Created by Mo DeJong on 12/13/18.
-//  Copyright © 2018 HelpURock. All rights reserved.
+//  Copyright © 2019 Mo DeJong. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>

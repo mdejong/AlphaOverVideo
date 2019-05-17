@@ -3,7 +3,7 @@
 //  EmptyiOS
 //
 //  Created by Mo DeJong on 12/29/18.
-//  Copyright © 2018 Apple. All rights reserved.
+//  Copyright © 2019 Mo DeJong. All rights reserved.
 //
 
 #import "ViewController.h"

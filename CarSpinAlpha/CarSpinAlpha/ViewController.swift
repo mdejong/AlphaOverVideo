@@ -3,7 +3,7 @@
 //  CarSpinAlpha
 //
 //  Created by Mo DeJong on 4/4/19.
-//  Copyright © 2019 HelpURock. All rights reserved.
+//  Copyright © 2019 Mo DeJong. All rights reserved.
 //
 
 import UIKit

@@ -1,7 +1,7 @@
 //
 //  MetalRenderContext.m
 //
-//  Copyright 2016 Mo DeJong.
+//  Copyright 2019 Mo DeJong.
 //
 //  See license.txt for license terms.
 //
