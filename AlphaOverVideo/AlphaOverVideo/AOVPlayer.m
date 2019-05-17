@@ -10,6 +10,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+#import "AOVFrameSource.h"
 #import "AOVFrameSourceAlphaVideo.h"
 #import "AOVFrameSourceVideo.h"
 
@@ -20,6 +21,12 @@
 @property (nonatomic, assign) int frameNum;
 
 @property (nonatomic, assign) BOOL hasAlphaChannel;
+
+// Protocol that defines how AOVFrame objects are loaded,
+// the implementation is invoked from a display linked timer
+// to load the next frame of video data to be displayed.
+
+@property (nonatomic, retain) id<AOVFrameSource> frameSource;
 
 @end
 

@@ -124,13 +124,13 @@
   id<MTLLibrary> defaultLibrary = metalRenderContext.defaultLibrary;
 
   NSString *functionName = nil;
-  MetalBT709Gamma gamma = self.gamma;
+  AOVGamma gamma = self.gamma;
 
-  if (gamma == MetalBT709GammaApple) {
+  if (gamma == AOVGammaApple) {
     functionName = @"BT709ToLinearSRGBKernel";
-  } else if (gamma == MetalBT709GammaSRGB) {
+  } else if (gamma == AOVGammaSRGB) {
     functionName = @"sRGBToLinearSRGBKernel";
-  } else if (gamma == MetalBT709GammaLinear) {
+  } else if (gamma == AOVGammaLinear) {
     functionName = @"LinearToLinearSRGBKernel";
   } else {
     assert(0);
@@ -171,18 +171,18 @@
   id<MTLFunction> vertexFunction = [defaultLibrary newFunctionWithName:@"identityVertexShader"];
   
   NSString *functionName = nil;
-  MetalBT709Gamma gamma = self.gamma;
+  AOVGamma gamma = self.gamma;
   
   if (self.hasAlphaChannel) {
     // RGBA alpha channel render supports only the sRGB gamma function and assumes
     // that the alpha channel is always encoded as linear.    
-    self.gamma = MetalBT709GammaSRGB;
+    self.gamma = AOVGammaSRGB;
     functionName = @"sRGBToLinearSRGBFragmentAlpha";
-  } else if (gamma == MetalBT709GammaApple) {
+  } else if (gamma == AOVGammaApple) {
     functionName = @"BT709ToLinearSRGBFragment";
-  } else if (gamma == MetalBT709GammaSRGB) {
+  } else if (gamma == AOVGammaSRGB) {
     functionName = @"sRGBToLinearSRGBFragment";
-  } else if (gamma == MetalBT709GammaLinear) {
+  } else if (gamma == AOVGammaLinear) {
     functionName = @"LinearToLinearSRGBFragment";
   } else {
     assert(0);
@@ -334,7 +334,7 @@ renderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor
   //const NSString *kCVImageBufferTransferFunction_sRGB_str = @"IEC_sRGB";
   //const NSString *kCVImageBufferTransferFunction_Linear_str = @"Linear";
   
-  MetalBT709Gamma gamma = self.gamma;
+  AOVGamma gamma = self.gamma;
  
   BOOL isBT709Gamma = FALSE;
   BOOL isSRGBGamma = FALSE;
@@ -350,11 +350,11 @@ renderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor
     // under MacOSX so there is no way to check the gamma setting. Need to assume user configured
     // this input correctly since there is no way to detect at runtime.
     
-    if (gamma == MetalBT709GammaApple) {
+    if (gamma == AOVGammaApple) {
       isBT709Gamma = TRUE;
-    } else if (gamma == MetalBT709GammaSRGB) {
+    } else if (gamma == AOVGammaSRGB) {
       isSRGBGamma = TRUE;
-    } else if (gamma == MetalBT709GammaLinear) {
+    } else if (gamma == AOVGammaLinear) {
       isLinearGamma = TRUE;
     }
 #endif // TARGET_OS_IOS
@@ -368,17 +368,17 @@ renderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor
   //NSLog(@"isBT709Gamma %d : isSRGBGamma %d : isSRGBGamma %d", isBT709Gamma, isSRGBGamma, isLinearGamma);
 #endif // DEBUG
   
-  if (gamma == MetalBT709GammaApple) {
+  if (gamma == AOVGammaApple) {
     if (isBT709Gamma == FALSE) {
       NSLog(@"Decoder configured for gamma = MetalBT709GammaApple but TransferFunction was \"%@\"", transferFunctionKeyAttachment);
       return FALSE;
     }
-  } else if (gamma == MetalBT709GammaSRGB) {
+  } else if (gamma == AOVGammaSRGB) {
     if (isSRGBGamma == FALSE) {
       NSLog(@"Decoder configured for gamma = MetalBT709GammaSRGB but TransferFunction was \"%@\"", transferFunctionKeyAttachment);
       return FALSE;
     }
-  } else if (gamma == MetalBT709GammaLinear) {
+  } else if (gamma == AOVGammaLinear) {
     if (isLinearGamma == FALSE) {
       NSLog(@"Decoder configured for gamma = MetalBT709GammaLinear but TransferFunction was \"%@\"", transferFunctionKeyAttachment);
       return FALSE;

@@ -19,4 +19,5 @@ FOUNDATION_EXPORT const unsigned char AlphaOverVideoVersionString[];
 #import <AlphaOverVideo/AOVPlayer.h>
 #import <AlphaOverVideo/AOVMTKView.h>
 #import <AlphaOverVideo/AOVDisplayLink.h>
-#import <AlphaOverVideo/H264Encoder.h>
+#import <AlphaOverVideo/AOVGamma.h>
+#import <AlphaOverVideo/AOVH264Encoder.h>

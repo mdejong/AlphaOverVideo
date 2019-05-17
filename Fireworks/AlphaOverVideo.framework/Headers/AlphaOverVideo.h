@@ -3,7 +3,6 @@
 //  AlphaOverVideo
 //
 //  Created by Mo DeJong on 4/4/19.
-//  Copyright © 2019 Apple. All rights reserved.
 //
 
 @import MetalKit;
@@ -20,4 +19,5 @@ FOUNDATION_EXPORT const unsigned char AlphaOverVideoVersionString[];
 #import <AlphaOverVideo/AOVPlayer.h>
 #import <AlphaOverVideo/AOVMTKView.h>
 #import <AlphaOverVideo/AOVDisplayLink.h>
-#import <AlphaOverVideo/H264Encoder.h>
+#import <AlphaOverVideo/AOVGamma.h>
+#import <AlphaOverVideo/AOVH264Encoder.h>

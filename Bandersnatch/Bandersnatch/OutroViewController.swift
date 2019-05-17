@@ -40,7 +40,7 @@ class OutroViewController: UIViewController {
     assert(player?.hasAlphaChannel == false)
     
     // Defaults to sRGB, so set BT.709 flag to indicate video encoding
-    player?.decodeGamma = MetalBT709GammaApple;
+    player?.decodeGamma = AOVGammaApple;
     
     // Transition to choose vc after first 2 clips have finished playing
     

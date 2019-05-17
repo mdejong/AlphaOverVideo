@@ -10,7 +10,7 @@
 
 #import "BT709.h"
 
-#import "H264Encoder.h"
+#import "AOVH264Encoder.h"
 
 #import "CVPixelBufferUtils.h"
 
@@ -381,7 +381,7 @@ static inline uint32_t byte_to_grayscale24(uint32_t byteVal)
   // FIXME: This call is not efficient, need to cache the HDTV colorspace
   // ref across calls to this module for better performance.
   
-  CGColorSpaceRef yuvColorSpace = [H264Encoder createHDTVColorSpaceRef];
+  CGColorSpaceRef yuvColorSpace = [AOVH264Encoder createHDTVColorSpaceRef];
   
   // Attach BT.709 info to pixel buffer
   

@@ -19,6 +19,7 @@
 #import "CGFrameBuffer.h"
 #import "CVPixelBufferUtils.h"
 #import "AOVDisplayLink.h"
+#import "AOVFrameSource.h"
 
 // Define this symbol to enable private texture mode on MacOSX.
 
@@ -53,6 +54,18 @@ void validate_storage_mode(id<MTLTexture> texture)
   
 #endif // STORAGE_MODE_PRIVATE
 }
+
+// Private API
+
+@interface AOVPlayer ()
+
+// Protocol that defines how AOVFrame objects are loaded,
+// the implementation is invoked from a display linked timer
+// to load the next frame of video data to be displayed.
+
+@property (nonatomic, retain) id<AOVFrameSource> frameSource;
+
+@end
 
 // Private API
 
@@ -437,7 +450,7 @@ void validate_storage_mode(id<MTLTexture> texture)
     
     [self setupViewOpaqueProperty:mtkView];
         
-    MetalBT709Gamma decodeGamma = player.decodeGamma;
+    AOVGamma decodeGamma = player.decodeGamma;
     self.metalBT709Decoder.gamma = decodeGamma;
     
     // Based on BPP and gamma config, choose Metal shader and

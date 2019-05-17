@@ -22,7 +22,6 @@
 #import <MetalKit/MTKView.h>
 
 #import "AOVFrame.h"
-#import "AOVFrameSource.h"
 #import "AOVPlayer.h"
 
 // AOVMTKView extends MTKView

@@ -16,8 +16,9 @@
 @import CoreMedia;
 @import VideoToolbox;
 
-#import "AOVFrameSource.h"
-#import "MetalBT709Gamma.h"
+#import "AOVGamma.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 // AOVFrame class
 
@@ -28,19 +29,13 @@
 
 @property (nonatomic, readonly) BOOL hasAlphaChannel;
 
-// Protocol that defines how AOVFrame objects are loaded,
-// the implementation is invoked from a display linked timer
-// to load the next frame of video data to be displayed.
-
-@property (nonatomic, retain) id<AOVFrameSource> frameSource;
-
 // The gamma setting to use when decoding the gamma curve used
 // by the YCbCr encoding in the H.264 file. This property defaults
 // to MetalBT709GammaSRGB, if the H.264 file is not encoded with
 // sRGB gamma then this property should be set to either
 // MetalBT709GammaApple or MetalBT709GammaLinear.
 
-@property (nonatomic, assign) MetalBT709Gamma decodeGamma;
+@property (nonatomic, assign) AOVGamma decodeGamma;
 
 // This block will be invoked on the main thread when the
 // dimensions of the video become available.
@@ -89,3 +84,6 @@
 + (NSURL* _Nullable) urlFromAsset:(NSString* _Nonnull)resFilename;
 
 @end
+
+NS_ASSUME_NONNULL_END
+

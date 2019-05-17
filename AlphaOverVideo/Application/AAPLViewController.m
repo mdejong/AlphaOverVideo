@@ -9,9 +9,7 @@ Implementation of our cross-platform view controller
 
 #import <QuartzCore/QuartzCore.h>
 
-#import "AOVMTKView.h"
-
-#import "AOVPlayer.h"
+@import AlphaOverVideo;
 
 #define LOAD_ALPHA_VIDEO
 
@@ -121,7 +119,7 @@ Implementation of our cross-platform view controller
     AOVPlayer *player = [AOVPlayer playerWithLoopedClips:clips];
   
     // sRGB is the default gamma setting for a AOVPlayer, but explicitly set it here
-    player.decodeGamma = MetalBT709GammaSRGB;
+    player.decodeGamma = AOVGammaSRGB;
   
     // Hold ref to AOVPlayer, note that a ref is never held by the AOVMTKView
     self.player = player;

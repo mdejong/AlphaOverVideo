@@ -4,7 +4,7 @@
 
 cd ../..
 
-SRC=AlphaOverVideo/AlphaOverVideo/CopyFramework/AlphaOverVideo.framework
+SRC=AlphaOverVideo/CopyFramework/AlphaOverVideo.framework
 
 rm -rf AlienEscape/AlphaOverVideo.framework
 cp -R ${SRC} AlienEscape

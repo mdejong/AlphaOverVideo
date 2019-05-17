@@ -1,17 +1,15 @@
 //
-//  H264Encoder.m
+//  AOVH264Encoder.m
 //
 //  Created by Mo DeJong on 4/5/16.
 //
 //  See license.txt for license terms.
 //
 
-#import "H264Encoder.h"
+#import "AOVH264Encoder.h"
 
 #import <QuartzCore/QuartzCore.h>
 #import "CGFrameBuffer.h"
-
-//#import "BGRAToBT709Converter.h"
 
 @import AVFoundation;
 
@@ -26,22 +24,22 @@
 
 // Private API
 
-@interface H264Encoder ()
+@interface AOVH264Encoder ()
 
 @property (nonatomic, assign) CGColorSpaceRef encodedColorspace;
 
 @end
 
-@implementation H264Encoder
+@implementation AOVH264Encoder
 
 // constructor
 
-+ (H264Encoder*) h264Encoder
++ (AOVH264Encoder*) h264Encoder
 {
 #if __has_feature(objc_arc)
-  return [[H264Encoder alloc] init];
+  return [[AOVH264Encoder alloc] init];
 #else
-  return [[[H264Encoder alloc] init] autorelease];
+  return [[[AOVH264Encoder alloc] init] autorelease];
 #endif // objc_arc
 }
 
@@ -57,14 +55,14 @@
 
 // convert error code to string
 
-+ (NSString*) ErrorCodeToString:(H264EncoderErrorCode)code
++ (NSString*) ErrorCodeToString:(AOVH264EncoderErrorCode)code
 {
-  if (code == H264EncoderErrorCodeSuccess) {
-    return @"H264EncoderErrorCodeSuccess";
-  } else if (code == H264EncoderErrorCodeNoFrameSource) {
-    return @"H264EncoderErrorCodeNoFrameSource";
-  } else if (code == H264EncoderErrorCodeSessionNotStarted) {
-    return @"H264EncoderErrorCodeSessionNotStarted";
+  if (code == AOVH264EncoderErrorCodeSuccess) {
+    return @"AOVH264EncoderErrorCodeSuccess";
+  } else if (code == AOVH264EncoderErrorCodeNoFrameSource) {
+    return @"AOVH264EncoderErrorCodeNoFrameSource";
+  } else if (code == AOVH264EncoderErrorCodeSessionNotStarted) {
+    return @"AOVH264EncoderErrorCodeSessionNotStarted";
   } else {
     return @"unknown";
   }
@@ -100,11 +98,11 @@
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
     @autoreleasepool {
       // Block holds strong ref to self here
-      H264EncoderErrorCode code = [self blockingEncode:outH264Path
+      AOVH264EncoderErrorCode code = [self blockingEncode:outH264Path
                                          frameDuration:frameDuration
                                             renderSize:renderSize
                                             aveBitrate:aveBitrate];
-      if (code != H264EncoderErrorCodeSuccess) {
+      if (code != AOVH264EncoderErrorCodeSuccess) {
         [self reportErrorCode:code];
       }
 
@@ -124,7 +122,7 @@
   
   while (self.finished == FALSE) {
 #ifdef LOGGING
-    NSLog(@"Waiting until H264Encoder is finished encoding");
+    NSLog(@"Waiting until AOVH264Encoder is finished encoding");
 #endif // LOGGING
     
     NSDate *maxDate = [NSDate dateWithTimeIntervalSinceNow:waitTime];
@@ -132,7 +130,7 @@
   }
 
 #ifdef LOGGING
-  NSLog(@"H264Encoder is now finished encoding");
+  NSLog(@"AOVH264Encoder is now finished encoding");
 #endif // LOGGING
   
   return;
@@ -140,9 +138,9 @@
 
 // This util method reports an error code to the associated H264EncoderResult
 
-- (void) reportErrorCode:(H264EncoderErrorCode)code
+- (void) reportErrorCode:(AOVH264EncoderErrorCode)code
 {
-  id<H264EncoderResult> encoderResult = self.encoderResult;
+  id<AOVH264EncoderResult> encoderResult = self.encoderResult;
   
   dispatch_async(dispatch_get_main_queue(), ^{
     [encoderResult encoderResult:code];
@@ -152,13 +150,13 @@
 // Invoke this method on the background thread to encode N
 // frames from an input source.
 
-- (H264EncoderErrorCode) blockingEncode:(NSString*)outH264Path
+- (AOVH264EncoderErrorCode) blockingEncode:(NSString*)outH264Path
           frameDuration:(float)frameDuration
              renderSize:(CGSize)renderSize
              aveBitrate:(int)aveBitrate
 {
   if (self.frameSource == nil) {
-    return H264EncoderErrorCodeNoFrameSource;
+    return AOVH264EncoderErrorCodeNoFrameSource;
   }
   
   // If the output file already exists, remove it before starting
@@ -277,7 +275,7 @@
     // seen as a nil pixelBufferPool, but it means something went wrong
     // when starting the encoding process.
     
-    return H264EncoderErrorCodeSessionNotStarted;
+    return AOVH264EncoderErrorCodeSessionNotStarted;
   }
   
   CVPixelBufferRef cvPixelBuffer = NULL;
@@ -379,7 +377,7 @@
   
   [self videoWriterFinishWriting:videoWriter];
   
-  return H264EncoderErrorCodeSuccess;
+  return AOVH264EncoderErrorCodeSuccess;
 }
 
 // Util to invoke finishWriting method
@@ -491,7 +489,7 @@
   CGColorSpaceRef encodedColorspace = self.encodedColorspace;
 
   if (encodedColorspace == nil) {
-    encodedColorspace = [H264Encoder createHDTVColorSpaceRef];
+    encodedColorspace = [AOVH264Encoder createHDTVColorSpaceRef];
     self.encodedColorspace = encodedColorspace;
   }
   

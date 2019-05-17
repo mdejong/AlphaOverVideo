@@ -57,7 +57,7 @@ class BandersnatchViewController: UIViewController {
     assert(player?.hasAlphaChannel == false)
     
     // Defaults to sRGB, so set BT.709 flag to indicate video encoding
-    player?.decodeGamma = MetalBT709GammaApple;
+    player?.decodeGamma = AOVGammaApple;
     
     // Transition to choose vc after first 2 clips have finished playing
     
@@ -80,11 +80,6 @@ class BandersnatchViewController: UIViewController {
     
     startChoiceVideo()
     animateShowButtons()
-    
-    //let delaySeconds = 0.5
-    //DispatchQueue.main.asyncAfter(deadline: .now() + delaySeconds) {
-    //  self.animateShowButtons()
-    //}
   }
   
   // This method is invoked to kick off a looping clip that zooms in on the
@@ -102,7 +97,7 @@ class BandersnatchViewController: UIViewController {
     assert(player?.hasAlphaChannel == false)
     
     // Defaults to sRGB, so set BT.709 flag to indicate video encoding
-    player?.decodeGamma = MetalBT709GammaApple;
+    player?.decodeGamma = AOVGammaApple;
     
     // Transition to choose vc after first 2 clips have finished playing
     

@@ -10,7 +10,7 @@
 #import <Metal/Metal.h>
 #import <CoreVideo/CoreVideo.h>
 
-#import "MetalBT709Gamma.h"
+#import "AOVGamma.h"
 
 @class MetalRenderContext;
 
@@ -30,7 +30,7 @@
 // even though the actualy type of content to be decoded may not
 // be known until the first frame of video is read.
 
-@property (nonatomic, assign) MetalBT709Gamma gamma;
+@property (nonatomic, assign) AOVGamma gamma;
 
 // If set to TRUE, a compute kernel will be used to render,
 // otherwise use a fragment shader.

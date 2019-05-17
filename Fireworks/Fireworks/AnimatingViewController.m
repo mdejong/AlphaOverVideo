@@ -85,8 +85,8 @@
   self.wheelPlayer = [AOVPlayer playerWithLoopedClips:@[wheelURL]];
 
   // Defaults to sRGB, so set BT.709 flag
-  self.redPlayer.decodeGamma = MetalBT709GammaApple;
-  self.wheelPlayer.decodeGamma = MetalBT709GammaApple;
+  self.redPlayer.decodeGamma = AOVGammaApple;
+  self.wheelPlayer.decodeGamma = AOVGammaApple;
   
   // Link player(s) to views
   

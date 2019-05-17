@@ -1,5 +1,5 @@
 //
-//  H264Encoder.h
+//  AOVH264Encoder.h
 //
 //  Created by Mo DeJong on 7/6/16.
 //
@@ -23,12 +23,12 @@
 
 typedef enum
 {
-  H264EncoderErrorCodeSuccess = 0,
-  H264EncoderErrorCodeNoFrameSource = 1,
-  H264EncoderErrorCodeSessionNotStarted = 2,
-} H264EncoderErrorCode;
+  AOVH264EncoderErrorCodeSuccess = 0,
+  AOVH264EncoderErrorCodeNoFrameSource = 1,
+  AOVH264EncoderErrorCodeSessionNotStarted = 2,
+} AOVH264EncoderErrorCode;
 
-@protocol H264EncoderFrameSource
+@protocol AOVH264EncoderFrameSource
 
 // Given a frame number in the range (0, N-1), return a CoreGraphics
 // image reference to the corresponding image to be written to
@@ -46,30 +46,30 @@ typedef enum
 // Implement this protocol to async report the results of an encoding
 // operation on a background thread.
 
-@protocol H264EncoderResult
+@protocol AOVH264EncoderResult
 
 // Given a frame number in the range (0, N-1), return a CoreGraphics
 // image reference to the corresponding image to be written to
 // the encoded file. The code is zero = H264EncoderErrorCodeSuccess
 // on success, otherwise an error code indicates wht went wrong.
 
-- (void) encoderResult:(H264EncoderErrorCode)code;
+- (void) encoderResult:(AOVH264EncoderErrorCode)code;
 
 @end
 
-// H264Encoder class
+// AOVH264Encoder class
 
-@interface H264Encoder : NSObject
+@interface AOVH264Encoder : NSObject
 
 // Reference to a H264EncoderFrameSource protocol implementation,
 // this must be set to a non-nil value before encoding.
 
-@property (nonatomic, assign) id<H264EncoderFrameSource> frameSource;
+@property (nonatomic, assign) id<AOVH264EncoderFrameSource> frameSource;
 
 // Reference to a H264EncoderResult, this must be set to a non-nil
 // value before encoding.
 
-@property (nonatomic, assign) id<H264EncoderResult> encoderResult;
+@property (nonatomic, assign) id<AOVH264EncoderResult> encoderResult;
 
 // This property is FALSE once encoding has started, when encoding is finished
 // with either a success or error status then this property is set to TRUE.
@@ -83,11 +83,11 @@ typedef enum
 
 // convert error code to string
 
-+ (NSString*) ErrorCodeToString:(H264EncoderErrorCode)code;
++ (NSString*) ErrorCodeToString:(AOVH264EncoderErrorCode)code;
 
 // constructor
 
-+ (H264Encoder*) h264Encoder;
++ (AOVH264Encoder*) h264Encoder;
 
 // Invoke this method to start a background thread that will encode
 // incoming frames of images and write the result to a H264 file.
