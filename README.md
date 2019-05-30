@@ -24,7 +24,9 @@ AlienEscape :  Example iOS app, displays alpha channel video over starfield back
 
 Fireworks : Example iOS app, display multiple alpha channel fireworks videos at the same time. (Objc)
 
-Bandersnatch: Example iOS app, display video and audio in a short parody of Black Mirror episode. (Swift)
+Bandersnatch : Example iOS app, display video and audio in a short parody of Black Mirror episode. (Swift)
+
+Bloom : Example iOS app, load super high def video from sliced Asset Catalog. (Objc)
 
 AlphaOverVideo : Framework Implementation source code, example iOS and MacOSX app, tests
 

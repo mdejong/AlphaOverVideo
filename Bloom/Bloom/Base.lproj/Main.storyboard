@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina3_5" orientation="landscape">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ExU-Rw-USi"/>
+                        <viewControllerLayoutGuide type="bottom" id="6tx-iM-fxM"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ucV-M7-Jjz" customClass="AOVMTKView">
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="ucV-M7-Jjz" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="5NC-mb-llf"/>
+                            <constraint firstItem="ucV-M7-Jjz" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="AcE-n9-ybq"/>
+                            <constraint firstItem="ucV-M7-Jjz" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="e5V-RZ-FeD"/>
+                            <constraint firstItem="ucV-M7-Jjz" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="fgG-G5-cL5"/>
+                            <constraint firstItem="ucV-M7-Jjz" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="frC-nS-XAI"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="mtkView" destination="ucV-M7-Jjz" id="HF0-C1-9on"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+</document>
