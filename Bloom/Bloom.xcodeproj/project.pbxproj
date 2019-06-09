@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C32591722AD894F005DFFEF /* EPNGDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C32591622AD894F005DFFEF /* EPNGDecoder.m */; };
 		3C633493229C7F56001BE86F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C633492229C7F56001BE86F /* AppDelegate.m */; };
 		3C633496229C7F56001BE86F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C633495229C7F56001BE86F /* ViewController.m */; };
 		3C633499229C7F56001BE86F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C633497229C7F56001BE86F /* Main.storyboard */; };
@@ -32,6 +33,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3C32591522AD894F005DFFEF /* EPNGDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPNGDecoder.h; sourceTree = "<group>"; };
+		3C32591622AD894F005DFFEF /* EPNGDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPNGDecoder.m; sourceTree = "<group>"; };
 		3C63348E229C7F56001BE86F /* Bloom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bloom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C633491229C7F56001BE86F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		3C633492229C7F56001BE86F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -81,6 +84,8 @@
 				3C633492229C7F56001BE86F /* AppDelegate.m */,
 				3C633494229C7F56001BE86F /* ViewController.h */,
 				3C633495229C7F56001BE86F /* ViewController.m */,
+				3C32591522AD894F005DFFEF /* EPNGDecoder.h */,
+				3C32591622AD894F005DFFEF /* EPNGDecoder.m */,
 				3C633497229C7F56001BE86F /* Main.storyboard */,
 				3C63349A229C7F59001BE86F /* Assets.xcassets */,
 				3C63349C229C7F5A001BE86F /* LaunchScreen.storyboard */,
@@ -161,6 +166,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C32591722AD894F005DFFEF /* EPNGDecoder.m in Sources */,
 				3C633496229C7F56001BE86F /* ViewController.m in Sources */,
 				3C6334A1229C7F5A001BE86F /* main.m in Sources */,
 				3C633493229C7F56001BE86F /* AppDelegate.m in Sources */,
